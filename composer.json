@@ -1,0 +1,16 @@
+{
+    "name": "dennisdigital/drupal_console_commands",
+    "description": "Custom commands for Drupal console.",
+    "keywords": ["Drupal", "Console", "Development", "Symfony"],
+    "type": "project",
+    "license": "GPL-2.0+",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "~5.6",
+        "drupal/console" : "1.0.0-beta5"
+     },
+    "autoload": {
+        "psr-4": {"VM\\": "src"}
+    }
+}
