@@ -1,4 +1,5 @@
-# dev_scripts
+Drupal console commands
+=======================
 
 Provides custom Drupal console commands.
 
@@ -12,13 +13,14 @@ Provides custom Drupal console commands.
 	- Import the latest Db dump
 	- Run Db updates
 
-Installation
-============
+## Installation
 
 Put the contents of config.yml inside config.yml
 i.e. cat config.yml >> ~/.console/config.yml
 
-Usage
-=====
+# Usage
+
+```
 drupal site:build [site_name]
 drupal site:db:import [site_name]
+```
