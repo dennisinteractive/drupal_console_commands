@@ -24,6 +24,18 @@ use Drupal\Console\Config;
  */
 class SiteBuildCommand extends Command {
   use CommandTrait;
+  /**
+   * Global location for sites.yml.
+   *
+   * @var array
+   */
+  private $configFile = NULL;
+  /**
+   * Stores the contents of sites.yml.
+   *
+   * @var array
+   */
+  private $config = NULL;
 
   /**
    * {@inheritdoc}
@@ -58,15 +70,17 @@ class SiteBuildCommand extends Command {
     // Check if configuration file exists.
     if (!file_exists($configFile)) {
       $io->simple(t('Could not find any configuration in :file', array(':file' => $configFile)));
+
       return FALSE;
     }
-    $configContents = $config->getFileContents($configFile);
+    $this->configFile = $configFile;
+    $this->config = $config->getFileContents($configFile);
 
     // Overrides default destination directory.
     if (!$input->getOption('destination-directory')) {
       // Load default destination directory.
-      if (isset($configContents['global']['destination-directory'])) {
-        $input->setOption('destination-directory', $configContents['global']['destination-directory']);
+      if (isset($this->config['global']['destination-directory'])) {
+        $input->setOption('destination-directory', $this->config['global']['destination-directory']);
       }
     }
   }
@@ -94,11 +108,23 @@ class SiteBuildCommand extends Command {
      * Drupal Console provides the DrupalStyle helper class:
      */
     $io = new DrupalStyle($input, $output);
-    $io->simple(t('Building :site', array(
-        ':site' => $input->getArgument('site-name')
-      ))
-    );
+    $siteName = $input->getArgument('site-name');
 
+    $io->simple(t('Building :site', array(':site' => $siteName)));
 
+    // Load site config from sites.yml.
+    if (isset($this->config['sites'][$siteName])) {
+      $siteConfig = $this->config['sites'][$siteName];
+    }
+    else {
+      $io->simple(t('Could not find any configuration for :site in :file',
+          array(':site' => $siteName, ':file' => $this->configFile))
+      );
+      return FALSE;
+    }
+
+    foreach ($siteConfig as $key => $item) {
+      var_dump($item);
+    }
   }
 }
