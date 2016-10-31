@@ -30,12 +30,20 @@ class SiteBuildCommand extends Command {
    * @var array
    */
   private $configFile = NULL;
+
   /**
    * Stores the contents of sites.yml.
    *
    * @var array
    */
   private $config = NULL;
+
+  /**
+   * Stores the site name.
+   *
+   * @var string
+   */
+  private $siteName = NULL;
 
   /**
    * {@inheritdoc}
@@ -51,10 +59,16 @@ class SiteBuildCommand extends Command {
         t('The site name that is mapped to a repo in sites.yml.')
       )->addOption(
         'destination-directory',
-        '-dd',
+        '-D',
         InputOption::VALUE_OPTIONAL,
         // @todo use: $this->trans('commands.site.build.site-name.options')
         t('Specify the destination of the site build if different than the global destination found in sites.yml')
+      )->addOption(
+        'branch',
+        '-B',
+        InputOption::VALUE_OPTIONAL,
+        // @todo use: $this->trans('commands.site.build.branch.options')
+        t('Specify which branch to checkout if different than the global branch found in sites.yml')
       );
   }
 
@@ -62,6 +76,8 @@ class SiteBuildCommand extends Command {
    * {@inheritdoc}
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
+    $this->siteName = $input->getArgument('site-name');
+
     $io = new DrupalStyle($input, $output);
     $ymlFile = new Parser();
     $config = new Config($ymlFile);
@@ -76,13 +92,36 @@ class SiteBuildCommand extends Command {
     $this->configFile = $configFile;
     $this->config = $config->getFileContents($configFile);
 
-    // Overrides default destination directory.
-    if (!$input->getOption('destination-directory')) {
-      // Load default destination directory.
-      if (isset($this->config['global']['destination-directory'])) {
-        $input->setOption('destination-directory', $this->config['global']['destination-directory']);
-      }
+    // Load site config from sites.yml.
+    if (!isset($this->config['sites'][$this->siteName])) {
+      $io->simple(t('Could not find any configuration for :site in :file',
+          array(':site' => $this->siteName, ':file' => $this->configFile))
+      );
+      return FALSE;
     }
+
+    // Load default destination directory.
+    $dir = NULL;
+    if (isset($this->config['global']['destination-directory'])) {
+      $dir = $this->config['global']['destination-directory'] .
+        '/' . $this->siteName . '/';
+    }
+    // Overrides default destination directory.
+    if ($input->getOption('destination-directory')) {
+      $dir = $input->getOption('destination-directory');
+    }
+    $input->setOption('destination-directory', $dir);
+
+    // Loads default branch settings.
+    $branch = NULL;
+    if (isset($this->config['sites'][$this->siteName]['branch'])) {
+      $branch = $this->config['sites'][$this->siteName]['branch'];
+    }
+    // Overrides default branch.
+    if ($input->getOption('branch')) {
+      $branch = $input->getOption('branch');
+    }
+    $input->setOption('branch', $branch);
   }
 
   /**
@@ -108,23 +147,12 @@ class SiteBuildCommand extends Command {
      * Drupal Console provides the DrupalStyle helper class:
      */
     $io = new DrupalStyle($input, $output);
-    $siteName = $input->getArgument('site-name');
+    $io->simple(t('Building :site (:branch) on :dir', array(
+      ':site' => $this->siteName,
+      ':branch' => $input->getOption('branch'),
+      ':dir' => $input->getOption('destination-directory'),
+    )));
 
-    $io->simple(t('Building :site', array(':site' => $siteName)));
-
-    // Load site config from sites.yml.
-    if (isset($this->config['sites'][$siteName])) {
-      $siteConfig = $this->config['sites'][$siteName];
-    }
-    else {
-      $io->simple(t('Could not find any configuration for :site in :file',
-          array(':site' => $siteName, ':file' => $this->configFile))
-      );
-      return FALSE;
-    }
-
-    foreach ($siteConfig as $key => $item) {
-      var_dump($item);
-    }
+//    $siteConfig = $this->config['sites'][$this->siteName];
   }
 }
