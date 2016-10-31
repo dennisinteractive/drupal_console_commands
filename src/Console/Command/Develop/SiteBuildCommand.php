@@ -26,11 +26,6 @@ class SiteBuildCommand extends Command {
   use CommandTrait;
 
   /**
-   * @var string Stores the destination directory.
-   */
-  private $destinationDirectory = NULL;
-
-  /**
    * {@inheritdoc}
    */
   protected function configure() {
@@ -55,27 +50,25 @@ class SiteBuildCommand extends Command {
    * {@inheritdoc}
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
+    $io = new DrupalStyle($input, $output);
     $ymlFile = new Parser();
     $config = new Config($ymlFile);
     $configFile = $config->getUserHomeDir() . '/.console/sites.yml';
 
     // Check if configuration file exists.
     if (!file_exists($configFile)) {
-      $io = new DrupalStyle($input, $output);
       $io->simple(t('Could not find any configuration in :file', array(':file' => $configFile)));
       return FALSE;
     }
     $configContents = $config->getFileContents($configFile);
 
-    // Load default destination directory.
-    if (isset($configContents['global']['destination-directory'])) {
-      $this->destinationDirectory = $configContents['global']['destination-directory'];
-    }
     // Overrides default destination directory.
-    if ($input->getOption('destination-directory')) {
-      $this->destinationDirectory = $input->getOption('destination-directory');
+    if (!$input->getOption('destination-directory')) {
+      // Load default destination directory.
+      if (isset($configContents['global']['destination-directory'])) {
+        $input->setOption('destination-directory', $configContents['global']['destination-directory']);
+      }
     }
-var_dump($this->destinationDirectory);
   }
 
   /**
@@ -105,12 +98,6 @@ var_dump($this->destinationDirectory);
         ':site' => $input->getArgument('site-name')
       ))
     );
-
-    // Reading user input argument.
-    // $input->getArgument('site-name');
-
-    // Reading user input option.
-    // $input->getOption('OPTION_NAME');
   }
 
   /**
