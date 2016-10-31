@@ -98,20 +98,7 @@ class SiteBuildCommand extends Command {
         ':site' => $input->getArgument('site-name')
       ))
     );
-  }
 
-  /**
-   * Helper to load the default configuration and allow it to be overriden
-   * by arguments passed on the command line.
-   */
-  function _getOption($name) {
-    // Load default destination directory.
-    if (isset($configContentss['global']['destination-directory'])) {
-      $this->destinationDirectory = $configContentss['global']['destination-directory'];
-    }
-    // Overrides default destination directory.
-    if ($input->getOption('destination-directory')) {
 
-    }
   }
 }
