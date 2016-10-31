@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
 use Drupal\Console\Command\Shared\CommandTrait;
 use Drupal\Console\Style\DrupalStyle;
+use Symfony\Component\Yaml\Parser;
+use Drupal\Console\Config;
 
 /**
  * Class SiteBuildCommand
@@ -22,6 +24,11 @@ use Drupal\Console\Style\DrupalStyle;
  */
 class SiteBuildCommand extends Command {
   use CommandTrait;
+
+  /**
+   * @var string Stores the destination directory.
+   */
+  private $destinationDirectory = NULL;
 
   /**
    * {@inheritdoc}
@@ -34,13 +41,13 @@ class SiteBuildCommand extends Command {
         'site-name',
         InputArgument::REQUIRED,
         // @todo use: $this->trans('commands.site.build.site-name.description')
-        t('The site name that is mapped to a repo in config.yml.')
+        t('The site name that is mapped to a repo in sites.yml.')
       )->addOption(
         'destination-directory',
-        '',
+        '-dd',
         InputOption::VALUE_OPTIONAL,
         // @todo use: $this->trans('commands.site.build.site-name.options')
-        t('Specify the destination of the site build if different than the global destination found in config.yml')
+        t('Specify the destination of the site build if different than the global destination found in sites.yml')
       );
   }
 
@@ -48,6 +55,27 @@ class SiteBuildCommand extends Command {
    * {@inheritdoc}
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
+    $ymlFile = new Parser();
+    $config = new Config($ymlFile);
+    $configFile = $config->getUserHomeDir() . '/.console/sites.yml';
+
+    // Check if configuration file exists.
+    if (!file_exists($configFile)) {
+      $io = new DrupalStyle($input, $output);
+      $io->simple(t('Could not find any configuration in :file', array(':file' => $configFile)));
+      return FALSE;
+    }
+    $configContents = $config->getFileContents($configFile);
+
+    // Load default destination directory.
+    if (isset($configContents['global']['destination-directory'])) {
+      $this->destinationDirectory = $configContents['global']['destination-directory'];
+    }
+    // Overrides default destination directory.
+    if ($input->getOption('destination-directory')) {
+      $this->destinationDirectory = $input->getOption('destination-directory');
+    }
+var_dump($this->destinationDirectory);
   }
 
   /**
@@ -83,5 +111,20 @@ class SiteBuildCommand extends Command {
 
     // Reading user input option.
     // $input->getOption('OPTION_NAME');
+  }
+
+  /**
+   * Helper to load the default configuration and allow it to be overriden
+   * by arguments passed on the command line.
+   */
+  function _getOption($name) {
+    // Load default destination directory.
+    if (isset($configContentss['global']['destination-directory'])) {
+      $this->destinationDirectory = $configContentss['global']['destination-directory'];
+    }
+    // Overrides default destination directory.
+    if ($input->getOption('destination-directory')) {
+
+    }
   }
 }
