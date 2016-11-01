@@ -51,24 +51,24 @@ class SiteBuildCommand extends Command {
   protected function configure() {
     $this->setName('site:build')
       // @todo use: ->setDescription($this->trans('commands.site.build.description'))
-      ->setDescription(t('Check out a site and installs composer.json.'))
+      ->setDescription('Check out a site and installs composer.json.')
       ->addArgument(
         'site-name',
         InputArgument::REQUIRED,
         // @todo use: $this->trans('commands.site.build.site-name.description')
-        t('The site name that is mapped to a repo in sites.yml.')
+        'The site name that is mapped to a repo in sites.yml.'
       )->addOption(
         'destination-directory',
         '-D',
         InputOption::VALUE_OPTIONAL,
         // @todo use: $this->trans('commands.site.build.site-name.options')
-        t('Specify the destination of the site build if different than the global destination found in sites.yml')
+        'Specify the destination of the site build if different than the global destination found in sites.yml'
       )->addOption(
         'branch',
         '-B',
         InputOption::VALUE_OPTIONAL,
         // @todo use: $this->trans('commands.site.build.branch.options')
-        t('Specify which branch to checkout if different than the global branch found in sites.yml')
+        'Specify which branch to checkout if different than the global branch found in sites.yml'
       );
   }
 
@@ -85,7 +85,7 @@ class SiteBuildCommand extends Command {
 
     // Check if configuration file exists.
     if (!file_exists($configFile)) {
-      $io->simple(t('Could not find any configuration in :file', array(':file' => $configFile)));
+      $io->simple(sprintf('Could not find any configuration in %s', $configFile));
 
       return FALSE;
     }
@@ -94,8 +94,9 @@ class SiteBuildCommand extends Command {
 
     // Load site config from sites.yml.
     if (!isset($this->config['sites'][$this->siteName])) {
-      $io->simple(t('Could not find any configuration for :site in :file',
-          array(':site' => $this->siteName, ':file' => $this->configFile))
+      $io->simple(sprintf('Could not find any configuration for %s in %f',
+        $this->siteName,
+        $this->configFile)
       );
       return FALSE;
     }
@@ -147,11 +148,11 @@ class SiteBuildCommand extends Command {
      * Drupal Console provides the DrupalStyle helper class:
      */
     $io = new DrupalStyle($input, $output);
-    $io->simple(t('Building :site (:branch) on :dir', array(
-      ':site' => $this->siteName,
-      ':branch' => $input->getOption('branch'),
-      ':dir' => $input->getOption('destination-directory'),
-    )));
+    $io->simple(sprintf('Building %s (%s) on %s',
+      $this->siteName,
+      $input->getOption('branch'),
+      $input->getOption('destination-directory')
+    ));
 
 //    $siteConfig = $this->config['sites'][$this->siteName];
   }
