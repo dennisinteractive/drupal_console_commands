@@ -172,7 +172,7 @@ class SiteBuildCommand extends Command {
             exit;
           }
           if ($status != 0) {
-            $io->writeln('Something went wrong when cloning the repo.');
+            $io->writeln('Something went wrong while cloning the repo.');
             die($status);
           }
         }
@@ -187,9 +187,22 @@ class SiteBuildCommand extends Command {
           exec($command, $result, $status);
           $io->writeln($result);
           if ($status != 0) {
-            // Something went wrong.
+            $io->writeln('Something went wrong while cloning the repo.');
             die($status);
           }
+        }
+
+        // Checkout branch.
+        $command = sprintf('cd %s; git checkout -B %s',
+          $destination,
+          $branch
+        );
+        $io->writeln($command);
+        exec($command, $result, $status);
+        $io->writeln($result);
+        if ($status != 0) {
+          $io->writeln('Something while checking out the branch.');
+          die($status);
         }
 
         // Build site.
