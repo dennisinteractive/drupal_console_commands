@@ -1,0 +1,27 @@
+global:
+  destination-directory: /vagrant/repos
+sites:
+  buyacar:
+    site-name: Buyacar.co.uk
+    repo:
+      type: git
+      url: ssh://didev@didev.kilnhg.com/Drupal-Sites/buyacar/0-1
+      branch: master
+    db-dump: /vagrant/repos/7_x_buyacar.sql.gz
+    extras: []
+  itpro:
+    site-name: Itpro.co.uk
+    repo:
+      type: git
+      url: ssh://didev@didev.kilnhg.com/Drupal-Sites/itpro/0-1
+      branch: master
+    db-dump: /vagrant/repos/8_x_itpro.sql.gz
+    extras: []
+  subscriptions:
+    site-name: Subscriptions
+    repo:
+      type: git
+      url: https://github.com/dennisinteractive/subscriptions.git
+      branch: 8.x
+    db-dump: /vagrant/repos/8_x_subscriptions.sql.gz
+    extras: []
