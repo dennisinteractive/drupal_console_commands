@@ -16,6 +16,7 @@ use Drupal\Console\Command\Shared\CommandTrait;
 use Drupal\Console\Style\DrupalStyle;
 use Symfony\Component\Yaml\Parser;
 use Drupal\Console\Config;
+use Unish\shellAliasesCase;
 
 /**
  * Class SiteBuildCommand
@@ -30,14 +31,12 @@ class SiteBuildCommand extends Command {
    * @var array
    */
   private $configFile = NULL;
-
   /**
    * Stores the contents of sites.yml.
    *
    * @var array
    */
   private $config = NULL;
-
   /**
    * Stores the site name.
    *
@@ -91,19 +90,21 @@ class SiteBuildCommand extends Command {
     $this->configFile = $configFile;
     $this->config = $config->getFileContents($configFile);
 
+    $siteConfig = $this->config['sites'][$this->siteName];
     // Load site config from sites.yml.
-    if (!isset($this->config['sites'][$this->siteName])) {
+    if (!isset($siteConfig)) {
       $io->writeln(sprintf('Could not find any configuration for %s in %s',
-        $this->siteName,
-        $this->configFile)
+          $this->siteName,
+          $this->configFile)
       );
       exit;
     }
 
+    $repo = $siteConfig['repo'];
     // Loads default branch settings.
     $branch = NULL;
-    if (isset($this->config['sites'][$this->siteName]['branch'])) {
-      $branch = $this->config['sites'][$this->siteName]['branch'];
+    if (isset($repo['branch'])) {
+      $branch = $repo['branch'];
     }
     // Overrides default branch.
     if ($input->getOption('branch')) {
@@ -128,31 +129,50 @@ class SiteBuildCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    /* Register your command as a service
-     *
-     * Make sure you register your command class at
-     * config/services/namespace.yml file and add the `console.command` tag.
-     *
-     * develop_example:
-     *   class: VM\Console\Command\Develop\SiteBuildCommand
-     *   tags:
-     *     - { name: console.command }
-     *
-     * NOTE: Make the proper changes on the namespace and class
-     *       according your new command.
-     *
-     * DrupalConsole extends the SymfonyStyle class to provide
-     * an standardized Output Formatting Style.
-     *
-     * Drupal Console provides the DrupalStyle helper class:
-     */
+
     $io = new DrupalStyle($input, $output);
+
+    $siteConfig = $this->config['sites'][$this->siteName];
+    $repo = $siteConfig['repo'];
+    $branch = $input->getOption('branch');
+    $destination = $input->getOption('destination-directory');
+
     $io->writeln(sprintf('Building %s (%s) on %s',
       $this->siteName,
-      $input->getOption('branch'),
-      $input->getOption('destination-directory')
+      $branch,
+      $destination
     ));
 
-//    $siteConfig = $this->config['sites'][$this->siteName];
+    switch ($repo['type']) {
+      case 'git':
+        // Check if repo exists and has any changes
+        if (file_exists($destination)) {
+          $command = sprintf('cd %s; git diff-files --name-status -r --ignore-submodules',
+            $destination
+          );
+          $result = shell_exec($command);
+          if (!empty($result)) {
+            $io->writeln(sprintf('You have uncommitted changes on %s. ' .
+              'Please commit or revert your changes before building the site.',
+              $destination));
+            exit;
+          }
+        }
+
+        // Checkout repo
+        $command = sprintf('git clone --branch %s %s %s',
+          $branch,
+          $repo['url'],
+          $destination
+        );
+        $io->writeln($command);
+        $result = shell_exec($command);
+        $io->writeln($result);
+        break;
+
+      default:
+        $io->writeln(sprintf('Repo commands for %s not implemented.',
+          $siteConfig['type']));
+    }
   }
 }
