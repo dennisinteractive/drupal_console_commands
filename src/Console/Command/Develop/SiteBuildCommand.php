@@ -25,17 +25,20 @@ use Unish\shellAliasesCase;
  */
 class SiteBuildCommand extends Command {
   use CommandTrait;
+
   /**
    * Global location for sites.yml.
    *
    * @var array
    */
+
   private $configFile = NULL;
   /**
    * Stores the contents of sites.yml.
    *
    * @var array
    */
+
   private $config = NULL;
   /**
    * Stores the site name.
@@ -96,9 +99,8 @@ class SiteBuildCommand extends Command {
     $this->configFile = $configFile;
     $this->config = $config->getFileContents($configFile);
 
-    $siteConfig = $this->config['sites'][$this->siteName];
     // Load site config from sites.yml.
-    if (!isset($siteConfig)) {
+    if (!isset($this->config['sites'])) {
       $io->writeln(sprintf('Could not find any configuration for %s in %s',
           $this->siteName,
           $this->configFile)
@@ -106,7 +108,9 @@ class SiteBuildCommand extends Command {
       exit;
     }
 
+    $siteConfig = $this->config['sites'][$this->siteName];
     $repo = $siteConfig['repo'];
+
     // Loads default branch settings.
     $branch = NULL;
     if (isset($repo['branch'])) {
