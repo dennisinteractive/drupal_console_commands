@@ -206,9 +206,21 @@ class SiteBuildCommand extends Command {
         }
 
         // Build site.
-        if (!$destination . 'composer.json') {
+        if (!file_exists($destination . 'composer.json')) {
           $io->writeln(sprintf('The file composer.json is missing on %s', $destination));
           exit;
+        }
+
+        // Build.
+        $command = sprintf('cd %s; composer install',
+          $destination
+        );
+        $io->writeln($command);
+        exec($command, $result, $status);
+        $io->writeln($result);
+        if ($status != 0) {
+          $io->writeln('Something while checking out the branch.');
+          die($status);
         }
 
         break;
