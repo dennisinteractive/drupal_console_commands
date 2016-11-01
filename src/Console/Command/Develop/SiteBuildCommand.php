@@ -86,32 +86,19 @@ class SiteBuildCommand extends Command {
     // Check if configuration file exists.
     if (!file_exists($configFile)) {
       $io->simple(sprintf('Could not find any configuration in %s', $configFile));
-
-      return FALSE;
+      exit;
     }
     $this->configFile = $configFile;
     $this->config = $config->getFileContents($configFile);
 
     // Load site config from sites.yml.
     if (!isset($this->config['sites'][$this->siteName])) {
-      $io->simple(sprintf('Could not find any configuration for %s in %f',
+      $io->simple(sprintf('Could not find any configuration for %s in %s',
         $this->siteName,
         $this->configFile)
       );
-      return FALSE;
+      exit;
     }
-
-    // Load default destination directory.
-    $dir = NULL;
-    if (isset($this->config['global']['destination-directory'])) {
-      $dir = $this->config['global']['destination-directory'] .
-        '/' . $this->siteName . '/';
-    }
-    // Overrides default destination directory.
-    if ($input->getOption('destination-directory')) {
-      $dir = $input->getOption('destination-directory');
-    }
-    $input->setOption('destination-directory', $dir);
 
     // Loads default branch settings.
     $branch = NULL;
@@ -123,6 +110,18 @@ class SiteBuildCommand extends Command {
       $branch = $input->getOption('branch');
     }
     $input->setOption('branch', $branch);
+
+    // Load default destination directory.
+    $dir = '/tmp/' . $this->siteName . '/';
+    if (isset($this->config['global']['destination-directory'])) {
+      $dir = $this->config['global']['destination-directory'] .
+        '/' . $this->siteName . '/';
+    }
+    // Overrides default destination directory.
+    if ($input->getOption('destination-directory')) {
+      $dir = $input->getOption('destination-directory');
+    }
+    $input->setOption('destination-directory', $dir);
   }
 
   /**
