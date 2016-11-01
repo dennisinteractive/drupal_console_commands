@@ -16,7 +16,6 @@ use Drupal\Console\Command\Shared\CommandTrait;
 use Drupal\Console\Style\DrupalStyle;
 use Symfony\Component\Yaml\Parser;
 use Drupal\Console\Config;
-use Unish\shellAliasesCase;
 
 /**
  * Class SiteBuildCommand
@@ -164,13 +163,17 @@ class SiteBuildCommand extends Command {
           $command = sprintf('cd %s; git diff-files --name-status -r --ignore-submodules',
             $destination
           );
-          $result = shell_exec($command);
+          exec($command, $result, $status);
           if (!empty($result) && !$input->getOption('ignore-changes')) {
             $io->writeln(sprintf('You have uncommitted changes on %s. ' .
               'Please commit or revert your changes before building the site.',
               $destination));
             $io->writeln('If you want to build the site without committing the changes use --ignore-changes.');
             exit;
+          }
+          if ($status != 0) {
+            $io->writeln('Something went wrong when cloning the repo.');
+            die($status);
           }
         }
         else {
@@ -181,9 +184,20 @@ class SiteBuildCommand extends Command {
             $destination
           );
           $io->writeln($command);
-          $result = shell_exec($command);
+          exec($command, $result, $status);
           $io->writeln($result);
+          if ($status != 0) {
+            // Something went wrong.
+            die($status);
+          }
         }
+
+        // Build site.
+        if (!$destination . 'composer.json') {
+          $io->writeln(sprintf('The file composer.json is missing on %s', $destination));
+          exit;
+        }
+
         break;
 
       default:
