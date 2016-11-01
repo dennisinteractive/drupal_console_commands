@@ -53,12 +53,12 @@ class SiteBuildCommand extends Command {
   protected function configure() {
     $this->setName('site:build')
       // @todo use: ->setDescription($this->trans('commands.site.build.description'))
-      ->setDescription('Check out a site and installs composer.json.')
+      ->setDescription('Check out a site and installs composer.json')
       ->addArgument(
         'site-name',
         InputArgument::REQUIRED,
         // @todo use: $this->trans('commands.site.build.site-name.description')
-        'The site name that is mapped to a repo in sites.yml.'
+        'The site name that is mapped to a repo in sites.yml'
       )->addOption(
         'destination-directory',
         '-D',
@@ -158,6 +158,7 @@ class SiteBuildCommand extends Command {
 
     switch ($repo['type']) {
       case 'git':
+
         // Check if repo exists and has any changes.
         if (file_exists($destination) && file_exists($destination . '.' . $repo['type'])) {
           $command = sprintf('cd %s; git diff-files --name-status -r --ignore-submodules',
@@ -172,9 +173,8 @@ class SiteBuildCommand extends Command {
             exit;
           }
         }
-
-        if (!file_exists($destination)) {
-          // Checkout repo
+        else {
+          // Clone repo.
           $command = sprintf('git clone --branch %s %s %s',
             $branch,
             $repo['url'],
