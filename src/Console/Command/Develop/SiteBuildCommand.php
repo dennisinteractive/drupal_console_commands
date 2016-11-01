@@ -63,10 +63,16 @@ class SiteBuildCommand extends Command {
         // @todo use: $this->trans('commands.site.build.site-name.options')
         'Specify the destination of the site build if different than the global destination found in sites.yml'
       )->addOption(
+        'ignore-changes',
+        '',
+        InputOption::VALUE_NONE,
+        // @todo use: $this->trans('commands.site.build.ignore-changes')
+        'Ignore local changes when building the site'
+      )->addOption(
         'branch',
         '-B',
         InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.build.branch.options')
+        // @todo use: $this->trans('commands.site.build.branch')
         'Specify which branch to checkout if different than the global branch found in sites.yml'
       );
   }
@@ -135,7 +141,10 @@ class SiteBuildCommand extends Command {
     $siteConfig = $this->config['sites'][$this->siteName];
     $repo = $siteConfig['repo'];
     $branch = $input->getOption('branch');
+
     $destination = $input->getOption('destination-directory');
+    // Make sure we have a slash at the end.
+    if (substr($destination, -1) != '/') $destination .= '/';
 
     $io->writeln(sprintf('Building %s (%s) on %s',
       $this->siteName,
@@ -145,29 +154,32 @@ class SiteBuildCommand extends Command {
 
     switch ($repo['type']) {
       case 'git':
-        // Check if repo exists and has any changes
-        if (file_exists($destination)) {
+        // Check if repo exists and has any changes.
+        if (file_exists($destination) && file_exists($destination . '.' . $repo['type'])) {
           $command = sprintf('cd %s; git diff-files --name-status -r --ignore-submodules',
             $destination
           );
           $result = shell_exec($command);
-          if (!empty($result)) {
+          if (!empty($result) && !$input->getOption('ignore-changes')) {
             $io->writeln(sprintf('You have uncommitted changes on %s. ' .
               'Please commit or revert your changes before building the site.',
               $destination));
+            $io->writeln('If you want to build the site without committing the changes use --ignore-changes.');
             exit;
           }
         }
 
-        // Checkout repo
-        $command = sprintf('git clone --branch %s %s %s',
-          $branch,
-          $repo['url'],
-          $destination
-        );
-        $io->writeln($command);
-        $result = shell_exec($command);
-        $io->writeln($result);
+        if (!file_exists($destination)) {
+          // Checkout repo
+          $command = sprintf('git clone --branch %s %s %s',
+            $branch,
+            $repo['url'],
+            $destination
+          );
+          $io->writeln($command);
+          $result = shell_exec($command);
+          $io->writeln($result);
+        }
         break;
 
       default:
