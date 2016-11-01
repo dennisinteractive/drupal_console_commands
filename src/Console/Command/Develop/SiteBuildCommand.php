@@ -85,7 +85,7 @@ class SiteBuildCommand extends Command {
 
     // Check if configuration file exists.
     if (!file_exists($configFile)) {
-      $io->simple(sprintf('Could not find any configuration in %s', $configFile));
+      $io->writeln(sprintf('Could not find any configuration in %s', $configFile));
       exit;
     }
     $this->configFile = $configFile;
@@ -93,7 +93,7 @@ class SiteBuildCommand extends Command {
 
     // Load site config from sites.yml.
     if (!isset($this->config['sites'][$this->siteName])) {
-      $io->simple(sprintf('Could not find any configuration for %s in %s',
+      $io->writeln(sprintf('Could not find any configuration for %s in %s',
         $this->siteName,
         $this->configFile)
       );
@@ -147,7 +147,7 @@ class SiteBuildCommand extends Command {
      * Drupal Console provides the DrupalStyle helper class:
      */
     $io = new DrupalStyle($input, $output);
-    $io->simple(sprintf('Building %s (%s) on %s',
+    $io->writeln(sprintf('Building %s (%s) on %s',
       $this->siteName,
       $input->getOption('branch'),
       $input->getOption('destination-directory')
