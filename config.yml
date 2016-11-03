@@ -1,9 +1,10 @@
 # Custom commands
-    autowire:
-        commands:
-            forced: {  }
-            name:
-                'site:build':
-                    class: \VM\Console\Command\Develop\SiteBuildCommand
-                'site:db:import':
-                    class: \VM\Console\Command\Develop\SiteDbImportCommand
+  autowire:
+    commands:
+      forced: {  }
+        name:
+          'site:build':
+             class: \VM\Console\Command\Develop\SiteBuildCommand
+          'site:db:import':
+             class: \VM\Console\Command\Develop\SiteDbImportCommand
+
