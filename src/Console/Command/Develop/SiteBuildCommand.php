@@ -92,7 +92,7 @@ class SiteBuildCommand extends Command {
 
     // Check if configuration file exists.
     if (!file_exists($configFile)) {
-      $io->writeln(sprintf('Could not find any configuration in %s', $configFile));
+      $io->error(sprintf('Could not find any configuration in %s', $configFile));
       exit;
     }
     $this->configFile = $configFile;
@@ -100,7 +100,7 @@ class SiteBuildCommand extends Command {
 
     // Load site config from sites.yml.
     if (!isset($this->config['sites'])) {
-      $io->writeln(sprintf('Could not find any configuration for %s in %s',
+      $io->error(sprintf('Could not find any configuration for %s in %s',
           $this->siteName,
           $this->configFile)
       );
@@ -172,7 +172,7 @@ class SiteBuildCommand extends Command {
             exit;
           }
           if ($status != 0) {
-            $io->writeln('Something went wrong while cloning the repo.');
+            $io->error('Something went wrong while cloning the repo.');
             die($status);
           }
         }
@@ -187,7 +187,7 @@ class SiteBuildCommand extends Command {
           exec($command, $result, $status);
           $io->writeln($result);
           if ($status != 0) {
-            $io->writeln('Something went wrong while cloning the repo.');
+            $io->error('Something went wrong while cloning the repo.');
             die($status);
           }
         }
@@ -201,13 +201,13 @@ class SiteBuildCommand extends Command {
         exec($command, $result, $status);
         $io->writeln($result);
         if ($status != 0) {
-          $io->writeln('Something while checking out the branch.');
+          $io->error('Something while checking out the branch.');
           die($status);
         }
 
         // Build site.
         if (!file_exists($destination . 'composer.json')) {
-          $io->writeln(sprintf('The file composer.json is missing on %s', $destination));
+          $io->error(sprintf('The file composer.json is missing on %s', $destination));
           exit;
         }
 
@@ -219,14 +219,14 @@ class SiteBuildCommand extends Command {
         exec($command, $result, $status);
         $io->writeln($result);
         if ($status != 0) {
-          $io->writeln('Something while checking out the branch.');
+          $io->error('Something while checking out the branch.');
           die($status);
         }
 
         break;
 
       default:
-        $io->writeln(sprintf('Repo commands for %s not implemented.',
+        $io->error(sprintf('Repo commands for %s not implemented.',
           $siteConfig['type']));
     }
   }
