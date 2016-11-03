@@ -1,5 +1,4 @@
-
-application:
+# Custom commands
     autowire:
         commands:
             forced: {  }
