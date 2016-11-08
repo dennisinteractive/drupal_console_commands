@@ -98,6 +98,14 @@ class SiteBuildCommand extends Command {
     $this->configFile = $configFile;
     $this->config = $config->getFileContents($configFile);
 
+    if (empty($this->siteName)) {
+      $io->writeln(sprintf('Site not found in /.console/sites.yml'));
+      $io->writeln(sprintf('Available sites: [%s]', implode(', ',
+        array_keys($this->config['sites'])))
+      );
+      exit;
+    }
+
     // Load site config from sites.yml.
     if (!isset($this->config['sites'])) {
       $io->error(sprintf('Could not find any configuration for %s in %s',
