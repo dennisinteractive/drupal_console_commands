@@ -212,7 +212,7 @@ class SiteBuildCommand extends Command {
    *
    * @param $directory Directory containing the git folder.
    */
-  protected function repoDiff($directory, $ignoreChanges) {
+  protected function repoDiff($directory) {
     $command = sprintf(
       'cd %s; git diff-files --name-status -r --ignore-submodules',
       $directory
