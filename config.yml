@@ -5,6 +5,8 @@
       name:
         'site:checkout':
           class: \VM\Console\Command\Develop\SiteCheckoutCommand
+        'site:compose':
+          class: \VM\Console\Command\Develop\SiteComposeCommand
         'site:build':
           class: \VM\Console\Command\Develop\SiteBuildCommand
         'site:db:import':
