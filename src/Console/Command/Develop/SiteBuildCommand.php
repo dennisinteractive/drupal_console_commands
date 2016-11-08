@@ -12,9 +12,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Validator\Constraints;
+use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Drupal\Console\Command\Shared\CommandTrait;
 use Drupal\Console\Style\DrupalStyle;
-use Symfony\Component\Yaml\Parser;
 use Drupal\Console\Config;
 
 /**
@@ -26,19 +28,26 @@ class SiteBuildCommand extends Command {
   use CommandTrait;
 
   /**
+   * IO interface.
+   *
+   * @var null
+   */
+  private $io = NULL;
+
+  /**
    * Global location for sites.yml.
    *
    * @var array
    */
-
   private $configFile = NULL;
+
   /**
    * Stores the contents of sites.yml.
    *
    * @var array
    */
-
   private $config = NULL;
+
   /**
    * Stores the site name.
    *
@@ -101,13 +110,13 @@ class SiteBuildCommand extends Command {
     if (empty($this->siteName)) {
       $io->writeln(sprintf('Site not found in /.console/sites.yml'));
       $io->writeln(sprintf('Available sites: [%s]', implode(', ',
-        array_keys($this->config['sites'])))
+          array_keys($this->config['sites'])))
       );
       exit;
     }
 
     // Load site config from sites.yml.
-    if (!isset($this->config['sites'])) {
+    if (!isset($this->config['sites'][$this->siteName])) {
       $io->error(sprintf('Could not find any configuration for %s in %s',
           $this->siteName,
           $this->configFile)
@@ -147,7 +156,7 @@ class SiteBuildCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
 
-    $io = new DrupalStyle($input, $output);
+    $this->io = new DrupalStyle($input, $output);
 
     $siteConfig = $this->config['sites'][$this->siteName];
     $repo = $siteConfig['repo'];
@@ -155,9 +164,11 @@ class SiteBuildCommand extends Command {
 
     $destination = $input->getOption('destination-directory');
     // Make sure we have a slash at the end.
-    if (substr($destination, -1) != '/') $destination .= '/';
+    if (substr($destination, -1) != '/') {
+      $destination .= '/';
+    }
 
-    $io->writeln(sprintf('Building %s (%s) on %s',
+    $this->io->writeln(sprintf('Building %s (%s) on %s',
       $this->siteName,
       $branch,
       $destination
@@ -168,74 +179,154 @@ class SiteBuildCommand extends Command {
 
         // Check if repo exists and has any changes.
         if (file_exists($destination) && file_exists($destination . '.' . $repo['type'])) {
-          $command = sprintf('cd %s; git diff-files --name-status -r --ignore-submodules',
-            $destination
-          );
-          exec($command, $result, $status);
-          if (!empty($result) && !$input->getOption('ignore-changes')) {
-            $io->writeln(sprintf('You have uncommitted changes on %s. ' .
-              'Please commit or revert your changes before building the site.',
-              $destination));
-            $io->writeln('If you want to build the site without committing the changes use --ignore-changes.');
-            exit;
+          if (!$input->getOption('ignore-changes')) {
+            $this->repoDiff($destination);
           }
-          if ($status != 0) {
-            $io->error('Something went wrong while cloning the repo.');
-            die($status);
-          }
+          // Check out branch on existing repo.
+          $this->repoCheckout($branch, $destination);
         }
         else {
           // Clone repo.
-          $command = sprintf('git clone --branch %s %s %s',
-            $branch,
-            $repo['url'],
-            $destination
-          );
-          $io->writeln($command);
-          exec($command, $result, $status);
-          $io->writeln($result);
-          if ($status != 0) {
-            $io->error('Something went wrong while cloning the repo.');
-            die($status);
-          }
-        }
-
-        // Checkout branch.
-        $command = sprintf('cd %s; git checkout -B %s',
-          $destination,
-          $branch
-        );
-        $io->writeln($command);
-        exec($command, $result, $status);
-        $io->writeln($result);
-        if ($status != 0) {
-          $io->error('Something while checking out the branch.');
-          die($status);
+          $this->repoClone($branch, $repo['url'], $destination);
         }
 
         // Build site.
         if (!file_exists($destination . 'composer.json')) {
-          $io->error(sprintf('The file composer.json is missing on %s', $destination));
+          $this->io->error(sprintf('The file composer.json is missing on %s', $destination));
           exit;
         }
-
-        // Build.
-        $command = sprintf('cd %s; composer install',
-          $destination
-        );
-        $io->writeln($command);
-        exec($command, $result, $status);
-        $io->writeln($result);
-        if ($status != 0) {
-          $io->error('Something while checking out the branch.');
-          die($status);
+        else {
+          // Run composer install.
+          $this->composerInstall($destination);
         }
-
         break;
 
       default:
-        $io->error(sprintf('Repo commands for %s not implemented.',
-          $siteConfig['type']));
+        $this->io->error(sprintf('Repo commands for %s not implemented.',
+          $repo['type']));
     }
+  }
+
+  /**
+   * Helper to detect local modifications.
+   *
+   * @param $directory Directory containing the git folder.
+   */
+  protected function repoDiff($directory, $ignoreChanges) {
+    $command = sprintf(
+      'cd %s; git diff-files --name-status -r --ignore-submodules',
+      $directory
+    );
+
+    $shellProcess = $this->get('shell_process');
+
+    if ($shellProcess->exec($command, TRUE)) {
+      if (!empty($shellProcess->getOutput())) {
+        $this->io->error(sprintf('You have uncommitted changes on %s' . PHP_EOL .
+            'Please commit or revert your changes before building the site.',
+            $directory)
+        );
+        $this->io->writeln('If you want to build the site without committing the changes use --ignore-changes.');
+        $this->io->newLine();
+        exit;
+      }
+    }
+    else {
+      // Show error message.
+      $this->io->error($shellProcess->getOutput());
+
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Helper to do the actual clone command.
+   *
+   * @param $branch Branch name.
+   * @param $repo Repo Url.
+   * @param $destination Destination folder.
+   *
+   * @return bool TRUE or FALSE.
+   */
+  protected function repoClone($branch, $repo, $destination) {
+    $command = sprintf('git clone --branch %s %s %s',
+      $branch,
+      $repo,
+      $destination
+    );
+    $this->io->commentBlock($command);
+
+    $shellProcess = $this->get('shell_process');
+
+    if ($shellProcess->exec($command, TRUE)) {
+      // All good, no output.
+    }
+    else {
+      // Show error message.
+      $this->io->error($shellProcess->getOutput());
+
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Helper to check out a branch.
+   *
+   * @param $branch Branch name.
+   * @param $destination Destination folder.
+   *
+   * @return bool TRUE or FALSE.
+   */
+  protected function repoCheckout($branch, $destination) {
+    $command = sprintf('cd %s; git checkout -B %s',
+      $destination,
+      $branch
+    );
+
+    $shellProcess = $this->get('shell_process');
+
+    if ($shellProcess->exec($command, TRUE)) {
+      // All good, no output.
+    }
+    else {
+      // Show error message.
+      $this->io->error($shellProcess->getOutput());
+
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Helper to run composer install.
+   *
+   * @param $destination The destination folder.
+   *
+   * @return bool TRUE or FALSE;
+   */
+  protected function composerInstall($destination) {
+    $command = sprintf('cd %s; composer install',
+      $destination
+    );
+
+    $shellProcess = $this->get('shell_process');
+
+    if ($shellProcess->exec($command, TRUE)) {
+      // All good, no output.
+      $this->io->success('Composer install finished');
+    }
+    else {
+      // Show error message.
+      $this->io->error($shellProcess->getOutput());
+
+      return FALSE;
+    }
+
+    return TRUE;
   }
 }
