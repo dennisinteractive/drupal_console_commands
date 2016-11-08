@@ -3,6 +3,8 @@
     commands:
       forced: {  }
       name:
+        'site:checkout':
+          class: \VM\Console\Command\Develop\SiteCheckoutCommand
         'site:build':
           class: \VM\Console\Command\Develop\SiteBuildCommand
         'site:db:import':
