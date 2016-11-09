@@ -60,6 +60,10 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
 
+    // Append web/sites/default to destination.
+    $this->destination .= 'web/sites/default/';
+
+    // Validation.
     if (!file_exists($this->destination . 'settings.php')) {
       $message = sprintf('The file settings.php is missing on %s',
         $this->destination
