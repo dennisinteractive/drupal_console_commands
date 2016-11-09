@@ -7,6 +7,8 @@
           class: \VM\Console\Command\Develop\SiteCheckoutCommand
         'site:compose':
           class: \VM\Console\Command\Develop\SiteComposeCommand
+        'site:settings:db':
+          class: \VM\Console\Command\Develop\SiteSettingsDbCommand
         'site:build':
           class: \VM\Console\Command\Develop\SiteBuildCommand
         'site:db:import':

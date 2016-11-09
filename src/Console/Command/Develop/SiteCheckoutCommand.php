@@ -11,45 +11,28 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Validator\Constraints;
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Drupal\Console\Command\Shared\CommandTrait;
-use Drupal\Console\Style\DrupalStyle;
-use Drupal\Console\Config;
+use VM\Console\Command\Exception\SiteCommandException;
 
 /**
  * Class SiteCheckoutCommand
  *
  * @package VM\Console\Command\Develop
  */
-class SiteCheckoutCommand extends Command {
-  use CommandTrait;
+class SiteCheckoutCommand extends SiteBaseCommand {
+
   /**
-   * IO interface.
+   * Stores repo information.
    *
-   * @var null
+   * @var array Repo.
    */
-  private $io = NULL;
+  protected $repo;
+
   /**
-   * Global location for sites.yml.
+   * Stores branch information.
    *
-   * @var array
+   * @var array Branch.
    */
-  private $configFile = NULL;
-  /**
-   * Stores the contents of sites.yml.
-   *
-   * @var array
-   */
-  private $config = NULL;
-  /**
-   * Stores the site name.
-   *
-   * @var string
-   */
-  private $siteName = NULL;
+  protected $branch;
 
   /**
    * {@inheritdoc}
@@ -88,118 +71,65 @@ class SiteCheckoutCommand extends Command {
    * {@inheritdoc}
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
-    $this->siteName = $input->getArgument('site-name');
-
-    $io = new DrupalStyle($input, $output);
-    $ymlFile = new Parser();
-    $config = new Config($ymlFile);
-    $configFile = $config->getUserHomeDir() . '/.console/sites.yml';
-
-    // Check if configuration file exists.
-    if (!file_exists($configFile)) {
-      $io->error(sprintf('Could not find any configuration in %s', $configFile));
-      exit;
-    }
-    $this->configFile = $configFile;
-    $this->config = $config->getFileContents($configFile);
-
-    if (empty($this->siteName)) {
-      $io->error(sprintf('Site not found in /.console/sites.yml' . PHP_EOL .
-          'Available sites: [%s]',
-          implode(', ', array_keys($this->config['sites']))
-        )
-      );
-      exit;
-    }
-
-    // Load site config from sites.yml.
-    if (!isset($this->config['sites'][$this->siteName])) {
-      $io->error(sprintf('Could not find any configuration for %s in %s',
-          $this->siteName,
-          $this->configFile)
-      );
-      exit;
-    }
+    parent::interact($input, $output);
 
     $siteConfig = $this->config['sites'][$this->siteName];
-    $repo = $siteConfig['repo'];
+    $this->repo = $siteConfig['repo'];
 
     // Loads default branch settings.
-    $branch = NULL;
-    if (isset($repo['branch'])) {
-      $branch = $repo['branch'];
+    if (!is_null($input->getOption('branch'))) {
+      $this->branch = $input->getOption('branch');
     }
-    // Overrides default branch.
-    if ($input->getOption('branch')) {
-      $branch = $input->getOption('branch');
+    else {
+      if (isset($this->repo['branch'])) {
+        $this->branch = $this->repo['branch'];
+      }
     }
-    $input->setOption('branch', $branch);
-
-    // Load default destination directory.
-    $dir = '/tmp/' . $this->siteName . '/';
-    if (isset($this->config['global']['destination-directory'])) {
-      $dir = $this->config['global']['destination-directory'] .
-        '/' . $this->siteName . '/';
-    }
-    // Overrides default destination directory.
-    if ($input->getOption('destination-directory')) {
-      $dir = $input->getOption('destination-directory');
-    }
-    $input->setOption('destination-directory', $dir);
   }
 
   /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-
-    $this->io = new DrupalStyle($input, $output);
-
-    $siteConfig = $this->config['sites'][$this->siteName];
-    $repo = $siteConfig['repo'];
-    $branch = $input->getOption('branch');
-
-    $destination = $input->getOption('destination-directory');
-    // Make sure we have a slash at the end.
-    if (substr($destination, -1) != '/') {
-      $destination .= '/';
-    }
-
-    $this->io->writeln(sprintf('Checking out %s (%s) on %s',
+    $this->io->writeln(sprintf('Checking out %s (%s)',
       $this->siteName,
-      $branch,
-      $destination
+      $this->branch
     ));
 
-    switch ($repo['type']) {
+    switch ($this->repo['type']) {
       case 'git':
-
         // Check if repo exists and has any changes.
-        if (file_exists($destination) && file_exists($destination . '.' . $repo['type'])) {
+        if (file_exists($this->destination) &&
+          file_exists($this->destination . '.' . $this->repo['type'])
+        ) {
           if (!$input->getOption('ignore-changes')) {
-            $this->repoDiff($destination);
+            // Check for uncommitted changes.
+            $this->gitDiff($this->destination);
           }
           // Check out branch on existing repo.
-          $this->repoCheckout($branch, $destination);
+          $this->gitCheckout($this->branch, $this->destination);
         }
         else {
           // Clone repo.
-          $this->repoClone($branch, $repo['url'], $destination);
+          $this->gitClone($this->branch, $this->repo['url'], $this->destination);
         }
         break;
 
       default:
-        $this->io->error(sprintf('Repo commands for %s not implemented.',
-          $repo['type']));
+        $message = sprintf('%s is not supported.',
+          $this->repo['type']
+        );
+        throw new SiteCommandException($message);
     }
   }
 
   /**
    * Helper to detect local modifications.
    *
-   * @param $directory Directory containing the git folder.
+   * @param $directory The directory containing the git folder.
+   * @return TRUE If everything is ok.
    */
-  protected function repoDiff($directory) {
+  protected function gitDiff($directory) {
     $command = sprintf(
       'cd %s; git diff-files --name-status -r --ignore-submodules',
       $directory
@@ -209,20 +139,16 @@ class SiteCheckoutCommand extends Command {
 
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
-        $this->io->error(sprintf('You have uncommitted changes on %s' . PHP_EOL .
-            'Please commit or revert your changes before checking out the site.',
-            $directory)
+        $message = sprintf('You have uncommitted changes on %s' . PHP_EOL .
+          'Please commit or revert your changes before checking out the site.' . PHP_EOL .
+          'If you want to check out the site without committing the changes use --ignore-changes.',
+          $directory
         );
-        $this->io->writeln('If you want to check out the site without committing the changes use --ignore-changes.');
-        $this->io->newLine();
-        exit;
+        throw new SiteCommandException($message);
       }
     }
     else {
-      // Show error message.
-      $this->io->error($shellProcess->getOutput());
-
-      return FALSE;
+      throw new SiteCommandException($shellProcess->getOutput());
     }
 
     return TRUE;
@@ -235,9 +161,9 @@ class SiteCheckoutCommand extends Command {
    * @param $repo Repo Url.
    * @param $destination Destination folder.
    *
-   * @return bool TRUE or FALSE.
+   * @return bool TRUE If successful.
    */
-  protected function repoClone($branch, $repo, $destination) {
+  protected function gitClone($branch, $repo, $destination) {
     $command = sprintf('git clone --branch %s %s %s',
       $branch,
       $repo,
@@ -248,13 +174,10 @@ class SiteCheckoutCommand extends Command {
     $shellProcess = $this->get('shell_process');
 
     if ($shellProcess->exec($command, TRUE)) {
-      // All good, no output.
+      $this->io->success(sprintf('Repo cloned on %s', $destination));
     }
     else {
-      // Show error message.
-      $this->io->error($shellProcess->getOutput());
-
-      return FALSE;
+      throw new SiteCommandException($shellProcess->getOutput());
     }
 
     return TRUE;
@@ -266,9 +189,9 @@ class SiteCheckoutCommand extends Command {
    * @param $branch Branch name.
    * @param $destination Destination folder.
    *
-   * @return bool TRUE or FALSE.
+   * @return bool TRUE If successful.
    */
-  protected function repoCheckout($branch, $destination) {
+  protected function gitCheckout($branch, $destination) {
     $command = sprintf('cd %s; git checkout -B %s',
       $destination,
       $branch
@@ -277,13 +200,11 @@ class SiteCheckoutCommand extends Command {
     $shellProcess = $this->get('shell_process');
 
     if ($shellProcess->exec($command, TRUE)) {
-      // All good, no output.
+      $this->io->success(sprintf('Checked out %s', $branch));
     }
     else {
-      // Show error message.
-      $this->io->error($shellProcess->getOutput());
+      throw new SiteCommandException($shellProcess->getOutput());
 
-      return FALSE;
     }
 
     return TRUE;
