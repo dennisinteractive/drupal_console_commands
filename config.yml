@@ -9,8 +9,9 @@
           class: \VM\Console\Command\Develop\SiteComposeCommand
         'site:settings:db':
           class: \VM\Console\Command\Develop\SiteSettingsDbCommand
+        'site:settings:memcache':
+          class: \VM\Console\Command\Develop\SiteSettingsMemcacheCommand
         'site:build':
           class: \VM\Console\Command\Develop\SiteBuildCommand
         'site:db:import':
           class: \VM\Console\Command\Develop\SiteDbImportCommand
-
