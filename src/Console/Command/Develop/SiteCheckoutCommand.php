@@ -111,7 +111,10 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         }
         else {
           // Clone repo.
-          $this->gitClone($this->branch, $this->repo['url'], $this->destination);
+          $this->gitClone($this->branch,
+            $this->repo['url'],
+            $this->destination
+          );
         }
         break;
 
