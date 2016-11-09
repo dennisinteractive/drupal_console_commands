@@ -11,45 +11,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Validator\Constraints;
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Drupal\Console\Command\Shared\CommandTrait;
-use Drupal\Console\Style\DrupalStyle;
-use Drupal\Console\Config;
+use VM\Console\Command\Exception\SiteCommandException;
 
 /**
  * Class SiteComposeCommand
  *
  * @package VM\Console\Command\Develop
  */
-class SiteComposeCommand extends Command {
-  use CommandTrait;
-  /**
-   * IO interface.
-   *
-   * @var null
-   */
-  private $io = NULL;
-  /**
-   * Global location for sites.yml.
-   *
-   * @var array
-   */
-  private $configFile = NULL;
-  /**
-   * Stores the contents of sites.yml.
-   *
-   * @var array
-   */
-  private $config = NULL;
-  /**
-   * Stores the site name.
-   *
-   * @var string
-   */
-  private $siteName = NULL;
+class SiteComposeCommand extends SiteBaseCommand {
 
   /**
    * {@inheritdoc}
@@ -76,74 +45,22 @@ class SiteComposeCommand extends Command {
    * {@inheritdoc}
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
-    $this->siteName = $input->getArgument('site-name');
+    parent::interact($input, $output);
 
-    $io = new DrupalStyle($input, $output);
-    $ymlFile = new Parser();
-    $config = new Config($ymlFile);
-    $configFile = $config->getUserHomeDir() . '/.console/sites.yml';
-
-    // Check if configuration file exists.
-    if (!file_exists($configFile)) {
-      $io->error(sprintf('Could not find any configuration in %s', $configFile));
-      exit;
-    }
-    $this->configFile = $configFile;
-    $this->config = $config->getFileContents($configFile);
-
-    if (empty($this->siteName)) {
-      $io->writeln(sprintf('Site not found in /.console/sites.yml'));
-      $io->writeln(sprintf('Available sites: [%s]', implode(', ',
-          array_keys($this->config['sites'])))
+    if (!file_exists($this->destination . 'composer.json')) {
+      $message = sprintf('The file composer.json is missing on %s',
+        $this->destination
       );
-      exit;
+      throw new SiteCommandException($message);
     }
-
-    // Load site config from sites.yml.
-    if (!isset($this->config['sites'][$this->siteName])) {
-      $io->error(sprintf('Could not find any configuration for %s in %s',
-          $this->siteName,
-          $this->configFile)
-      );
-      exit;
-    }
-
-    // Load default destination directory.
-    $dir = '/tmp/' . $this->siteName . '/';
-    if (isset($this->config['global']['destination-directory'])) {
-      $dir = $this->config['global']['destination-directory'] .
-        '/' . $this->siteName . '/';
-    }
-    // Overrides default destination directory.
-    if ($input->getOption('destination-directory')) {
-      $dir = $input->getOption('destination-directory');
-    }
-    $input->setOption('destination-directory', $dir);
   }
 
   /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-
-    $this->io = new DrupalStyle($input, $output);
-
-    $destination = $input->getOption('destination-directory');
-    // Make sure we have a slash at the end.
-    if (substr($destination, -1) != '/') {
-      $destination .= '/';
-    }
-
-    // Compose site.
-    if (!file_exists($destination . 'composer.json')) {
-      $this->io->error(sprintf('The file composer.json is missing on %s', $destination));
-      exit;
-    }
-    else {
-      // Run composer install.
-      $this->composerInstall($destination);
-    }
-
+    // Run composer install.
+    $this->composerInstall($this->destination);
   }
 
   /**
@@ -151,24 +68,21 @@ class SiteComposeCommand extends Command {
    *
    * @param $destination The destination folder.
    *
-   * @return bool TRUE or FALSE;
+   * @return bool TRUE If successful.
+   *
+   * @throws SiteCommandException
    */
   protected function composerInstall($destination) {
-    $command = sprintf('cd %s; composer install',
-      $destination
-    );
+    $command = sprintf('cd %s; composer -v install', $destination);
 
     $shellProcess = $this->get('shell_process');
 
+    //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {
-      // All good, no output.
-      $this->io->success('Composer install finished');
+      $this->io->success('Composer installed on %s', $this->destination);
     }
     else {
-      // Show error message.
-      $this->io->error($shellProcess->getOutput());
-
-      return FALSE;
+      throw new SiteCommandException($shellProcess->getOutput());
     }
 
     return TRUE;

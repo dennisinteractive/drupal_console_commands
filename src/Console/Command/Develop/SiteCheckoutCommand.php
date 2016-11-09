@@ -127,7 +127,10 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    * Helper to detect local modifications.
    *
    * @param $directory The directory containing the git folder.
+   *
    * @return TRUE If everything is ok.
+   *
+   * @throws SiteCommandException
    */
   protected function gitDiff($directory) {
     $command = sprintf(
@@ -162,6 +165,8 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    * @param $destination Destination folder.
    *
    * @return bool TRUE If successful.
+   *
+   * @throws SiteCommandException
    */
   protected function gitClone($branch, $repo, $destination) {
     $command = sprintf('git clone --branch %s %s %s',
@@ -190,6 +195,8 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    * @param $destination Destination folder.
    *
    * @return bool TRUE If successful.
+   *
+   * @throws SiteCommandException
    */
   protected function gitCheckout($branch, $destination) {
     $command = sprintf('cd %s; git checkout -B %s',
