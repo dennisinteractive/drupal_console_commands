@@ -150,7 +150,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
   'password' => '$db_pass',
   'prefix' => '$table_prefix',
   'host' => '$db_host',
-  'port' => '$db_port',
+  'port' => $db_port,
   'driver' => '$db_type',
   'namespace' => '$namespace',
 );
