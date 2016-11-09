@@ -44,7 +44,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
         '-D',
         InputOption::VALUE_OPTIONAL,
         // @todo use: $this->trans('commands.site.settings.db.site-name.options')
-        'Specify the destination of the site settings.db if different than the global destination found in sites.yml'
+        'Specify the destination of the site settings.db.php if different than the global destination found in sites.yml'
       )->addOption(
         'db-type',
         '',
@@ -102,7 +102,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
 
-    if (!file_exists($this->destination . $this->filename)) {
+    if (!file_exists($this->destination . 'settings.php')) {
       $message = sprintf('The file settings.php is missing on %s',
         $this->destination
       );
@@ -119,43 +119,50 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
 
-    // Prepare array.
-    $databases['default']['default'] = array(
-      'database' => $input->getOption('db-name'),
-      'username' => $input->getOption('db-user'),
-      'password' => $input->getOption('db-pass'),
-      'prefix' => $input->getOption('table-prefix'),
-      'host' => $input->getOption('db-host'),
-      'port' => $input->getOption('db-port'),
-    );
-    switch ($input->getOption('db-type')) {
-      case 'mysql':
-        $databases['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\mysql';
-        $databases['default']['default']['driver'] = 'mysql';
-    }
-
     // Remove existing file.
-    $file = $this->destination . '/settings.db.php';
+    $file = $this->destination . $this->filename;
     if (file_exists($file)) {
       unlink($file);
     }
 
-    // Generate file.
-    $content = '<?php' . PHP_EOL;
-    $content .= '$databases[\'default\'][\'default\'] = ' . PHP_EOL;
-    $content .= var_export($databases, TRUE);
-    $content .= ';';
+    // Prepare content.
+    $db_name = $input->getOption('db-name');
+    $db_user = $input->getOption('db-user');
+    $db_pass = $input->getOption('db-pass');
+    $table_prefix = $input->getOption('table-prefix');
+    $db_host = $input->getOption('db-host');
+    $db_port = $input->getOption('db-port');
+    $db_type = $input->getOption('db-type');
+    $namespace = 'Drupal\\Core\\Database\\Driver\\' . $db_type;
+
+    $content = <<<EOF
+<?php
+/**
+ * DB Settings.
+ */
+\$databases['default']['default'] = array(
+  'database' => '$db_name',
+  'username' => '$db_user',
+  'password' => '$db_pass',
+  'prefix' => '$table_prefix',
+  'host' => '$db_host',
+  'port' => '$db_port',
+  'driver' => '$db_type',
+  'namespace' => '$namespace',
+);
+EOF;
+
     file_put_contents($file, $content);
 
     // Check file.
-    if (file_exists($this->destination . $this->filename)) {
+    if (file_exists($file)) {
       $this->io->success(sprintf('Generated %s',
-        $this->destination . $this->filename)
+          $file)
       );
     }
     else {
       throw new SiteCommandException('Error generating %s',
-        $this->destination . $this->filename
+        $file
       );
     }
   }
