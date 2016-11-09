@@ -80,7 +80,7 @@ class SiteComposeCommand extends SiteBaseCommand {
 
     //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success('Composer installed on %s', $this->destination);
+      $this->io->success(sprintf('Composer installed on %s', $this->destination));
     }
     else {
       throw new SiteCommandException($shellProcess->getOutput());
