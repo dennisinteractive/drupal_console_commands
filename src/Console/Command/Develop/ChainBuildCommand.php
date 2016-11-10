@@ -134,7 +134,7 @@ class ChainBuildCommand extends SiteBaseCommand {
       $shellProcess = $this->get('shell_process');
 
       if ($shellProcess->exec($command, TRUE)) {
-        $this->io->success($shellProcess->getOutput());
+        $this->io->success('Done');
       }
       else {
         throw new SiteCommandException($shellProcess->getOutput());
