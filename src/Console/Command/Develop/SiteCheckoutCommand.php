@@ -3,6 +3,8 @@
 /**
  * @file
  * Contains \VM\Console\Develop\SiteCheckoutCommand.
+ *
+ * Does repo checkouts.
  */
 
 namespace VM\Console\Command\Develop;
@@ -77,7 +79,9 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     $this->repo = $siteConfig['repo'];
 
     // Loads default branch settings.
-    if (!is_null($input->getOption('branch'))) {
+    if ($input->hasOption('branch') &&
+      !is_null($input->getOption('branch'))
+    ) {
       $this->branch = $input->getOption('branch');
     }
     else {
@@ -97,7 +101,9 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         if (file_exists($this->destination) &&
           file_exists($this->destination . '.' . $this->repo['type'])
         ) {
-          if (!$input->getOption('ignore-changes')) {
+          if ($input->hasOption('ignore-changes') &&
+            !$input->getOption('ignore-changes')
+          ) {
             // Check for uncommitted changes.
             $this->gitDiff($this->destination);
           }

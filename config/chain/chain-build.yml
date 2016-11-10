@@ -4,6 +4,7 @@ commands:
     arguments:
       site-name: ''
     options:
+      destination-directory: ''
       branch: 'master'
 # Run composer
   - command: site:compose
@@ -25,7 +26,7 @@ commands:
       site-name: ''
     options:
       memcache-prefix: ''
-# Install site
-  - command: exec drush si -y
+# Imports db or installs a site
+  - command: site:db:import
     options:
       account-pass: 'dennis3'

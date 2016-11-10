@@ -3,6 +3,8 @@
 /**
  * @file
  * Contains \VM\Console\Develop\SiteBaseCommand.
+ *
+ * Base class for site commands.
  */
 
 namespace VM\Console\Command\Develop;

@@ -2,81 +2,80 @@
 
 /**
  * @file
- * Contains VM\Console\Develop\SiteDbImportCommand.
+ * Contains \VM\Console\Develop\SiteDbImportCommand.
+ *
+ * Imports local dumps or installs a fresh site if no dump is found.
  */
 
 namespace VM\Console\Command\Develop;
 
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-use Drupal\Console\Command\Shared\ContainerAwareCommandTrait;
-use Drupal\Console\Style\DrupalStyle;
+use VM\Console\Command\Exception\SiteCommandException;
 
 /**
  * Class SiteDbImportCommand
+ *
  * @package VM\Console\Command\Develop
  */
-class SiteDbImportCommand extends Command
-{
-    use ContainerAwareCommandTrait;
+class SiteDbImportCommand extends SiteBaseCommand {
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
-    {
-        $this->setName('site:db:import');
+  /**
+   * The Db dump file.
+   *
+   * @var
+   */
+  protected $filename = NULL;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function configure() {
+    parent::configure();
+
+    $this->setName('site:db:import')
+      // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
+      ->setDescription('Imports local dump or does a fresh install.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function interact(InputInterface $input, OutputInterface $output) {
+    parent::interact($input, $output);
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::execute($input, $output);
+
+    //@todo try to read db first
+
+    // Append web/sites/default to destination.
+    $this->destination .= 'web/sites/default/';
+
+    $command = sprintf('cd %s; %s; %s; %s',
+      $this->destination,
+      'chmod 777 ../default',
+      'chmod 777 settings.php',
+      'drush si -y config_installer' //@todo this is hardcoded for now, but needs to go to sites.yml
+    );
+    $this->io->commentBlock($command);
+
+    // Run.
+    $shellProcess = $this->get('shell_process');
+
+    if ($shellProcess->exec($command, TRUE)) {
+      $this->io->writeln($shellProcess->getOutput());
+      $this->io->success(sprintf('Site installed on %s', $this->destination));
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
+    else {
+      throw new SiteCommandException($shellProcess->getOutput());
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        /* Register your command as a service
-         *
-         * Make sure you register your command class at
-         * config/services/namespace.yml file and add the `console.command` tag.
-         *
-         * develop_example_container_aware:
-         *   class: VM\Console\Command\Develop\SiteDbImportCommand
-         *   tags:
-         *     - { name: console.command }
-         *
-         * NOTE: Make the proper changes on the namespace and class
-         *       according your new command.
-         *
-         * DrupalConsole extends the SymfonyStyle class to provide
-         * an standardized Output Formatting Style.
-         *
-         * Drupal Console provides the DrupalStyle helper class:
-         */
-        $io = new DrupalStyle($input, $output);
-        $io->simple('Importing database');
-
-        /**
-         *  By using ContainerAwareCommandTrait on your class for the command
-         *  (instead of the more basic CommandTrait), you have access to
-         *  the service container.
-         *
-         *  In other words, you can access to any configured Drupal service
-         *  using the provided getService method.
-         *
-         *  $this->getDrupalService('entity_type.manager');
-         *
-         *  Reading user input argument
-         *  $input->getArgument('ARGUMENT_NAME');
-         *
-         *  Reading user input option
-         *  $input->getOption('OPTION_NAME');
-         */
-    }
+  }
 }

@@ -3,6 +3,8 @@
 /**
  * @file
  * Contains \VM\Console\Develop\SiteSettingsDbCommand.
+ *
+ * Create Db configurations.
  */
 
 namespace VM\Console\Command\Develop;

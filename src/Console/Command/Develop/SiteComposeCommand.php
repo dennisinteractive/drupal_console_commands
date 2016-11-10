@@ -3,6 +3,8 @@
 /**
  * @file
  * Contains \VM\Console\Develop\SiteComposeCommand.
+ *
+ * Runs composer installer.
  */
 
 namespace VM\Console\Command\Develop;

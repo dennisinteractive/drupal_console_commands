@@ -3,6 +3,8 @@
 /**
  * @file
  * Contains \VM\Console\Develop\SiteSettingsMemcacheCommand.
+ *
+ * Creates Memcache configurations.
  */
 
 namespace VM\Console\Command\Develop;
