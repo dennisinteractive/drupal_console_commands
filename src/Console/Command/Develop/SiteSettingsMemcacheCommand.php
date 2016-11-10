@@ -31,21 +31,14 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
    * {@inheritdoc}
    */
   protected function configure() {
+    parent::configure();
+
     $this->setName('site:settings:memcache')
       // @todo use: ->setDescription($this->trans('commands.site.settings.memcache.description'))
-      ->setDescription('Generates settings.memcache.php for a given site.')
-      ->addArgument(
-        'site-name',
-        InputArgument::REQUIRED,
-        // @todo use: $this->trans('commands.site.settings.memcache.site-name.description')
-        'The site name that is mapped to a repo in sites.yml'
-      )->addOption(
-        'destination-directory',
-        '-D',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.memcache.site-name.options')
-        'Specify the destination of the site settings.memcache.php if different than the global destination found in sites.yml'
-      )->addOption(
+      ->setDescription('Generates settings.memcache.php for a given site.');
+
+      // Add extra options.
+      $this->addOption(
         'prefix',
         '',
         InputOption::VALUE_OPTIONAL,

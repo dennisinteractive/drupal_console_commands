@@ -21,6 +21,11 @@ class SiteBuildCommand extends SiteBaseCommand {
    * {@inheritdoc}
    */
   protected function configure() {
+    $db_command =  new SiteSettingsDbCommand();
+    foreach ($db_command->getDefinition()->getOptions() as $arg) {
+      //var_dump($arg->getName());
+    }
+
     $this->setName('site:build')
       // @todo use: ->setDescription($this->trans('commands.site.build.description'))
       ->setDescription('Check out a site and installs composer.json')

@@ -24,21 +24,11 @@ class SiteComposeCommand extends SiteBaseCommand {
    * {@inheritdoc}
    */
   protected function configure() {
+    parent::configure();
+
     $this->setName('site:compose')
       // @todo use: ->setDescription($this->trans('commands.site.compose.description'))
-      ->setDescription('Runs composer installer')
-      ->addArgument(
-        'site-name',
-        InputArgument::REQUIRED,
-        // @todo use: $this->trans('commands.site.compose.site-name.description')
-        'The site name that is mapped to a repo in sites.yml'
-      )->addOption(
-        'destination-directory',
-        '-D',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.compose.site-name.options')
-        'Specify the destination of the site compose if different than the global destination found in sites.yml'
-      );
+      ->setDescription('Runs composer installer');
   }
 
   /**
