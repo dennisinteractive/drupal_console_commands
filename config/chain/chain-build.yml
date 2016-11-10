@@ -1,0 +1,25 @@
+commands:
+# Checkout site
+  - command: site:checkout
+    arguments:
+      site-name: ''
+    options:
+      branch: 'master'
+# Run composer
+  - command: site:compose
+    arguments:
+      site-name: ''
+# Create settings.db.php
+  - command: site:settings:db
+    arguments:
+      site-name: ''
+    options:
+      db-name: ''
+      db-user: 'root'
+      db-pass: ''
+      db-host: '127.0.0.1'
+      db-port: '3306'
+# Install site
+  - command: exec drush si -y
+    options:
+      account-pass: 'dennis3'

@@ -127,9 +127,6 @@ class SiteBaseCommand extends Command {
   /**
    * Helper to check that the config file exits.
    *
-   * @param $config
-   * @param $configFile
-   *
    * @return $config The configuration from the yml file
    *
    * @throws SiteCommandException
@@ -179,7 +176,9 @@ class SiteBaseCommand extends Command {
    * @throws SiteCommandException
    */
   protected function _validateDestination(InputInterface $input) {
-    if (!is_null($input->getOption('destination-directory'))) {
+    if ($input->hasOption('destination-directory') &&
+      !is_null($input->getOption('destination-directory'))
+    ) {
       // Use config from parameter.
       $this->destination = $input->getOption('destination-directory');
     }
@@ -199,6 +198,7 @@ class SiteBaseCommand extends Command {
     if (strpos($this->destination, $this->siteName, 0) === FALSE) {
       $this->destination .= $this->siteName . '/';
     }
+
     return $this;
   }
 

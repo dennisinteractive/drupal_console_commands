@@ -2,8 +2,8 @@
   autowire:
     commands:
       forced:
-        _site_build:
-          class: \VM\Console\Command\Develop\SiteBuildCommand
+        _chain_build:
+          class: \VM\Console\Command\Develop\ChainBuildCommand
         _site_checkout:
           class: \VM\Console\Command\Develop\SiteCheckoutCommand
         _site_compose:
