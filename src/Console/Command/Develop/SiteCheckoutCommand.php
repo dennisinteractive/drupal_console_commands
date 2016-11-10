@@ -65,6 +65,13 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::execute($input, $output);
 
     $siteConfig = $this->config['sites'][$this->siteName];
     $this->repo = $siteConfig['repo'];
@@ -78,12 +85,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         $this->branch = $this->repo['branch'];
       }
     }
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function execute(InputInterface $input, OutputInterface $output) {
     $this->io->writeln(sprintf('Checking out %s (%s)',
       $this->siteName,
       $this->branch

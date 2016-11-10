@@ -36,6 +36,13 @@ class SiteComposeCommand extends SiteBaseCommand {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::execute($input, $output);
 
     if (!file_exists($this->destination . 'composer.json')) {
       $message = sprintf('The file composer.json is missing on %s',
@@ -43,12 +50,7 @@ class SiteComposeCommand extends SiteBaseCommand {
       );
       throw new SiteCommandException($message);
     }
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  protected function execute(InputInterface $input, OutputInterface $output) {
     // Run composer install.
     $this->composerInstall($this->destination);
   }

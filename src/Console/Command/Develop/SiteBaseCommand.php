@@ -86,23 +86,14 @@ class SiteBaseCommand extends Command {
    * {@inheritdoc}
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
-    $this->validateSiteParams($input, $output);
+
   }
 
   /**
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-//    $siteConfig = $this->config['sites'][$this->siteName];
-//    $repo = $siteConfig['repo'];
-//    $branch = $input->getOption('branch');
-//
-//    $destination = $input->getOption('destination-directory');
-//    // Make sure we have a slash at the end.
-//    if (substr($destination, -1) != '/') {
-//      $destination .= '/';
-//    }
-
+    $this->validateSiteParams($input, $output);
   }
 
   /**

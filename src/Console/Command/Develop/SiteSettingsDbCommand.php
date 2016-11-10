@@ -95,6 +95,14 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
 
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::execute($input, $output);
+
     // Append web/sites/default to destination.
     $this->destination .= 'web/sites/default/';
 
@@ -109,12 +117,6 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     if (is_null($input->getOption('db-name'))) {
       $input->setOption('db-name',  $this->siteName);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function execute(InputInterface $input, OutputInterface $output) {
 
     // Remove existing file.
     $file = $this->destination . $this->filename;

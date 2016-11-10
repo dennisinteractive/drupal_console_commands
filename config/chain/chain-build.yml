@@ -19,6 +19,12 @@ commands:
       db-pass: ''
       db-host: '127.0.0.1'
       db-port: '3306'
+# Create settings.memcache.php
+  - command: site:settings:memcache
+    arguments:
+      site-name: ''
+    options:
+      memcache-prefix: ''
 # Install site
   - command: exec drush si -y
     options:

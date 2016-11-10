@@ -88,6 +88,8 @@ class ChainBuildCommand extends SiteBaseCommand {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::execute($input, $output);
+
     foreach ($this->chainData['commands'] as $item) {
 
       // Gather arguments.

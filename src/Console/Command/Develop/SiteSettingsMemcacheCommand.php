@@ -39,7 +39,7 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
 
       // Add extra options.
       $this->addOption(
-        'prefix',
+        'memcache-prefix',
         '',
         InputOption::VALUE_OPTIONAL,
         // @todo use: $this->trans('commands.site.settings.memcache.prefix')
@@ -53,6 +53,14 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
 
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    parent::execute($input, $output);
+
     // Append web/sites/default to destination.
     $this->destination .= 'web/sites/default/';
 
@@ -64,15 +72,9 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
       throw new SiteCommandException($message);
     }
 
-    if (is_null($input->getOption('prefix'))) {
-      $input->setOption('prefix',  $this->siteName);
+    if (is_null($input->getOption('memcache-prefix'))) {
+      $input->setOption('memcache-prefix',  $this->siteName);
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function execute(InputInterface $input, OutputInterface $output) {
 
     // Remove existing file.
     $file = $this->destination . $this->filename;
@@ -81,7 +83,7 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
     }
 
     // Prepare content.
-    $memcache_prefix = $input->getOption('prefix');
+    $memcache_prefix = $input->getOption('memcache-prefix');
 
     $content = <<<EOF
 <?php
