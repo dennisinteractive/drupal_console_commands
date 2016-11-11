@@ -97,7 +97,10 @@ class ChainBuildCommand extends SiteBaseCommand {
       $name = $option->getName();
       $value = $input->getOption($name);
       if (!empty($value)) {
-        $options .= "--$name $value ";
+        $options .= sprintf('--placeholder="%s:%s" ',
+          $name,
+          $value
+        );
       }
     }
 

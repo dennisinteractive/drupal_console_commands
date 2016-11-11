@@ -44,22 +44,6 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     $command = new InstallCommand();
     $this->inheritArguments($command);
     $this->inheritOptions($command);
-
-    // Override default values for these options (if empty).
-    $override = array(
-      'db-name' => $this->siteName,
-      'db-user' => 'root',
-      'db-host' => '127.0.0.1',
-      'db-port' => 3306,
-      'db-type' => 'mysql',
-    );
-
-    foreach ($this->getDefinition()->getOptions() as $option) {
-      $name = $option->getName();
-      if (array_key_exists($name, $override) && empty($option->getDefault())) {
-        $this->getDefinition()->getOption($name)->setDefault($override[$name]);
-      }
-    }
   }
 
   /**
@@ -87,9 +71,25 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       throw new SiteCommandException($message);
     }
 
+    // Override default values for these options (if empty).
+    $override = array(
+      'db-name' => $this->siteName,
+      'db-user' => 'root',
+      'db-host' => '127.0.0.1',
+      'db-port' => 3306,
+      'db-type' => 'mysql',
+    );
+
+    foreach ($this->getDefinition()->getOptions() as $option) {
+      $name = $option->getName();
+      if (array_key_exists($name, $override) && is_null($input->getOption($name))) {
+        $input->setOption($name, $override[$name]);
+      }
+    }
+
     //@todo investigate why the default db-name is not being passed to the option.
     if (is_null($input->getOption('db-name'))) {
-      $input->setOption('db-name', $this->siteName);
+      //$input->setOption('db-name', $this->siteName);
     }
 
     // Remove existing file.

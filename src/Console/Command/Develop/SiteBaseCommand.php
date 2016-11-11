@@ -179,6 +179,7 @@ class SiteBaseCommand extends Command {
    */
   protected function _validateSiteName(InputInterface $input) {
     $this->siteName = $input->getArgument('site-name');
+    $this->io->success($this->siteName);
     if (!isset($this->config['sites'][$this->siteName])) {
       $message = sprintf(
         'Site not found in /.console/sites.yml' . PHP_EOL .
