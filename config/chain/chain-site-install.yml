@@ -1,0 +1,6 @@
+commands:
+# Imports db or installs a site
+  - command: site:db:import
+    arguments:
+      site-name: '%{{site_name}}'
+      profile: '%{{profile|standard}}'

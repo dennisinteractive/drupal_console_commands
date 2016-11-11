@@ -64,11 +64,16 @@ class SiteDbImportCommand extends SiteBaseCommand {
     // Append web/sites/default to destination.
     $this->destination .= 'web/sites/default/';
 
-    $command = sprintf('cd %s; %s; %s; %s',
+    $profile = $input->getArgument('profile');
+
+    $command = sprintf(
+      'cd %s; ' .
+      'chmod 777 ../default; ' .
+      'chmod 777 settings.php; ' .
+      'drush si -y %s; ' .
+      'drush cim;',
       $this->destination,
-      'chmod 777 ../default',
-      'chmod 777 settings.php',
-      'drush si -y config_installer' //@todo this is hardcoded for now, but needs to go to sites.yml
+      $profile
     );
     $this->io->commentBlock($command);
 

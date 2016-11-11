@@ -71,16 +71,16 @@ class SiteBaseCommand extends Command {
   protected function configure() {
     $this->setName('site_base');
 
-    if (!$this->getDefinition()->hasArgument('site-name')) {
+   // if (!$this->getDefinition()->hasArgument('site-name')) {
       $this->addArgument(
         'site-name',
         InputArgument::REQUIRED,
         // @todo use: $this->trans('commands.site.checkout.site-name.description')
         'The site name that is mapped to a repo in sites.yml'
       );
-    }
+   // }
 
-    if (!$this->getDefinition()->hasOption('destination-directory')) {
+    //if (!$this->getDefinition()->hasOption('destination-directory')) {
       $this->addOption(
         'destination-directory',
         '-D',
@@ -88,7 +88,16 @@ class SiteBaseCommand extends Command {
         // @todo use: $this->trans('commands.site.checkout.site-name.options')
         'Specify the destination of the site if different than the global destination found in sites.yml'
       );
-    }
+
+      // Since unassisted chain commands don't work with arguments, we have this workaround to pass the site-name as option.
+      $this->addOption(
+        'site-name',
+        '',
+        InputOption::VALUE_OPTIONAL,
+        // @todo use: $this->trans('commands.site.checkout.site-name.options')
+        'Same as site-name argument, but this works in unassisted chain commands'
+      );
+   // }
   }
 
   /**

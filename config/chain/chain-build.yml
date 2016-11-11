@@ -28,5 +28,6 @@ commands:
       memcache-prefix: ''
 # Imports db or installs a site
   - command: site:db:import
-    options:
-      account-pass: 'dennis3'
+    arguments:
+      site-name: '%{{site_name}}'
+      profile: '%{{profile|standard}}'
