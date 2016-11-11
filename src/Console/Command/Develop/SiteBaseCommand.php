@@ -73,9 +73,9 @@ class SiteBaseCommand extends Command {
     $this->setName('site_base');
 
     $this->addArgument(
-      'site-name',
+      'name',
       InputArgument::REQUIRED,
-      // @todo use: $this->trans('commands.site.checkout.site-name.description')
+      // @todo use: $this->trans('commands.site.checkout.name.description')
       'The site name that is mapped to a repo in sites.yml'
     );
 
@@ -83,7 +83,7 @@ class SiteBaseCommand extends Command {
       'destination-directory',
       '-D',
       InputOption::VALUE_OPTIONAL,
-      // @todo use: $this->trans('commands.site.checkout.site-name.options')
+      // @todo use: $this->trans('commands.site.checkout.name.options')
       'Specify the destination of the site if different than the global destination found in sites.yml'
     );
   }
@@ -169,7 +169,7 @@ class SiteBaseCommand extends Command {
   }
 
   /**
-   * Helper to validate site-name parameter.
+   * Helper to validate name parameter.
    *
    * @param InputInterface $input
    *
@@ -178,12 +178,11 @@ class SiteBaseCommand extends Command {
    * @return string Site name.
    */
   protected function _validateSiteName(InputInterface $input) {
-    $this->siteName = $input->getArgument('site-name');
-    $this->io->success($this->siteName);
+    $this->siteName = $input->getArgument('name');
     if (!isset($this->config['sites'][$this->siteName])) {
       $message = sprintf(
         'Site not found in /.console/sites.yml' . PHP_EOL .
-        'Usage: drupal site:checkout site-name' . PHP_EOL .
+        'Usage: drupal site:checkout name' . PHP_EOL .
         'Available sites: [%s]',
         implode(', ', array_keys($this->config['sites']))
       );
@@ -191,8 +190,8 @@ class SiteBaseCommand extends Command {
     };
 
     // Update input.
-    if ($input->hasArgument('site-name')) {
-      $input->setArgument('site-name', $this->siteName);
+    if ($input->hasArgument('name')) {
+      $input->setArgument('name', $this->siteName);
     }
 
     return $this->siteName;
@@ -265,7 +264,8 @@ class SiteBaseCommand extends Command {
 
     // Update input.
     if ($input->hasOption('destination-directory')) {
-      $input->setOption('destination-directory', $this->destination);
+      // This breaks the chain command.
+      // $input->setOption('destination-directory', $this->destination);
     }
 
     return $this->destination;

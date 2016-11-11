@@ -2,5 +2,7 @@ commands:
 # Imports db or installs a site
   - command: site:db:import
     arguments:
-      site-name: '%{{site-name}}'
-      profile: '%{{profile|standard}}'
+      name: '%{{name}}'
+      profile: '%{{profile|config_installer}}'
+    options:
+      account-pass: dennis3

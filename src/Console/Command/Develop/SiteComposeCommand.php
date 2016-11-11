@@ -67,7 +67,7 @@ class SiteComposeCommand extends SiteBaseCommand {
    * @throws SiteCommandException
    */
   protected function composerInstall($destination) {
-    $command = sprintf('cd %s; composer -v install', $destination);
+    $command = sprintf('cd %s; composer install', $destination);
     $this->io->commentBlock($command);
 
     $shellProcess = $this->get('shell_process');
