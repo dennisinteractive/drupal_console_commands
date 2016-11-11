@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Drupal\Console\Command\Site\InstallCommand;
 use VM\Console\Command\Exception\SiteCommandException;
 
 /**
@@ -39,56 +40,10 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Generates settings.db.php for a given site.');
 
-    // Add extra options.
-    $this->addOption(
-        'db-type',
-        '',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.db.type')
-        'Database type',
-        'mysql'
-      )->addOption(
-        'db-host',
-        '',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.db.host')
-        'Database host',
-        '127.0.0.1'
-      )->addOption(
-        'db-port',
-        '',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.db.port')
-        'Database port',
-        '3306'
-      )->addOption(
-        'db-name',
-        '',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.db.name')
-        'Database name. [default: site machine name from sites.yml]'
-      )->addOption(
-        'table-prefix',
-        '',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.db.prefix')
-        'Table prefix.',
-        ''
-      )->addOption(
-        'db-user',
-        '',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.db.user')
-        'Database user',
-        'root'
-      )->addOption(
-        'db-pass',
-        '',
-        InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.settings.db.pass')
-        'Database password',
-        ''
-      );
+    // Use same arguments and options as InstallCommand().
+    $command = new InstallCommand();
+    $this->inheritArguments($command);
+    $this->inheritOptions($command);
   }
 
   /**
