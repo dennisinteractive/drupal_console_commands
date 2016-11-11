@@ -69,19 +69,26 @@ class SiteBaseCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure() {
-    $this->setName('site_base')
-      ->addArgument(
+    $this->setName('site_base');
+
+    if (!$this->getDefinition()->hasArgument('site-name')) {
+      $this->addArgument(
         'site-name',
         InputArgument::REQUIRED,
         // @todo use: $this->trans('commands.site.checkout.site-name.description')
         'The site name that is mapped to a repo in sites.yml'
-      )->addOption(
+      );
+    }
+
+    if (!$this->getDefinition()->hasOption('destination-directory')) {
+      $this->addOption(
         'destination-directory',
         '-D',
         InputOption::VALUE_OPTIONAL,
         // @todo use: $this->trans('commands.site.checkout.site-name.options')
         'Specify the destination of the site if different than the global destination found in sites.yml'
       );
+    }
   }
 
   /**
@@ -96,6 +103,28 @@ class SiteBaseCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->validateSiteParams($input, $output);
+  }
+
+  /**
+   * Helper to copy the arguments from another class.
+   */
+  public function inheritArguments(\Symfony\Component\Console\Command\Command $command) {
+    foreach ($command->getDefinition()->getArguments() as $argument) {
+      if (!$this->getDefinition()->hasArgument($argument->getName())) {
+        $this->getDefinition()->addArgument($argument);
+      }
+    }
+  }
+
+  /**
+   * Helper to copy the options from another class.
+   */
+  public function inheritOptions(\Symfony\Component\Console\Command\Command $command) {
+    foreach ($command->getDefinition()->getOptions() as $option) {
+      if (!$this->getDefinition()->hasOption($option->getName())) {
+        $this->getDefinition()->addOption($option);
+      }
+    }
   }
 
   /**

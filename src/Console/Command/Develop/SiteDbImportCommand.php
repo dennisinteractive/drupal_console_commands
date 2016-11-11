@@ -35,6 +35,11 @@ class SiteDbImportCommand extends SiteBaseCommand {
   protected function configure() {
     parent::configure();
 
+    // Use same properties as SiteSettingsDbCommand.
+    $siteSettingsDbCommand = new SiteSettingsDbCommand();
+    $this->inheritArguments($siteSettingsDbCommand);
+    $this->inheritOptions($siteSettingsDbCommand);
+
     $this->setName('site:db:import')
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Imports local dump or does a fresh install.');
