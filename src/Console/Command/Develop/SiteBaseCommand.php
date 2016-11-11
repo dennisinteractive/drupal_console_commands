@@ -59,6 +59,13 @@ class SiteBaseCommand extends Command {
   protected $siteName = NULL;
 
   /**
+   * Stores the profile name.
+   *
+   * @var string
+   */
+  protected $profile = NULL;
+
+  /**
    * Stores the destination directory.
    *
    * @var string
@@ -138,6 +145,9 @@ class SiteBaseCommand extends Command {
     // Validate site name.
     $this->_validateSiteName($input);
 
+    // Validate profile.
+    $this->_validateProfile($input);
+
     // Validate destination.
     $this->_validateDestination($input);
   }
@@ -161,7 +171,7 @@ class SiteBaseCommand extends Command {
     $this->configFile = $configFile;
     $this->config = $config->getFileContents($configFile);
 
-    return $this;
+    return $this->configFile;
   }
 
   /**
@@ -183,7 +193,33 @@ class SiteBaseCommand extends Command {
       throw new SiteCommandException($message);
     };
 
-    return $this;
+    return $this->siteName;
+  }
+
+  /**
+   * Helper to validate profile parameter.
+   *
+   * @param InputInterface $input
+   *
+   * @return string Profile
+   */
+  protected function _validateProfile(InputInterface $input) {
+    if ($input->hasArgument('profile') &&
+      !is_null($input->getArgument('profile'))
+    ) {
+      // Use config from parameter.
+      $this->profile = $input->getArgument('profile');
+    }
+    elseif (isset($this->config['global']['destination-directory'])) {
+      // Use config from sites.yml.
+      $this->profile = $this->config['sites'][$this->siteName]['profile'];
+    }
+    else {
+      $this->profile = 'config_installer';
+    }
+    $input->setArgument('profile',  $this->profile);
+
+    return $this->profile;
   }
 
   /**
@@ -216,8 +252,9 @@ class SiteBaseCommand extends Command {
     if (strpos($this->destination, $this->siteName, 0) === FALSE) {
       $this->destination .= $this->siteName . '/';
     }
+    $input->setOption('destination-directory',  $this->destination);
 
-    return $this;
+    return $this->destination;
   }
 
 }

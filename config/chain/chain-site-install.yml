@@ -2,5 +2,5 @@ commands:
 # Imports db or installs a site
   - command: site:db:import
     arguments:
-      site-name: '%{{site_name}}'
+      site-name: '%{{site-name}}'
       profile: '%{{profile|standard}}'

@@ -72,21 +72,45 @@ class ChainBuildCommand extends SiteBaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $profile = ($input->getArgument('profile')) ? $input->getArgument('profile') : 'minimal';
-    $siteName = $input->getArgument('site-name');
+    $chainFile = realpath(__DIR__ . '/../../../../config/chain/chain-build.yml');
 
-    $this->io->writeln(sprintf(
-        'Building %s using %s profile',
-        $siteName,
-        $profile
+    // Populate arguments.
+    $arguments = '';
+    foreach ($this->getDefinition()->getArguments() as $argument) {
+      $name = $argument->getName();
+      if ($name == 'command') {
+        continue;
+      }
+
+      $value = $input->getArgument($name);
+      if (!empty($value)) {
+        $arguments .= sprintf('--placeholder="%s:%s" ',
+          $name,
+          $value
+        );
+      }
+    }
+
+    // Populate options.
+    $options = '';
+    foreach ($this->getDefinition()->getOptions() as $option) {
+      $name = $option->getName();
+      $value = $input->getOption($name);
+      if (!empty($value)) {
+        $options .= "--$name $value ";
+      }
+    }
+
+    $this->io->writeln(sprintf('Building %s using %s profile',
+        $this->siteName,
+        $this->profile
       )
     );
 
-    $command = sprintf(
-      'drupal chain --file /vagrant/repos/drupal_console_commands/config/chain/chain-site-install.yml ' .
-      '--placeholder="site_name:%s" --placeholder="profile:%s"',
-      $siteName,
-      $profile
+    $command = sprintf('drupal chain --file %s %s %s',
+      $chainFile,
+      $arguments,
+      $options
     );
 
     $this->io->commentBlock($command);

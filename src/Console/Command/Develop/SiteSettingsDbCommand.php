@@ -85,10 +85,10 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     $db_name = $input->getOption('db-name');
     $db_user = $input->getOption('db-user');
     $db_pass = $input->getOption('db-pass');
-    $table_prefix = $input->getOption('table-prefix');
     $db_host = $input->getOption('db-host');
     $db_port = $input->getOption('db-port');
     $db_type = $input->getOption('db-type');
+    $table_prefix = $input->getOption('table-prefix');
     $namespace = 'Drupal\\Core\\Database\\Driver\\' . $db_type;
 
     $content = <<<EOF

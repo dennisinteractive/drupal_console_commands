@@ -2,20 +2,20 @@ commands:
 # Checkout site
   - command: site:checkout
     arguments:
-      site-name: ''
+      site-name: '%{{site-name}}'
     options:
-      destination-directory: ''
+      destination-directory: '/vagrant/repos/%{{site-name}}'
       branch: 'master'
 # Run composer
   - command: site:compose
     arguments:
-      site-name: ''
+      site-name: '%{{site-name}}'
 # Create settings.db.php
   - command: site:settings:db
     arguments:
-      site-name: ''
+      site-name: '%{{site-name}}'
     options:
-      db-name: ''
+      db-name: '%{{site-name}}'
       db-user: 'root'
       db-pass: ''
       db-host: '127.0.0.1'
@@ -23,11 +23,11 @@ commands:
 # Create settings.memcache.php
   - command: site:settings:memcache
     arguments:
-      site-name: ''
+      site-name: '%{{site-name}}'
     options:
-      memcache-prefix: ''
+      memcache-prefix: '%{{site-name}}'
 # Imports db or installs a site
   - command: site:db:import
     arguments:
-      site-name: '%{{site_name}}'
-      profile: '%{{profile|standard}}'
+      site-name: '%{{site-name}}'
+      profile: '%{{profile|config_installer}}'

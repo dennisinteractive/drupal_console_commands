@@ -89,6 +89,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         $this->branch = $this->repo['branch'];
       }
     }
+    $input->setOption('branch', $this->branch);
 
     $this->io->writeln(sprintf('Checking out %s (%s)',
       $this->siteName,
