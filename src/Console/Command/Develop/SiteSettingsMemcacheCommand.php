@@ -75,7 +75,7 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
     }
 
     if (is_null($input->getOption('memcache-prefix'))) {
-      $input->setOption('memcache-prefix',  $this->siteName);
+      $input->setOption('memcache-prefix', $this->siteName);
     }
 
     // Remove existing file.

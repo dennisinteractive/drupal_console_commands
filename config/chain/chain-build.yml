@@ -5,7 +5,6 @@ commands:
       site-name: '%{{site-name}}'
     options:
       destination-directory: '/vagrant/repos/%{{site-name}}'
-      branch: 'master'
 # Run composer
   - command: site:compose
     arguments:

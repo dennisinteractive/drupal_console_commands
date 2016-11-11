@@ -29,42 +29,36 @@ use VM\Console\Command\Exception\SiteCommandException;
  */
 class SiteBaseCommand extends Command {
   use CommandTrait;
-
   /**
    * IO interface.
    *
    * @var null
    */
   protected $io = NULL;
-
   /**
    * Global location for sites.yml.
    *
    * @var array
    */
   protected $configFile = NULL;
-
   /**
    * Stores the contents of sites.yml.
    *
    * @var array
    */
   protected $config = NULL;
-
   /**
    * Stores the site name.
    *
    * @var string
    */
   protected $siteName = NULL;
-
   /**
    * Stores the profile name.
    *
    * @var string
    */
   protected $profile = NULL;
-
   /**
    * Stores the destination directory.
    *
@@ -180,6 +174,8 @@ class SiteBaseCommand extends Command {
    * @param InputInterface $input
    *
    * @throws SiteCommandException
+   *
+   * @return string Site name.
    */
   protected function _validateSiteName(InputInterface $input) {
     $this->siteName = $input->getArgument('site-name');
@@ -192,6 +188,11 @@ class SiteBaseCommand extends Command {
       );
       throw new SiteCommandException($message);
     };
+
+    // Update input.
+    if ($input->hasArgument('site-name')) {
+      $input->setArgument('site-name', $this->siteName);
+    }
 
     return $this->siteName;
   }
@@ -210,14 +211,18 @@ class SiteBaseCommand extends Command {
       // Use config from parameter.
       $this->profile = $input->getArgument('profile');
     }
-    elseif (isset($this->config['global']['destination-directory'])) {
+    elseif (isset($this->config['sites'][$this->siteName]['profile'])) {
       // Use config from sites.yml.
       $this->profile = $this->config['sites'][$this->siteName]['profile'];
     }
     else {
       $this->profile = 'config_installer';
     }
-    $input->setArgument('profile',  $this->profile);
+
+    // Update input.
+    if ($input->hasArgument('profile')) {
+      $input->setArgument('profile', $this->profile);
+    }
 
     return $this->profile;
   }
@@ -228,6 +233,8 @@ class SiteBaseCommand extends Command {
    * @param InputInterface $input
    *
    * @throws SiteCommandException
+   *
+   * @return string Destination
    */
   protected function _validateDestination(InputInterface $input) {
     if ($input->hasOption('destination-directory') &&
@@ -244,17 +251,22 @@ class SiteBaseCommand extends Command {
     else {
       $this->destination = '/tmp/' . $this->siteName;
     }
+
     // Make sure we have a slash at the end.
     if (substr($this->destination, -1) != '/') {
       $this->destination .= '/';
     }
+
     // Append site name.
     if (strpos($this->destination, $this->siteName, 0) === FALSE) {
       $this->destination .= $this->siteName . '/';
     }
-    $input->setOption('destination-directory',  $this->destination);
+
+    // Update input.
+    if ($input->hasOption('destination-directory')) {
+      $input->setOption('destination-directory', $this->destination);
+    }
 
     return $this->destination;
   }
-
 }

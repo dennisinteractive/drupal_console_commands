@@ -75,21 +75,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $siteConfig = $this->config['sites'][$this->siteName];
-    $this->repo = $siteConfig['repo'];
+    // Validate repo.
+    $this->_validateRepo();
 
-    // Loads default branch settings.
-    if ($input->hasOption('branch') &&
-      !is_null($input->getOption('branch'))
-    ) {
-      $this->branch = $input->getOption('branch');
-    }
-    else {
-      if (isset($this->repo['branch'])) {
-        $this->branch = $this->repo['branch'];
-      }
-    }
-    $input->setOption('branch', $this->branch);
+    // Validate branch.
+    $this->_validateBranch($input);
 
     $this->io->writeln(sprintf('Checking out %s (%s)',
       $this->siteName,
@@ -125,6 +115,53 @@ class SiteCheckoutCommand extends SiteBaseCommand {
           $this->repo['type']
         );
         throw new SiteCommandException($message);
+    }
+  }
+
+  /**
+   * Helper to validate repo.
+   *
+   * @throws SiteCommandException
+   *
+   * @return string Repo url
+   */
+  protected function _validateRepo() {
+    $siteConfig = $this->config['sites'][$this->siteName];
+    if (isset($siteConfig['repo'])) {
+      $this->repo = $siteConfig['repo'];
+    }
+    else {
+      throw new SiteCommandException('Repo Url not found in sites.yml');
+    }
+
+    return $this->repo;
+  }
+
+  /**
+   * Helper to validate branch option.
+   *
+   * @param InputInterface $input
+   *
+   * @throws SiteCommandException
+   */
+  protected function _validateBranch(InputInterface $input) {
+    if ($input->hasOption('branch') &&
+      !is_null($input->getOption('branch'))
+    ) {
+      // Use config from parameter.
+      $this->branch = $input->getOption('branch');
+    }
+    elseif (isset($this->config['sites'][$this->siteName]['repo']['branch'])) {
+      // Use config from sites.yml.
+      $this->branch = $this->config['sites'][$this->siteName]['repo']['branch'];
+    }
+    else {
+      $this->branch = 'master';
+    }
+
+    // Update input.
+    if ($input->hasOption('branch')) {
+      $input->setOption('branch', $this->branch);
     }
   }
 

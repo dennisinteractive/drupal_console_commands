@@ -44,6 +44,22 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     $command = new InstallCommand();
     $this->inheritArguments($command);
     $this->inheritOptions($command);
+
+    // Override default values for these options (if empty).
+    $override = array(
+      'db-name' => $this->siteName,
+      'db-user' => 'root',
+      'db-host' => '127.0.0.1',
+      'db-port' => 3306,
+      'db-type' => 'mysql',
+    );
+
+    foreach ($this->getDefinition()->getOptions() as $option) {
+      $name = $option->getName();
+      if (array_key_exists($name, $override) && empty($option->getDefault())) {
+        $this->getDefinition()->getOption($name)->setDefault($override[$name]);
+      }
+    }
   }
 
   /**
@@ -71,8 +87,9 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       throw new SiteCommandException($message);
     }
 
+    //@todo investigate why the default db-name is not being passed to the option.
     if (is_null($input->getOption('db-name'))) {
-      $input->setOption('db-name',  $this->siteName);
+      $input->setOption('db-name', $this->siteName);
     }
 
     // Remove existing file.
@@ -88,7 +105,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     $db_host = $input->getOption('db-host');
     $db_port = $input->getOption('db-port');
     $db_type = $input->getOption('db-type');
-    $table_prefix = $input->getOption('table-prefix');
+    $db_prefix = $input->getOption('db-prefix');
     $namespace = 'Drupal\\Core\\Database\\Driver\\' . $db_type;
 
     $content = <<<EOF
@@ -100,10 +117,10 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
   'database' => '$db_name',
   'username' => '$db_user',
   'password' => '$db_pass',
-  'prefix' => '$table_prefix',
   'host' => '$db_host',
   'port' => $db_port,
   'driver' => '$db_type',
+  'prefix' => '$db_prefix',
   'namespace' => '$namespace',
 );
 EOF;
