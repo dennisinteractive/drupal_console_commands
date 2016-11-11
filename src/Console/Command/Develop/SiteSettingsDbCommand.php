@@ -40,7 +40,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Generates settings.db.php for a given site.');
 
-    // Use same arguments and options as InstallCommand().
+    // Inherit arguments and options from InstallCommand().
     $command = new InstallCommand();
     $this->inheritArguments($command);
     $this->inheritOptions($command);

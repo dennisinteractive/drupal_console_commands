@@ -39,10 +39,10 @@ class SiteDbImportCommand extends SiteBaseCommand {
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Imports local dump or does a fresh install.');
 
-    // Use same arguments and options as SiteSettingsDbCommand().
-    $siteSettingsDbCommand = new SiteSettingsDbCommand();
-    $this->inheritArguments($siteSettingsDbCommand);
-    $this->inheritOptions($siteSettingsDbCommand);
+    // Inherit arguments and options from SiteSettingsDbCommand().
+    $command = new SiteSettingsDbCommand();
+    $this->inheritArguments($command);
+    $this->inheritOptions($command);
   }
 
   /**
