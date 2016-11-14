@@ -87,11 +87,6 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       }
     }
 
-    //@todo investigate why the default db-name is not being passed to the option.
-    if (is_null($input->getOption('db-name'))) {
-      //$input->setOption('db-name', $this->siteName);
-    }
-
     // Remove existing file.
     $file = $this->destination . $this->filename;
     if (file_exists($file)) {

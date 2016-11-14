@@ -158,11 +158,15 @@ class SiteDbImportCommand extends SiteBaseCommand {
           $this->filename = '/tmp/' . basename($this->filename);
           break;
       }
+      if (is_null($input->getOption('db-name'))) {
+        $input->setOption('db-name', $this->siteName);
+      }
       $command .= sprintf(
         'cd %s; ' .
-        'drush sql-drop -y; ' .
+        'drush sql-create %s -y; ' .
         'drush sql-cli < %s; ',
         $this->destination,
+        $input->getOption('db-name'),
         $this->filename
       );
       $this->io->writeln('Importing dump');
