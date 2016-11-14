@@ -21,7 +21,6 @@ use VM\Console\Command\Exception\SiteCommandException;
  * @package VM\Console\Command\Develop
  */
 class SiteDbImportCommand extends SiteBaseCommand {
-
   /**
    * The Db dump file.
    *
@@ -46,7 +45,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
 
     $this->addOption(
       'file',
-      null,
+      NULL,
       InputOption::VALUE_REQUIRED,
       $this->trans('commands.database.restore.options.file')
     );
@@ -68,7 +67,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
    * @return bool TRUE if is relative
    */
   protected function is_absolute_path($path) {
-    return $path[0] === DIRECTORY_SEPARATOR || preg_match('~\A[A-Z]:(?![^/\\\\])~i',$path) > 0;
+    return $path[0] === DIRECTORY_SEPARATOR || preg_match('~\A[A-Z]:(?![^/\\\\])~i', $path) > 0;
   }
 
   /**
@@ -96,7 +95,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
       $filename = realpath(getcwd() . trim($this->filename, '.'));
       if (!file_exists($filename)) {
         throw new SiteCommandException(sprintf('Dump file %s doesn\'t exist',
-          $this->filename)
+            $this->filename)
         );
       }
       else {
@@ -142,20 +141,47 @@ class SiteDbImportCommand extends SiteBaseCommand {
     else {
       $command = '';
       // Check the format of the dump.
-      switch(mime_content_type($this->filename)) {
+      switch (mime_content_type($this->filename)) {
         case 'application/x-gzip':
-          // Unzip.
-          $command = sprintf(
-            'cp %s /tmp; ' .
+
+          // The basename without any path.
+          $baseNameGz = basename($this->filename);
+
+          // The basename with sql extension.
+          $baseNameSql = str_replace('.sql.gz', '.sql', $baseNameGz);
+
+          $this->io->write(sprintf('Checking if dump exists locally: '));
+          if (file_exists('/tmp/' . $baseNameGz)) {
+            $this->io->writeln('Yes');
+          }
+          else {
+            $this->io->writeln('No');
+          }
+
+          $this->io->write(sprintf('Checking if local dump is up to date: '));
+          if (filesize('/tmp/' . $baseNameGz) != filesize($this->filename)) {
+            $this->io->writeln('No');
+
+            // Copy file to /tmp.
+            $command .= sprintf(
+              'cp %s /tmp; ',
+              $this->filename
+            );
+          }
+          else {
+            $this->io->writeln('Yes');
+          }
+
+          // Unzip sql file and keep zipped in the folder.
+          $command .= sprintf(
             'cd /tmp; ' .
-            'gunzip %s; ',
-            $this->filename,
-            basename($this->filename)
+            'gunzip -c %s > %s; ',
+            $baseNameGz,
+            $baseNameSql
           );
-          // Remove .gz from filename.
-          $this->filename = str_replace('.sql.gz', '.sql', $this->filename);
+
           // Use the file extracted on tmp folder.
-          $this->filename = '/tmp/' . basename($this->filename);
+          $this->filename = '/tmp/' . $baseNameSql;
           break;
       }
       if (is_null($input->getOption('db-name'))) {
