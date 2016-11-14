@@ -8,7 +8,7 @@ sites:
       type: git
       url: ssh://didev@didev.kilnhg.com/Drupal-Sites/buyacar/0-1
       branch: master
-    db-dump: /vagrant/repos/7_x_buyacar.sql.gz
+    db-dump: /mnt/nfs/Drupal/sql/buyacar-latest.sql.gz
     extras: []
   itpro:
     site-name: Itpro.co.uk
@@ -17,7 +17,7 @@ sites:
       type: git
       url: ssh://didev@didev.kilnhg.com/Drupal-Sites/itpro/0-1
       branch: master
-    db-dump: /vagrant/repos/8_x_itpro.sql.gz
+    db-dump: /mnt/nfs/Drupal/sql/itpro-latest.sql.gz
     extras: []
   subscriptions:
     site-name: Subscriptions
@@ -26,5 +26,5 @@ sites:
       type: git
       url: https://github.com/dennisinteractive/subscriptions.git
       branch: 8.x
-    db-dump: /vagrant/repos/8_x_subscriptions.sql.gz
+    db-dump: /mnt/nfs/Drupal/sql/d8_subscriptions-latest.sql.gz
     extras: []
