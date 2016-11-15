@@ -1,17 +1,24 @@
 {
-    "name": "dennisdigital/drupal_console_commands",
-    "description": "Custom commands for Drupal console.",
-    "keywords": ["Drupal", "Console", "Development", "Symfony"],
-    "type": "project",
-    "license": "GPL-2.0+",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "_comment": "Temporarily using a fork of console until the pull request is accepted.",
-    "require": {
-        "php": ">=5.6",
-        "marcelovani/console" : "dev-master"
-     },
-    "autoload": {
-        "psr-4": {"VM\\": "src"}
+  "name": "dennisdigital/drupal_console_commands",
+  "description": "Custom commands for Drupal console.",
+  "keywords": [
+    "Drupal",
+    "Console",
+    "Development",
+    "Symfony"
+  ],
+  "type": "project",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "_comment": "Temporarily using a fork of console until the pull request is accepted.",
+  "require": {
+    "php": ">=5.6",
+    "marcelovani/console": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "VM\\": "src"
     }
+  }
 }
