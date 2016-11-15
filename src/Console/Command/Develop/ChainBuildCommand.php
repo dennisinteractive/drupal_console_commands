@@ -104,7 +104,7 @@ class ChainBuildCommand extends SiteBaseCommand {
       }
     }
 
-    $this->io->writeln(sprintf('Building %s using %s profile',
+    $this->io->comment(sprintf('Building %s using %s profile',
         $this->siteName,
         $this->profile
       )

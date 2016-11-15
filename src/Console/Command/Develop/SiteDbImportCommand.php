@@ -135,7 +135,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
         $this->profile,
         $options
       );
-      $this->io->writeln('Installing site');
+      $this->io->comment('Installing site');
     }
     else {
       $command = '';
@@ -194,7 +194,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
         $input->getOption('db-name'),
         $this->filename
       );
-      $this->io->writeln('Importing dump');
+      $this->io->comment('Importing dump');
     }
 
     $this->io->commentBlock($command);

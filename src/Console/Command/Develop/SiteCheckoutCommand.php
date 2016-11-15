@@ -81,7 +81,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     // Validate branch.
     $this->_validateBranch($input);
 
-    $this->io->writeln(sprintf('Checking out %s (%s)',
+    $this->io->comment(sprintf('Checking out %s (%s)',
       $this->siteName,
       $this->branch
     ));

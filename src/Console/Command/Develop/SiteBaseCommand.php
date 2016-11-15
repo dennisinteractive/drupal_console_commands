@@ -287,7 +287,7 @@ class SiteBaseCommand extends Command {
       $webSitesPath
     );
 
-    $this->io->writeln('Searching for settings.php in the sites folder');
+    $this->io->comment('Searching for settings.php in the sites folder');
     $shellProcess = $this->get('shell_process');
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
