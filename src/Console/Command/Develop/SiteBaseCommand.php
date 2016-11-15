@@ -273,12 +273,47 @@ class SiteBaseCommand extends Command {
 
   /**
    * Helper to return the path to settings.php
+   * It will try to match a folder with same name as site name
+   * If not found, it will try to match a folder called "default".
    *
    * @return string Path
    */
-  public function findSettingsPhp() {
-    $path = 'web/sites/default/';
+  public function settingsPhpDirectory() {
+    $webSitesPath = $this->destination . 'web/sites/';
+    $settingsPath = $webSitesPath . 'default';
 
-    return $path;
+    $command = sprintf(
+      'cd %s; find . -name settings.php',
+      $webSitesPath
+    );
+
+    $this->io->writeln('Searching for settings.php in the sites folder');
+    $shellProcess = $this->get('shell_process');
+    if ($shellProcess->exec($command, TRUE)) {
+      if (!empty($shellProcess->getOutput())) {
+        $output = $shellProcess->getOutput();
+
+        // Regex to match.
+        $siteName = $this->siteName;
+        $regex = array (
+          "|^./($siteName)/settings.php|m",
+          "|^./(default)/settings.php|m"
+        );
+        foreach ($regex as $r) {
+          preg_match_all($r, $output, $matches);
+          if (!empty($matches[0])) {
+            $settingsPath = $webSitesPath . reset($matches[1]);
+            break;
+          }
+        }
+      }
+    }
+
+    // Make sure we have a slash at the end.
+    if (substr($settingsPath, -1) != '/') {
+      $settingsPath .= '/';
+    }
+
+    return $settingsPath;
   }
 }
