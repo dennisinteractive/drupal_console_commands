@@ -104,7 +104,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
 
     // Append web/sites/default to destination.
-    $this->destination .= 'web/sites/default/';
+    $this->destination = $this->findSettingsPhp();
 
     // Populate options.
     $options = '';

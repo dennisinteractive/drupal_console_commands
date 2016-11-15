@@ -61,8 +61,8 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     parent::execute($input, $output);
 
     // Append web/sites/default to destination.
-    $this->destination .= 'web/sites/default/';
-
+    $this->destination = $this->findSettingsPhp();
+    throw new SiteCommandException($this->destination);
     // Validation.
     if (!file_exists($this->destination . 'settings.php')) {
       $message = sprintf('The file settings.php is missing on %s',

@@ -270,4 +270,15 @@ class SiteBaseCommand extends Command {
 
     return $this->destination;
   }
+
+  /**
+   * Helper to return the path to settings.php
+   *
+   * @return string Path
+   */
+  public function findSettingsPhp() {
+    $path = 'web/sites/default/';
+
+    return $path;
+  }
 }

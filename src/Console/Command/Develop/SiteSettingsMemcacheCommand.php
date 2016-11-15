@@ -64,7 +64,7 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
     parent::execute($input, $output);
 
     // Append web/sites/default to destination.
-    $this->destination .= 'web/sites/default/';
+    $this->destination = $this->findSettingsPhp();
 
     // Validation.
     if (!file_exists($this->destination . 'settings.php')) {
