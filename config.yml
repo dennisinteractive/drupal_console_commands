@@ -2,10 +2,6 @@
   autowire:
     commands:
       forced:
-        _site_new:
-          class: \VM\Console\Command\Site\NewCommand
-        _chain_build:
-          class: \VM\Console\Command\Develop\ChainBuildCommand
         _site_checkout:
           class: \VM\Console\Command\Develop\SiteCheckoutCommand
         _site_compose:
@@ -17,3 +13,14 @@
         _site_db_import:
           class: \VM\Console\Command\Develop\SiteDbImportCommand
       name: { }
+    chain:
+      name:
+        'site:new':
+          file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-new.yml'
+        'site:build':
+          file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-build.yml'
+        'site:install':
+          file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-install.yml'
+      disabled:
+        'site:test':
+          file: '~/.composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-test.yml'
