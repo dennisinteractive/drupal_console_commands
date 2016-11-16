@@ -1,5 +1,5 @@
 commands:
-# Build from template
+# Example of a chain calling another chain with placeholders
   - command: exec
     arguments:
-      bin: 'echo "This is a test %{{project|dennisdigital/drupal-project:8.x-dev}} %{{directory|/vagrant/repos/new-site}} %{{version|8.x-dev}}"'
+      bin: 'drupal chain:site:test-child --placeholder="project:foo" --placeholder="directory:some-dir" --placeholder="version:10"'

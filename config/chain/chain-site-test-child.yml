@@ -1,0 +1,5 @@
+commands:
+# This chain shows the variables passed either via placeholders or interactive
+  - command: exec
+    arguments:
+      bin: 'echo "This is a test %{{project|dennisdigital/drupal-project:8.x-dev}} %{{directory|/vagrant/repos/new-site}} %{{version|8.x-dev}}"'
