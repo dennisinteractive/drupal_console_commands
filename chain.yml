@@ -1,0 +1,12 @@
+# Custom chains
+chain:
+  name:
+    'site:new':
+      file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-new.yml'
+    'site:build':
+      file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-build.yml'
+    'site:install':
+      file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-install.yml'
+  disabled:
+    'site:test':
+      file: '~/.composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-test.yml'
