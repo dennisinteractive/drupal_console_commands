@@ -1,0 +1,5 @@
+# chain-grunt.yml
+commands:
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; find . -type d \( -name node_modules -o -path ./core \) -prune -o -name Gruntfile.js -printf "Running grunt in %h\n" -execdir sh -c "grunt" \;'

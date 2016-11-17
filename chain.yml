@@ -7,6 +7,10 @@ chain:
       file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-build.yml'
     'site:install':
       file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-install.yml'
+    'npm':
+      file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-npm.yml'
+    'grunt':
+      file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-grunt.yml'
   disabled:
     'site:test':
       file: '~/.composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-test.yml'

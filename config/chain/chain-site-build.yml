@@ -9,6 +9,14 @@ commands:
   - command: site:compose
     arguments:
       name: '%{{name}}'
+# Run npm
+  - command: exec
+    arguments:
+      bin: 'drupal chain:npm  --placeholder="name:%{{name}}"'
+# Run grunt
+- command: exec
+  arguments:
+    bin: 'drupal chain:grunt  --placeholder="name:%{{name}}"'
 # Create settings.db.php
   - command: site:settings:db
     arguments:
