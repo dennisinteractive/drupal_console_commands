@@ -2,4 +2,4 @@
 commands:
   - command: exec
     arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; find . -type d \( -name node_modules -o -path ./core \) -prune -o -name package.json -printf "Running npm install in %h\n" -execdir sh -c "npm install" \;'
+      bin: 'cd /vagrant/repos/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -printf "Running npm install in %h\n" -execdir sh -c "npm install" \;'
