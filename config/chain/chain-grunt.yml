@@ -2,4 +2,4 @@
 commands:
   - command: exec
     arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -printf "Running grunt in %h\n" -execdir sh -c "grunt" \;'
+      bin: 'cd /vagrant/repos/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "grunt" \;'

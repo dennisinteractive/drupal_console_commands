@@ -12,5 +12,7 @@ chain:
     'grunt':
       file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-grunt.yml'
   disabled:
-    'site:test':
-      file: '~/.composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-test.yml'
+    'test:main':
+      file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-test-main.yml'
+    'test:child':
+      file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-test-child.yml'
