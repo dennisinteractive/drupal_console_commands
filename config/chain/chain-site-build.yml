@@ -43,3 +43,7 @@ commands:
       profile: '%{{profile|config_installer}}'
     options:
       account-pass: dennis3
+# Clear cache
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush cr;'
