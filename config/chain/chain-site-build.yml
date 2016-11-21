@@ -11,12 +11,12 @@ commands:
     arguments:
       name: '%{{name}}'
 # Run npm
-  - command: chain:npm
+  - command: chain:site:npm
     options:
       placeholder:
         - 'name:%{{name}}'
 # Run grunt
-  - command: chain:grunt
+  - command: chain:site:grunt
     options:
       placeholder:
         - 'name:%{{name}}'
