@@ -47,8 +47,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
       ->setDescription('Checkout a repo');
 
     // Custom options.
-    $this
-      ->addOption(
+    $this->addOption(
         'ignore-changes',
         '',
         InputOption::VALUE_NONE,
@@ -69,19 +68,23 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
 
-
     $branch = $input->getOption('branch');
     if (!$branch) {
-      $branches = ['8.x', 'master'];
+        // Typical branches.
+        $branches = ['8.x', 'master'];
 
-      $branch = $this->io->choice(
-        $this->trans('Select a branch'),
-        $branches,
-        '8.x',
-        false
-      );
+        if (isset($this->config['repo']['branch'])) {
+          // Populate branches from config.
+          $siteBranch = $this->config['repo']['branch'];
+        }
 
-      $input->setOption('branch', $branch);
+        $branch = $this->io->choice(
+            $this->trans('Select a branch'),
+            array_values(array_unique(array_merge([$siteBranch], $branches))),
+            isset($siteBranch) ? $siteBranch : '8.x',
+            true
+        );
+        $input->setOption('branch', reset($branch));
     }
   }
 
@@ -97,9 +100,10 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     // Validate branch.
     $this->_validateBranch($input);
 
-    $this->io->comment(sprintf('Checking out %s (%s)',
+    $this->io->comment(sprintf('Checking out %s (%s) on %s',
       $this->siteName,
-      $this->branch
+      $this->branch,
+      $this->destination
     ));
 
     switch ($this->repo['type']) {
@@ -142,12 +146,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    * @return string Repo url
    */
   protected function _validateRepo() {
-    $siteConfig = $this->config['sites'][$this->siteName];
-    if (isset($siteConfig['repo'])) {
-      $this->repo = $siteConfig['repo'];
+    if (isset($this->config['repo'])) {
+      $this->repo = $this->config['repo'];
     }
     else {
-      throw new SiteCommandException('Repo Url not found in sites.yml');
+      throw new SiteCommandException('Repo not found in sites.yml');
     }
 
     return $this->repo;
@@ -167,12 +170,12 @@ class SiteCheckoutCommand extends SiteBaseCommand {
       // Use config from parameter.
       $this->branch = $input->getOption('branch');
     }
-    elseif (isset($this->config['sites'][$this->siteName]['repo']['branch'])) {
+    elseif (isset($this->config['repo']['branch'])) {
       // Use config from sites.yml.
-      $this->branch = $this->config['sites'][$this->siteName]['repo']['branch'];
+      $this->branch = $this->config['repo']['branch'];
     }
     else {
-      $this->branch = 'master';
+      $this->branch = '8.x';
     }
 
     // Update input.

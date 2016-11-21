@@ -96,10 +96,12 @@ class SiteBaseCommand extends Command {
 
     $name = $input->getArgument('name');
     if (!$name) {
-      $name = $this->io->ask($this->trans('Site name (In small letters, no spaces)'));
+        $name = $this->io->ask($this->trans('Site name (In small letters, no spaces)'));
 
-      $input->setArgument('name', $name);
+        $input->setArgument('name', $name);
     }
+
+    $this->validateSiteParams($input, $output);
 
   }
 
@@ -142,10 +144,7 @@ class SiteBaseCommand extends Command {
     $this->io = new DrupalStyle($input, $output);
 
     // Get config.
-    $this->_getConfigFile();
-
-    // Validate site name.
-    $this->_validateSiteName($input);
+    $this->_siteConfig($input);
 
     // Validate profile.
     $this->_validateProfile($input);
@@ -155,54 +154,42 @@ class SiteBaseCommand extends Command {
   }
 
   /**
-   * Helper to check that the config file exits.
-   *
-   * @return $config The configuration from the yml file
-   *
-   * @throws SiteCommandException
-   */
-  protected function _getConfigFile() {
-    $ymlFile = new Parser();
-    $config = new Config($ymlFile);
-    $configFile = $config->getUserHomeDir() . '/.console/sites.yml';
-
-    if (!file_exists($configFile)) {
-      $message = sprintf('Could not find any configuration in %s', $configFile);
-      throw new SiteCommandException($message);
-    }
-    $this->configFile = $configFile;
-    $this->config = $config->getFileContents($configFile);
-
-    return $this->configFile;
-  }
-
-  /**
-   * Helper to validate name parameter.
+   * Helper to check that the config file exits and load the configuration.
    *
    * @param InputInterface $input
    *
-   * @throws SiteCommandException
+   * @return $this
    *
-   * @return string Site name.
+   * @throws SiteCommandException
    */
-  protected function _validateSiteName(InputInterface $input) {
-    $this->siteName = $input->getArgument('name');
-    if (!isset($this->config['sites'][$this->siteName])) {
+  protected function _siteConfig(InputInterface $input) {
+    $siteName = $input->getArgument('name');
+
+    $application = $this->getApplication();
+    $application->getConfig()->loadSite($siteName);
+
+    // Site environment from config.yml.
+    $config = $application->getConfig()->get(sprintf(
+      'sites.%s.%s',
+        $siteName,
+        $input->getOption('env')
+      )
+    );
+
+    if (empty($config)) {
       $message = sprintf(
-        'Site not found in /.console/sites.yml' . PHP_EOL .
-        'Usage: drupal site:checkout name' . PHP_EOL .
-        'Available sites: [%s]',
-        implode(', ', array_keys($this->config['sites']))
+        'Site not found. To see a list of available sites, run %s',
+        'drupal site:debug'
       );
       throw new SiteCommandException($message);
-    };
-
-    // Update input.
-    if ($input->hasArgument('name')) {
-      $input->setArgument('name', $this->siteName);
     }
 
-    return $this->siteName;
+    // Update input.
+    $input->setArgument('name', $siteName);
+    $this->siteName = $siteName;
+    $this->config = $config;
+
+    return $this;
   }
 
   /**
@@ -219,9 +206,9 @@ class SiteBaseCommand extends Command {
       // Use config from parameter.
       $this->profile = $input->getArgument('profile');
     }
-    elseif (isset($this->config['sites'][$this->siteName]['profile'])) {
+    elseif (isset($this->config['profile'])) {
       // Use config from sites.yml.
-      $this->profile = $this->config['sites'][$this->siteName]['profile'];
+      $this->profile = $this->config['profile'];
     }
     else {
       $this->profile = 'config_installer';
@@ -251,10 +238,9 @@ class SiteBaseCommand extends Command {
       // Use config from parameter.
       $this->destination = $input->getOption('destination-directory');
     }
-    elseif (isset($this->config['global']['destination-directory'])) {
+    elseif (isset($this->config['root'])) {
       // Use config from sites.yml.
-      $this->destination = $this->config['global']['destination-directory'] .
-        '/' . $this->siteName;
+      $this->destination = $this->config['root'];
     }
     else {
       $this->destination = '/tmp/' . $this->siteName;
@@ -268,12 +254,6 @@ class SiteBaseCommand extends Command {
     // Append site name.
     if (strpos($this->destination, $this->siteName, 0) === FALSE) {
       $this->destination .= $this->siteName . '/';
-    }
-
-    // Update input.
-    if ($input->hasOption('destination-directory')) {
-      // This breaks the chain command.
-      // $input->setOption('destination-directory', $this->destination);
     }
 
     return $this->destination;

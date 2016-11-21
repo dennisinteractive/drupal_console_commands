@@ -82,9 +82,9 @@ class SiteDbImportCommand extends SiteBaseCommand {
     ) {
       $this->filename = $input->getOption('file');
     }
-    elseif (isset($this->config['sites'][$this->siteName]['db-dump'])) {
+    elseif (isset($this->config['db-dump'])) {
       // Use config from sites.yml.
-      $this->filename = $this->config['sites'][$this->siteName]['db-dump'];
+      $this->filename = $this->config['db-dump'];
     }
     else {
       throw new SiteCommandException('Please specify a file to import the dump from');
