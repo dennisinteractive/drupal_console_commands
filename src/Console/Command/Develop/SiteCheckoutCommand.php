@@ -47,7 +47,8 @@ class SiteCheckoutCommand extends SiteBaseCommand {
       ->setDescription('Checkout a repo');
 
     // Custom options.
-    $this->addOption(
+    $this
+      ->addOption(
         'ignore-changes',
         '',
         InputOption::VALUE_NONE,
@@ -67,6 +68,21 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
+
+
+    $branch = $input->getOption('branch');
+    if (!$branch) {
+      $branches = ['8.x', 'master'];
+
+      $branch = $this->io->choice(
+        $this->trans('Select a branch'),
+        $branches,
+        '8.x',
+        false
+      );
+
+      $input->setOption('branch', $branch);
+    }
   }
 
   /**
