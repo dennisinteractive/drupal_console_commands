@@ -92,6 +92,14 @@ class SiteBaseCommand extends Command {
    * {@inheritdoc}
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
+    $this->io = new DrupalStyle($input, $output);
+
+    $name = $input->getArgument('name');
+    if (!$name) {
+      $name = $this->io->ask($this->trans('Site name (In small letters, no spaces)'));
+
+      $input->setArgument('name', $name);
+    }
 
   }
 
