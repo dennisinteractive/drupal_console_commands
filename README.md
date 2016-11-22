@@ -24,6 +24,8 @@ This has been set in Dennis dev_scripts https://github.com/dennisinteractive/dev
 # Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
 
+- drupal chain:site:new
+	Builds a new site using Drupal project as template https://github.com/dennisinteractive/drupal-project
 - drupal site:checkout site-mame
 	Performs a git clone and checks out the specified branch
 - drupal site:compose site-name
@@ -37,9 +39,13 @@ These are custom commands used to build a site. The information about the site c
 	If no db-dump information is available, it will run a site install.
 	The command will copy the dump from the original place to /tmp. If you run the command again, it will only copy the file once the original has changed. This is very useful when working remotely on slow networks.
 	Supported cxtensions: .sql, .sql.gz.
+- drupal chain:site:npm
+	Runs npm install
+- drupal chain:site:grung
+	Runs grunt
 - drupal chain:site:build
 	A wrapper that will call all the commands above and do some additional tasks.
-	
+
 
 # Useful arguments and options
 - -h Show all the available arguments and options
