@@ -36,8 +36,8 @@ These are custom commands used to build a site. The information about the site c
 	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
 - drupal **site:db:import** *site-name*
 	If a database dump is available, it will drop the current database and import the dump. The db-dump information comes from *~/.console/sites/site-name.yml*.
-	If no db-dump information is available, it will run a site install.
 	The command will copy the dump from the original place to */tmp*. If you run the command again, it will only copy the file once the original has changed. This is very useful when working remotely on slow networks.
+	If no db-dump information is available or there is no dump at the location, it will run a site install.
 	Supported cxtensions: **.sql**, **.sql.gz**.
 - drupal **chain:site:npm** *site-name*
 	Runs npm install
