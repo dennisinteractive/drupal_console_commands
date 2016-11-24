@@ -1,15 +1,15 @@
 # Custom commands
-  autowire:
-    commands:
-      forced:
-        _site_checkout:
-          class: \VM\Console\Command\Develop\SiteCheckoutCommand
-        _site_compose:
-          class: \VM\Console\Command\Develop\SiteComposeCommand
-        _site_settings_db:
-          class: \VM\Console\Command\Develop\SiteSettingsDbCommand
-        _site_settings_memcache:
-          class: \VM\Console\Command\Develop\SiteSettingsMemcacheCommand
-        _site_db_import:
-          class: \VM\Console\Command\Develop\SiteDbImportCommand
-      name: { }
+    autowire:
+        commands:
+            forced:
+                _site_checkout:
+                    class: \VM\Console\Command\Develop\SiteCheckoutCommand
+                _site_compose:
+                    class: \VM\Console\Command\Develop\SiteComposeCommand
+                _site_settings_db:
+                    class: \VM\Console\Command\Develop\SiteSettingsDbCommand
+                _site_settings_memcache:
+                    class: \VM\Console\Command\Develop\SiteSettingsMemcacheCommand
+                _site_db_import:
+                    class: \VM\Console\Command\Develop\SiteDbImportCommand
+            name: { }
