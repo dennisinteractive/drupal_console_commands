@@ -43,6 +43,10 @@ commands:
       profile: '%{{profile|config_installer}}'
     options:
       account-pass: dennis3
+# Run updates
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
 # Clear cache
   - command: exec
     arguments:
