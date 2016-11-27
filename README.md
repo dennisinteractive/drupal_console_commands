@@ -18,7 +18,7 @@ This is how we did it:
 # Initial investigation
 I started by looking how Drupal console works, so I created the site configurations in ~/.console/sites/. This is an example that is shipped with Drupal console.
 
-`File: drupalvm.yml`
+File: *drupalvm.yml*
 ```javascript
 dev:
   root: /var/www/drupalvm/drupal  
