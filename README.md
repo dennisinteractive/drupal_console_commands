@@ -1,3 +1,5 @@
+# Extending Drupal console
+
 We have more than 30 websites when doing development we need some simple way of running commands without having to type too much. Our previous development workflow involved using some bash scripts to do things like:
 
 - Check out the site’s repo
@@ -31,8 +33,11 @@ dev:
 When I run drupal site:debug I can see the site in the list.
 
 
-I noticed that there were only few properties, and I was wondering if I could add more details about a site. Drupal console doesn’t care what key/values you add, so I went on and created this file with details about which repo to use, branch, database dump location, profile, etc.
-File: ~/console/sites/subscriptions.yml <--add anchor-->
+I noticed that there were only few properties, and I was wondering if I could add more details about a site.
+Drupal console doesn’t care what key/values you add, so I went on and created this file with details about which repo to use, branch, database dump location, profile, etc.
+
+File: *~/console/sites/subscriptions.yml <--add anchor-->*
+```javascript
 dev:
   name: Subscriptions
   profile: config_installer
@@ -45,35 +50,45 @@ dev:
     url: https://github.com/dennisinteractive/subscriptions.git
     branch: 8.x
   db-dump: /mnt/nfs/Drupal/sql/d8_subscriptions-latest.sql.gz
-
+```
 
 In order to create some custom commands, I need Drupal console to run globally, which means it is installed on my home folder and my commands can be executed independently, with no need of having Drupal core installed.
-Initially I tried to use the latest release 1.0.0-rc9 but things are moving too fast in Drupal console world, since 1.0.0-beta5 they started to remove some code from DrupalConsole https://github.com/hechoendrupal/DrupalConsole and move to separate repos, amongst them: 
-Drupal Console Core https://github.com/hechoendrupal/drupal-console-core
-Drupal Console Launcher https://github.com/hechoendrupal/drupal-console-launcher
 
+Initially I tried to use the latest release 1.0.0-rc9 but things are moving too fast in Drupal console world, since 1.0.0-beta5 they started to remove some code from DrupalConsole https://github.com/hechoendrupal/DrupalConsole and move to separate repos, amongst them: 
+- Drupal Console Core https://github.com/hechoendrupal/drupal-console-core
+- Drupal Console Launcher https://github.com/hechoendrupal/drupal-console-launcher
 
 I could not figure out how to make my custom commands run globally using Drupal console launcher, so I decided to branch off 1.0.0-beta5, get everything working, then port to the latest dev.
 One of the things that is definetely broken is the command site:new https://github.com/hechoendrupal/DrupalConsole/issues/2825.
 
-
 Still thinking about the development workflow, I started to explore the possibilities.
-Using existing commands
-site:new <--add anchor here-->
+
+## 1. Using existing commands
+**site:new <--add anchor here-->**
 As I mentioned above I am using Drupal console 1.0.0-beta5, that still provides this command. The problem with it is that I cannot use a different Drupal project template, it will start a new site using drupal-composer/drupal-project as it is hard coded here https://github.com/hechoendrupal/DrupalConsole/blob/1.0.0-rc5/src/Command/Site/NewCommand.php#L99.
-I implemented a new option to pass --template and sent a pull request https://github.com/hechoendrupal/DrupalConsole/issues/2949 
-The project template can be passed as parameter i.e. drupal site:new /var/www/new --composer --template=dennisdigital/drupal-project
-site:install
+
+I implemented a new option to pass *--template* and sent a pull request https://github.com/hechoendrupal/DrupalConsole/issues/2949
+
+The project template can be passed as parameter i.e.
+`drupal site:new /var/www/new --composer --template=dennisdigital/drupal-project`
+
+**site:install**
 This will install the site and append the database credentials to the bottom of settings.php. We should not really commit these credentials, because it will vary depending on the environment, i.e. CI, QA, Production.
+
 So we need a way of putting these settings onto a separate file that will be included in settings.php, i.e.
-File: web/sites/default/settings.php
-…
+
+File: *web/sites/default/settings.php*
+.
+.
+.
+```php
 if (file_exists(__DIR__ . '/settings.db.php')) {
   include __DIR__ . '/settings.db.php';
 }
+```
 
-
-File: web/sites/default/settings.db.php
+File: *web/sites/default/settings.db.php*
+```php
 $databases['default']['default'] = array(
   'database' => 'subscriptions',
   'username' => 'root',
@@ -84,13 +99,18 @@ $databases['default']['default'] = array(
   'prefix' => '',
   'namespace' => 'Drupal\Core\Database\Driver\mysql',
 );
-database:restore
+```
+
+*database:restore*
 We store db dumps on a folder that is mounted and becomes accessible inside the VM, the files are stored in gzip format. The reason for that, obviously is to make the downloads faster, specially when working remotely.
+
 Our workflow involves copying the file inside the VM, unzipping and then importing. All of these steps cannot be handled by database:restore, so we might need to create a custom command to fulfill our needs.
 Another good idea is to only copy the dump from the server again once there is a new dump available. So the idea is to reuse the same local copy of the zipped dump on subsequent database restores.
+
 Since some of the functionalities that we need are not available out of the box, I have two options:
 Forking Drupal console and sending a pull request
-Creating our own Custom commands.
+
+## 2. Creating our own Custom commands.
 I decided to go with the second option for now and if that works, will do the pull request. Besides, at this stage I don’t know if our requirements are relevant for the rest of the community.
 
 
