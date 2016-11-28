@@ -118,7 +118,7 @@ After playing with built in commands I started looking into building our custom 
 - **site:settings:db** This will take care of creating *settings.db.php* which will not be committed to the repo, but it will be inserted into *settings.php* as an include.
 - **site:db:import** This is a replacement for *database:restore* with some additional features, mentioned above, such as support to zipped files.
 
-I did some research and found that to make the commands available in Drupal console, we need to list the classes in *~/.console/config.yml*. I have been chatting with [link](https://twitter.com/jmolivas "@jmolivas") and there are plans to have these classes automatically registered as a service https://github.com/hechoendrupal/DrupalConsole/issues/1947 
+I did some research and found that to make the commands available in Drupal console, we need to list the classes in *~/.console/config.yml*. I have been chatting with [@jmolivas](https://twitter.com/jmolivas "@jmolivas") and there are plans to have these classes automatically registered as a service https://github.com/hechoendrupal/DrupalConsole/issues/1947 
 But for now, the solution is to stick autowire at the bottom of *~/.console/config.yml*, i.e.
 ```javascript
 ...
@@ -189,7 +189,7 @@ No need to specify *--file* anymore
 `drupal chain:site:new`
 ![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/chain-site-new.png)
 
-On a hangout with [link](https://twitter.com/jmolivas "@jmolivas") I pitched the idea and he liked it, this can be used in conjunction with commands as a service. I created a pull request that can be merged to the latest dev https://github.com/hechoendrupal/DrupalConsole/pull/2961. This pull request doesn’t use chain.yml, but for our branch off 1.0.0-beta5 it is still needed.
+On a hangout with [@jmolivas](https://twitter.com/jmolivas "@jmolivas") I pitched the idea and he liked it, this can be used in conjunction with commands as a service. I created a pull request that can be merged to the latest dev https://github.com/hechoendrupal/DrupalConsole/pull/2961. This pull request doesn’t use chain.yml, but for our branch off 1.0.0-beta5 it is still needed.
 
 What if I want to create a chain that will do two things: Create a new site and run site install. That means calling chain:site:new and then site:install from this new chain.
 
@@ -288,7 +288,9 @@ Ability to call chain commands with arguments and options without having to spec
 
 ## Marcelo Vani
 ### Software engineer
-[link](https://twitter.com/marcelovani "@marcelovani")
-[link](http://marcelovani.eu)
+[@marcelovani](https://twitter.com/marcelovani "@marcelovani")
+
+[http://marcelovani.eu](http://marcelovani.eu)
+
 ### Dennis Publishing
 ![](http://cdn2.dennis.co.uk/sites/denniscorporate/themes/denniscorporate/logo.png)
