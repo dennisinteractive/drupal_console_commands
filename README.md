@@ -78,10 +78,8 @@ This will install the site and append the database credentials to the bottom of 
 So we need a way of putting these settings onto a separate file that will be included in settings.php, i.e.
 
 File: *web/sites/default/settings.php*
-.
-.
-.
 ```php
+...
 if (file_exists(__DIR__ . '/settings.db.php')) {
   include __DIR__ . '/settings.db.php';
 }
@@ -123,9 +121,7 @@ After playing with built in commands I started looking into building our custom 
 I did some research and found that to make the commands available in Drupal console, we need to list the classes in *~/.console/config.yml*. I have been chatting with [link](https://twitter.com/jmolivas "@jmolivas") and there are plans to have these classes automatically registered as a service https://github.com/hechoendrupal/DrupalConsole/issues/1947 
 But for now, the solution is to stick autowire at the bottom of *~/.console/config.yml*, i.e.
 ```javascript
-.
-.
-.
+...
 # Custom commands
   autowire:
     commands:
@@ -134,38 +130,41 @@ But for now, the solution is to stick autowire at the bottom of *~/.console/conf
           class: \VM\Console\Command\Develop\SiteCheckoutCommand
         _site_compose:
           class: \VM\Console\Command\Develop\SiteComposeCommand
-.
-.
-.
 ```
 
 Now the command appears in the list
 `drupal list site`
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/drupal-list-site-checkout.png)
 
 I implemented all commands from the list above but site:new. I came up with the idea of using chains to do it.
-Using chains
-Using chains to do what site:new does makes the pull request above redundant <--add link here-->, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher and by using chains, we can eliminate some redundant code. 
-File: chain-site-new.yml
+
+## 3. Using chains
+Using chains to do what *site:new* does makes the pull request above redundant <--add link here-->, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher and by using chains, we can eliminate some redundant code. 
+
+File: *chain-site-new.yml*
+```javascript
 commands:
 # Build from template
   - command: exec
     arguments:
       bin: 'composer create-project %{{project|dennisdigital/drupal-project:8.x-dev}}:%{{version|8.x-dev}} %{{directory|/vagrant/repos/new-site}} --stability dev --no-interaction'
 I am using placeholders for project, version and directory, if the values are omitted when using interactive mode, the default values (after |) will be used.
+```
 
-
-But there is a problem: Chain commands need --file argument to specify which file to execute which is not very convenient as we have to type too much.
+But there is a problem: Chain commands need *--file* argument to specify which file to execute which is not very convenient as we have to type too much.
 Imagine a developer wants to build a site using this chain, the command line would look like this:
-drupal chain --file=/some-folder/path-to-file/chain-site-new.yml
-
+drupal chain *--file=/some-folder/path-to-file/chain-site-new.yml*
 
 I wanted to register chain commands using the same discovery mechanism as normal commands. Registering commands as a service is work in progress, but I needed some way of registering them in the interim.
+
 Then I came up with the idea of creating a ChainRegister class https://github.com/dennisinteractive/DrupalConsole/blob/chain_register_beta5/src/Command/Chain/ChainRegister.php, which extends ChainCommand.
-It has a mechanism similar to what we currently do with custom commands (above), where you basically list the classes in ~/.console/chain.yml and the commands became available as normal commands. 
+
+It has a mechanism similar to what we currently do with custom commands (above), where you basically list the classes in *~/.console/chain.yml* and the commands became available as normal commands.
+
 This is a temporary solution until the work to register commands as services is finished.
 
-
-File: ~/console/chain.yml
+File: *~/console/chain.yml*
+```javascript
 # Custom chains
 chain:
   name:
@@ -173,36 +172,33 @@ chain:
       file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-new.yml'
     'site:new-install:
       file: '~/.config/composer/dev_scripts/vendor/dennisdigital/drupal_console_commands/config/chain/chain-site-new-install.yml'
+```
 
-
-How it works
+### How it works
 This will be loaded in the Application https://github.com/dennisinteractive/DrupalConsole/blob/chain_register_beta5/src/Application.php#L348 and passed to the constructor https://github.com/dennisinteractive/DrupalConsole/blob/chain_register_beta5/src/Command/Chain/ChainRegister.php
 
+With very few modifications to ChainCommand.php, I introduced a new property $file and a check for $name in *configure()* https://github.com/dennisinteractive/DrupalConsole/blob/chain_register_beta5/src/Command/Chain/ChainCommand.php#L43.
 
-With very few modifications to ChainCommand.php, I introduced a new property $file and a check for $name in configure() https://github.com/dennisinteractive/DrupalConsole/blob/chain_register_beta5/src/Command/Chain/ChainCommand.php#L43.
-
-
-That means, when you call chain commands the usual way with --file, the code will behave the same say as originally. But when the commands are passed via ChainRegister (chain.yml), $name and $file are passed via constructor and the --file is automatically done for you.
-
+That means, when you call chain commands the usual way with *--file*, the code will behave the same say as originally. But when the commands are passed via *ChainRegister* (chain.yml), $name and $file are passed via constructor and the *--file* is automatically done for you.
 
 The chain commands will appear
-drupal list chain
+`drupal list chain`
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/drupal-list-chain-site.png)
 
+No need to specify *--file* anymore
+`drupal chain:site:new`
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/chain-site-new.png)
 
-
-No need to specify --file anymore
-drupal chain:site:new
-
-
-
-On a hangout with @jmolivas I pitched the idea and he liked it, this can be used in conjunction with commands as a service. I created a pull request that can be merged to the latest dev https://github.com/hechoendrupal/DrupalConsole/pull/2961. This pull request doesn’t use chain.yml, but for our branch off 1.0.0-beta5 it is still needed.
-
+On a hangout with [link](https://twitter.com/jmolivas "@jmolivas") I pitched the idea and he liked it, this can be used in conjunction with commands as a service. I created a pull request that can be merged to the latest dev https://github.com/hechoendrupal/DrupalConsole/pull/2961. This pull request doesn’t use chain.yml, but for our branch off 1.0.0-beta5 it is still needed.
 
 What if I want to create a chain that will do two things: Create a new site and run site install. That means calling chain:site:new and then site:install from this new chain.
-Chain calling another chain (one may call it a “chain reaction”)
-It kind of works out of the box. You can call other chain commands using exec, but you have to specify all the arguments and options as --placeholder=”foo:bar”  (each of them.) and It’s not pretty..
+
+## 4. Chain calling another chain (one may call it a “chain reaction”)
+It kind of works out of the box. You can call other chain commands using exec, but you have to specify all the arguments and options as *--placeholder=”foo:bar”*  (each of them.) and It’s not pretty..
+
 Imagine for example that we want to call chain-site-new.yml from another chain:
-File: chain-site-new-install.yml
+File: *chain-site-new-install.yml*
+```javascript
 # Run chain-site-new and site:install
 commands:
   - command: exec
@@ -211,13 +207,13 @@ commands:
   - command: site:install
     arguments:
       profile: %{{profile|standard}}
-
-
+```
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/chain-site-new-install-file.png)
 
 Note that chain-site-new-install.yml asks 4 questions and uses 3 arguments to call chain-site-new.yml and 1 argument to call site:install
 
-
 With ChainRegister, this is how chain-site-new-install.yml would look
+```javascript
 # Run chain-site-new and site:install
 commands:
   - command: chain:site:new
@@ -229,109 +225,69 @@ commands:
   - command: site:install
     arguments:
       profile: 'profile:%{{profile|standard}}'
+```
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/chain-site-new-install.png)
 
 
-
-
-
-See it in action
+### See it in action
 Have a look at this article: Development workflow with Drupal console<--link--> where we introduce more custom commands and chains using ChainRegister.
 
 
-Roadmap
-database:restore
-Port the functionalities of site:db:import
-Add option to specify the path for the dump i.e. site.sql.gz
+## Roadmap
+**database:restore**
+Port the functionalities of *site:db:import*
+Add option to specify the path for the dump i.e. **site.sql.gz**
 
+**site:install**
+Port the functionalities of *site:settings:db*
+Add a new option to specify the filename to contain the db credentials, i.e. *settings.db.php*
 
-site:install
-Port the functionalities of site:settings:db
-Add a new option to specify the filename to contain the db credentials, i.e. settings.db.php
+**chain:site:new** will do the following:
+- Build site using Drupal project template
+- Create *~/.console/sites/site-name.yml* automatically
+- Call the command to generate *settings.db.php*
+- Run a site installation
 
+**site:checkout**
+- Pull the list of sites in the interactive mode, and a list of branches for the selected site: see `git ls-remote --heads <repo>`
+- Add option for: tag
+- Add option for: revision
 
-chain:site:new will do the following:
-Build site using Drupal project template
-Create ~/.console/sites/site-name.yml automatically
-Call the command to generate settings.db.php
-Run a site installation
-
-
-site:checkout
-Pull the list of sites in the interactive mode, and a list of branches for the selected site: see git ls-remote --heads <repo>
-Add option for: tag
-Add option for: revision
-
-
-Chain commands
+**Chain commands**
 When running chain commands within a site folder, don’t ask the site name, get it from the container.
-Ability to call chain commands with arguments and options without having to specify --placeholder i.e. --placeholder=”arg:foo” --placeholder=”option:bar” would became arg --option=bar
+Ability to call chain commands with arguments and options without having to specify *--placeholder* i.e. `--placeholder=”arg:foo” --placeholder=”option:bar”` would became `--option=bar`
 
 
-Related issues and Pull requests
-Site:new has hard coded value for project template https://github.com/hechoendrupal/DrupalConsole/issues/2949 
-Chain is parsing comments https://github.com/hechoendrupal/DrupalConsole/pull/2963 
-Chain with --no-interaction is broken https://github.com/hechoendrupal/DrupalConsole/issues/2964 
-Using variables and functions in yml https://github.com/hechoendrupal/DrupalConsole/issues/2267 
+## Related issues and Pull requests
+- *site:new* has hard coded value for project template https://github.com/hechoendrupal/DrupalConsole/issues/2949 
+- Chain is parsing comments https://github.com/hechoendrupal/DrupalConsole/pull/2963 
+- Chain with *--no-interaction* is broken https://github.com/hechoendrupal/DrupalConsole/issues/2964 
+- Using variables and functions in yml https://github.com/hechoendrupal/DrupalConsole/issues/2267 
 
+## Repos
+- Drupal Console https://github.com/hechoendrupal/DrupalConsole
+- Dev scripts https://github.com/dennisinteractive/dev_scripts
+- Drupal Console Commands: https://github.com/dennisinteractive/drupal_console_commands
+- Drupal Project: https://github.com/dennisinteractive/drupal-project
 
-Repos
-Drupal Console https://github.com/hechoendrupal/DrupalConsole
-Dev scripts https://github.com/dennisinteractive/dev_scripts
-Drupal Console Commands: https://github.com/dennisinteractive/drupal_console_commands
-Drupal Project: https://github.com/dennisinteractive/drupal-project
+## Issues
+- Use Chain as actual command https://github.com/hechoendrupal/DrupalConsole/issues/1898
+- Chain commands are not working when passing one placeholder and --no-interaction https://github.com/hechoendrupal/DrupalConsole/issues/2964
 
+## Pull requests
+- Chain Register: https://github.com/hechoendrupal/DrupalConsole/pull/2961
+- Comments in yml: https://github.com/hechoendrupal/DrupalConsole/pull/2963
 
-Issues
-Use Chain as actual command https://github.com/hechoendrupal/DrupalConsole/issues/1898
+## Chat about Drupal console
+- Drupal Console on Slack: https://drupal.slack.com/archives/drupal-console
+- Drupal Console on Gitter: https://gitter.im/hechoendrupal/DrupalConsole
 
+## About me
 
-Chain commands are not working when passing one placeholder and --no-interaction https://github.com/hechoendrupal/DrupalConsole/issues/2964
+![](http://marcelovani.eu/me-microsoft.JPG)
 
-
-Pull requests
-Chain Register: https://github.com/hechoendrupal/DrupalConsole/pull/2961
-Comments in yml: https://github.com/hechoendrupal/DrupalConsole/pull/2963
-
-
-Chat
-Drupal Console on Slack: https://drupal.slack.com/archives/drupal-console
-Drupal Console on Gitter: https://gitter.im/hechoendrupal/DrupalConsole
-
-
-
-
-About me
-
-
-
-
-
-
-
-
-
-
-
-
-Marcelo Vani
-Software engineer
-@marcelovani
-http://marcelovani.eu
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Marcelo Vani
+### Software engineer
+[link](https://twitter.com/marcelovani "@marcelovani")
+[link](http://marcelovani.eu)
 
