@@ -187,7 +187,7 @@ Supported extensions: **.sql**, **.sql.gz**.
 This command provides the same arguments and options as *site:db:settings*.
 
 
-## One command does all
+## Doing everything with a single command
 And finally, putting all together into one place. I created chain:site:build that contains calls to Drupal console commands, custom commands and calls to another chains:
 
 File: *chain-site-build.yml*
