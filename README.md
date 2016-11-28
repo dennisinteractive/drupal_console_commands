@@ -114,7 +114,7 @@ I decided to go with the second option for now and if that works, will do the pu
 ## 2. <a name="head-creating-custom-commands">Creating Custom commands.</a>
 After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we need the following:
 
-- **site:checkout** After the new site has been installed, the codebase committed, we need an easy way or running repo commands without having to type the repo’s URL every time, can you imagine how much copy and paste when working on so many sites? How about using the information that is already available on the site’s yml file <--link to ~/console/sites/subscriptions.yml above-->?
+- **site:checkout** After the new site has been installed, the codebase committed, we need an easy way or running repo commands without having to type the repo’s URL every time, can you imagine how much copy and paste when working on so many sites? How about using the information that is already available on the [site’s yml file](#file-subscriptions-yml)
 - **site:compose** This will take care of running composer install/update
 - **site:settings:db** This will take care of creating *settings.db.php* which will not be committed to the repo, but it will be inserted into *settings.php* as an include.
 - **site:db:import** This is a replacement for *database:restore* with some additional features, mentioned above, such as support to zipped files.
