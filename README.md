@@ -99,18 +99,19 @@ $databases['default']['default'] = array(
 );
 ```
 
-*database:restore*
+**database:restore**
 We store db dumps on a folder that is mounted and becomes accessible inside the VM, the files are stored in gzip format. The reason for that, obviously is to make the downloads faster, specially when working remotely.
 
 Our workflow involves copying the file inside the VM, unzipping and then importing. All of these steps cannot be handled by database:restore, so we might need to create a custom command to fulfill our needs.
 Another good idea is to only copy the dump from the server again once there is a new dump available. So the idea is to reuse the same local copy of the zipped dump on subsequent database restores.
 
 Since some of the functionalities that we need are not available out of the box, I have two options:
-Forking Drupal console and sending a pull request
+- Forking Drupal console and sending a pull request
+- Creating our own Custom commands
 
-## 2. Creating Custom commands.
 I decided to go with the second option for now and if that works, will do the pull request. Besides, at this stage I don’t know if our requirements are relevant for the rest of the community.
 
+## 2. Creating Custom commands.
 After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we need the following:
 
 - **site:checkout** After the new site has been installed, the codebase committed, we need an easy way or running repo commands without having to type the repo’s URL every time, can you imagine how much copy and paste when working on so many sites? How about using the information that is already available on the site’s yml file <--link to ~/console/sites/subscriptions.yml above-->?
@@ -153,7 +154,8 @@ I am using placeholders for project, version and directory, if the values are om
 
 But there is a problem: Chain commands need *--file* argument to specify which file to execute which is not very convenient as we have to type too much.
 Imagine a developer wants to build a site using this chain, the command line would look like this:
-drupal chain *--file=/some-folder/path-to-file/chain-site-new.yml*
+
+`drupal chain --file=/some-folder/path-to-file/chain-site-new.yml`
 
 I wanted to register chain commands using the same discovery mechanism as normal commands. Registering commands as a service is work in progress, but I needed some way of registering them in the interim.
 
@@ -197,6 +199,7 @@ What if I want to create a chain that will do two things: Create a new site and 
 It kind of works out of the box. You can call other chain commands using exec, but you have to specify all the arguments and options as *--placeholder=”foo:bar”*  (each of them.) and It’s not pretty..
 
 Imagine for example that we want to call chain-site-new.yml from another chain:
+
 File: *chain-site-new-install.yml*
 ```javascript
 # Run chain-site-new and site:install
