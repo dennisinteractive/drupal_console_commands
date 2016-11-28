@@ -12,7 +12,7 @@ We have more than 30 websites when doing development we need some simple way of 
 We needed a new way of doing this using Drupal console, but out of the box it doesn’t provide everything we need, so we thought about extending it.
 This is how we did it:
 
-- Using existing commands <--link to anchor-->
+- [Using existing commands](#head-using-existing-commands)
 - Creating custom commands <--link to anchor-->
 - Using chains <--link to anchor-->
 - Chain calling another chain <--link to anchor-->
@@ -63,7 +63,7 @@ One of the things that is definetely broken is the command site:new https://gith
 
 Still thinking about the development workflow, I started to explore the possibilities.
 
-## 1. Using existing commands
+## 1. <a name="head-using-existing-commands">Using existing commands<a/>
 **site:new <--add anchor here-->**
 As I mentioned above I am using Drupal console 1.0.0-beta5, that still provides this command. The problem with it is that I cannot use a different Drupal project template, it will start a new site using drupal-composer/drupal-project as it is hard coded here https://github.com/hechoendrupal/DrupalConsole/blob/1.0.0-rc5/src/Command/Site/NewCommand.php#L99.
 
