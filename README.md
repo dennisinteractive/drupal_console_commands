@@ -13,9 +13,9 @@ We needed a new way of doing this using Drupal console, but out of the box it do
 This is how we did it:
 
 - [Using existing commands](#head-using-existing-commands)
-- Creating custom commands <--link to anchor-->
-- Using chains <--link to anchor-->
-- Chain calling another chain <--link to anchor-->
+- [Creating custom commands](#head-creating-custom-commands)
+- [Using chains](#head-using-chains)
+- [Chain calling another chain](#head-chain-calling-chain)
 
 # Initial investigation
 I started by looking how Drupal console works, so I created the site configurations in ~/.console/sites/. This is an example that is shipped with Drupal console.
@@ -36,7 +36,7 @@ When I run drupal site:debug I can see the site in the list.
 I noticed that there were only few properties, and I was wondering if I could add more details about a site.
 Drupal console doesn’t care what key/values you add, so I went on and created this file with details about which repo to use, branch, database dump location, profile, etc.
 
-File: *~/console/sites/subscriptions.yml <--add anchor-->*
+<a name="file-subscriptions-yml">File:</a> *~/console/sites/subscriptions.yml
 ```javascript
 dev:
   name: Subscriptions
@@ -64,7 +64,7 @@ One of the things that is definetely broken is the command site:new https://gith
 Still thinking about the development workflow, I started to explore the possibilities.
 
 ## 1. <a name="head-using-existing-commands">Using existing commands<a/>
-**site:new <--add anchor here-->**
+<a name="cmd-site-new">**site:new**</a>
 As I mentioned above I am using Drupal console 1.0.0-beta5, that still provides this command. The problem with it is that I cannot use a different Drupal project template, it will start a new site using drupal-composer/drupal-project as it is hard coded here https://github.com/hechoendrupal/DrupalConsole/blob/1.0.0-rc5/src/Command/Site/NewCommand.php#L99.
 
 I implemented a new option to pass *--template* and sent a pull request https://github.com/hechoendrupal/DrupalConsole/issues/2949
@@ -111,7 +111,7 @@ Since some of the functionalities that we need are not available out of the box,
 
 I decided to go with the second option for now and if that works, will do the pull request. Besides, at this stage I don’t know if our requirements are relevant for the rest of the community.
 
-## 2. Creating Custom commands.
+## 2. <a name="head-creating-custom-commands">Creating Custom commands.</a>
 After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we need the following:
 
 - **site:checkout** After the new site has been installed, the codebase committed, we need an easy way or running repo commands without having to type the repo’s URL every time, can you imagine how much copy and paste when working on so many sites? How about using the information that is already available on the site’s yml file <--link to ~/console/sites/subscriptions.yml above-->?
@@ -139,7 +139,7 @@ Now the command appears in the list
 
 I implemented all commands from the list above but site:new. I came up with the idea of using chains to do it.
 
-## 3. Using chains
+## 3. <a name="head-using-chains">Using chains</a>
 Using chains to do what *site:new* does makes the pull request above redundant <--add link here-->, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher and by using chains, we can eliminate some redundant code. 
 
 File: *chain-site-new.yml*
@@ -195,7 +195,7 @@ On a hangout with [@jmolivas](https://twitter.com/jmolivas "@jmolivas") I pitche
 
 What if I want to create a chain that will do two things: Create a new site and run site install. That means calling chain:site:new and then site:install from this new chain.
 
-## 4. Chain calling another chain (one may call it a “chain reaction”)
+## 4. <a name="head-chain-calling-chain">Chain calling another chain</a> (one may call it a “chain reaction”)
 It kind of works out of the box. You can call other chain commands using exec, but you have to specify all the arguments and options as *--placeholder=”foo:bar”*  (each of them.) and It’s not pretty..
 
 Imagine for example that we want to call chain-site-new.yml from another chain:
