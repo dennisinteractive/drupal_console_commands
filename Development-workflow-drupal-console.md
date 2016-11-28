@@ -1,33 +1,38 @@
 # Development workflow with Drupal console
-Our development workflow in Drupal 7 is based on a bash script that does all sort of things, among them:
-Check out the site’s repo
-Run drush make
-Run npm and grunt
-Create symlinks
-Import the database
-Run updates
 
+Our development workflow in Drupal 7 is based on a bash script that does all sort of things, among them:
+- Check out the site’s repo
+- Run drush make
+- Run npm and grunt
+- Create symlinks
+- Import the database
+- Run updates
 
 Because it is a monolithic gismo, it’s not possible to only run commands individually, you get all or nothing. These scripts are managed by our DevOps which are quite happy to maintain and introduce new functionalities but this really should be a dev job and it should be done in PHP.
 
-
 Another thing that we desperately need to fix is the workflow for creating new sites. Every time we have a new site, it involves DevOps manually running a Drupal installation, creating the initial setup (without any template). They also have to manually configure all the Jenkins scripts because we don’t have a definition of site info in the shape of a file that will contain details that will be used to deploy the site.
+
 At the end, they will provide us the link to the new repo and a database dump that we will use to develop locally. The first thing we have to do is remove all the unneeded stuff.
 The whole process takes ages and it’s prone to human error.
 
+We always wanted to re-write it and now that Drupal console is the new trend, we saw an opportunity to extend it ([check this article to see how we extended Drupal console](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md)), keeping in mind what we were trying to improve:
+- [Easier way of starting new sites](#head-starting-new-sites)
+- [Easier way of working on existing sites](#head-existing-sites)
 
-We always wanted to re-write it and now that Drupal console is the new trend, we saw an opportunity to extend it (check this article to see how we extended Drupal console <--link-->), keeping in mind what we were trying to improve:
-Easier way of starting new sites <--link to anchor-->
-Easier way of working on existing sites <--link to anchor→
-Starting new sites
-
+## <a name="head-starting-new-sites">Starting new sites</a>
 
 I had a look at this Composer template for Drupal projects https://github.com/drupal-composer/drupal-project which apparently is what may people use. It kind of works but it’s really just a starting point.
+
 I was going to fork it when I found this fork by pfrenssen https://github.com/pfrenssen/drupal-project which has some nice additions like php unit and behat.
+
 There is a script handler that automates the creation of settings.php https://github.com/pfrenssen/drupal-project/blob/8.x/scripts/composer/ScriptHandler.php, since I liked this, I decided to fork it and add some extra bits.
-Now, the script handler will add the includes for local configurations, so you would commit settings.php but not the includes, since they are relevant to the environment only).These includes are also added to .gitignore.
-Here is how settings.php will be modified:
-File: web/sites/settings.php
+
+Now, the script handler will add the includes for local configurations, so you would commit settings.php but not the includes, since they are relevant to the environment only).These includes are also added to *.gitignore*.
+
+Here is how *settings.php* will be modified:
+
+File: *web/sites/settings.php*
+```php
 ...
 if (file_exists(__DIR__ . '/settings.local.php')) {
   include __DIR__ . '/settings.local.php';
@@ -41,14 +46,16 @@ if (file_exists(__DIR__ . '/settings.db.php')) {
 if (file_exists(__DIR__ . '/settings.dev.php')) {
   include __DIR__ . '/settings.dev.php';
 }
+```
 
+### 1. Start the site from a template
+I tried to use site:new out of the box but the project template is hard coded as **drupal-composer/drupal-project**. Then I started using our patched version of [*site:new*](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#cmd-site-new) but with [ChainRegister](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#how-it-works) I can create new sites using chain command: *chain:site:new*.
 
-1. Start the site from a template
-I tried to use site:new out of the box but the project template is hard coded as drupal-composer/drupal-project. Then I started using our patched version of site:new <--link to other blog#site:new--> but with ChainRegister <--link to other blog--> I can create new sites using chain command: chain:site:new.
-drupal chain:site:new
+`drupal chain:site:new`
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/1%20drupal%20chain-site-new.png)
 
  
-2. Push the code to the repo
+### 2. Push the code to the repo
 Now go into the site folder, edit composer.json, remove the ScriptHandler scripts, change all the details with the relevant information for the site. Commit the code.
  
 git init 
@@ -95,7 +102,7 @@ drupal database:dump --file=filename
 
 
 
-Working on existing sites
+## <a name="head-existing-sites">Working on existing sites</a>
 1. Listing available sites
 This command will list site information for all yml files found in ~/.console/sites.
 drupal site:debug
