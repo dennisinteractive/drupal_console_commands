@@ -311,7 +311,8 @@ Also, chain.yml will no longer be needed when we have commands as services https
 
 The provisioning will checkout the list of sites (yml) into *~/.console/sites* and we are ready to go.
 
-<--Video→
+<a href="https://www.youtube.com/watch?v=Y1Thr6qTvxg
+">![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/video.png)</a>
 
 ## Roadmap
 - Upgrade dev_scripts to use the latest Drupal console codebase (requires command as services, ability to install Drupal console commands globally, independent of drupal core)
