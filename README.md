@@ -110,20 +110,22 @@ Another good idea is to only copy the dump from the server again once there is a
 Since some of the functionalities that we need are not available out of the box, I have two options:
 Forking Drupal console and sending a pull request
 
-## 2. Creating our own Custom commands.
+## 2. Creating Custom commands.
 I decided to go with the second option for now and if that works, will do the pull request. Besides, at this stage I don’t know if our requirements are relevant for the rest of the community.
 
-
-Creating custom commands
 After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we need the following:
-site:checkout After the new site has been installed, the codebase committed, we need an easy way or running repo commands without having to type the repo’s URL every time, can you imagine how much copy and paste when working on so many sites? How about using the information that is already available on the site’s yml file <--link to ~/console/sites/subscriptions.yml above-->?
-site:compose This will take care of running composer install/update
-site:settings:db This will take care of creating settings.db.php which will not be committed to the repo, but it will be inserted into settings.php as an include.
-site:db:import This is a replacement for database:restore with some additional features, mentioned above, such as support to zipped files.
 
+- **site:checkout** After the new site has been installed, the codebase committed, we need an easy way or running repo commands without having to type the repo’s URL every time, can you imagine how much copy and paste when working on so many sites? How about using the information that is already available on the site’s yml file <--link to ~/console/sites/subscriptions.yml above-->?
+- **site:compose** This will take care of running composer install/update
+- **site:settings:db** This will take care of creating *settings.db.php* which will not be committed to the repo, but it will be inserted into *settings.php* as an include.
+- **site:db:import** This is a replacement for *database:restore* with some additional features, mentioned above, such as support to zipped files.
 
-I did some research and found that to make the commands available in Drupal console, we need to list the classes in ~/.console/config.yml. I have been chatting with @jmolivas and there are plans to have these classes automatically registered as a service https://github.com/hechoendrupal/DrupalConsole/issues/1947 
-But for now, the solution is to stick autowire at the bottom of ~/.console/config.yml, i.e.
+I did some research and found that to make the commands available in Drupal console, we need to list the classes in *~/.console/config.yml*. I have been chatting with [link](https://twitter.com/jmolivas "@jmolivas") and there are plans to have these classes automatically registered as a service https://github.com/hechoendrupal/DrupalConsole/issues/1947 
+But for now, the solution is to stick autowire at the bottom of *~/.console/config.yml*, i.e.
+```javascript
+.
+.
+.
 # Custom commands
   autowire:
     commands:
@@ -132,13 +134,13 @@ But for now, the solution is to stick autowire at the bottom of ~/.console/confi
           class: \VM\Console\Command\Develop\SiteCheckoutCommand
         _site_compose:
           class: \VM\Console\Command\Develop\SiteComposeCommand
-...
-
+.
+.
+.
+```
 
 Now the command appears in the list
-drupal list site
-
-
+`drupal list site`
 
 I implemented all commands from the list above but site:new. I came up with the idea of using chains to do it.
 Using chains
