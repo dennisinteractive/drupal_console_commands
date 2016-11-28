@@ -233,7 +233,7 @@ commands:
 
 
 ### See it in action
-Have a look at this article: Development workflow with Drupal console<--link--> where we introduce more custom commands and chains using ChainRegister.
+Have a look at this article: [Development workflow with Drupal console](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Development-workflow-drupal-console.md) where we introduce more custom commands and chains using ChainRegister.
 
 
 ## Roadmap
