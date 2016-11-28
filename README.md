@@ -290,4 +290,5 @@ Ability to call chain commands with arguments and options without having to spec
 ### Software engineer
 [link](https://twitter.com/marcelovani "@marcelovani")
 [link](http://marcelovani.eu)
-
+### Dennis Publishing
+![](http://cdn2.dennis.co.uk/sites/denniscorporate/themes/denniscorporate/logo.png)
