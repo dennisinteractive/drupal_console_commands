@@ -140,7 +140,7 @@ Now the command appears in the list
 I implemented all commands from the list above but site:new. I came up with the idea of using chains to do it.
 
 ## 3. <a name="head-using-chains">Using chains</a>
-Using chains to do what *site:new* does makes the pull request above redundant <--add link here-->, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher and by using chains, we can eliminate some redundant code. 
+Using chains to do what [*site:new*](#cmd-site-new) does makes the pull request above redundant, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher and by using chains, we can eliminate some redundant code. 
 
 File: *chain-site-new.yml*
 ```javascript
