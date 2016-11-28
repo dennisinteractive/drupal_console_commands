@@ -284,7 +284,7 @@ Ability to call chain commands with arguments and options without having to spec
 
 ## About me
 
-![](http://marcelovani.eu/me-microsoft.JPG)
+![](http://marcelovani.eu/images/me-350.jpg)
 
 ## Marcelo Vani
 ### Software engineer
