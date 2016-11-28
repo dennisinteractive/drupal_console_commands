@@ -52,25 +52,38 @@ if (file_exists(__DIR__ . '/settings.dev.php')) {
 I tried to use site:new out of the box but the project template is hard coded as **drupal-composer/drupal-project**. Then I started using our patched version of [*site:new*](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#cmd-site-new) but with [ChainRegister](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#how-it-works) I can create new sites using chain command: *chain:site:new*.
 
 `drupal chain:site:new`
-![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/1%20drupal%20chain-site-new.png)
 
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/1%20drupal%20chain-site-new.png)
  
 ### 2. Push the code to the repo
-Now go into the site folder, edit composer.json, remove the ScriptHandler scripts, change all the details with the relevant information for the site. Commit the code.
- 
+Now go into the site folder, edit composer.json, remove the **ScriptHandler** scripts, change all the details with the relevant information for the site.
+
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/2%20commit%20your%20code.png)
+
+Commit the code.
+
+```bash 
 git init 
 git add .  
 git remote add origin [url]
+```
 
-3. Create site-name.yml
-Now you can create ~/.console/sites/site-name.yml. I usually clone another yml as a starting point.
-See an example here <--link to subscriptions.yml on other article→
+### 3. Create site-name.yml
+Now you can create *~/.console/sites/site-name.yml*. I usually clone another yml as a starting point.
+[See an example here](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#file-subscriptions-yml)
 
-I have some plans to automate the generation of the yml file for the site based on the parameters used in chain:site:new.
-4. Db Settings
-This command will create settings.db.php on the same folder where settings.php is.
-drupal site:settings:db
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/3%20site.yml.png)
 
+I have some plans to automate the generation of the yml file for the site based on the parameters used in *chain:site:new*.
+
+### 4. Db Settings
+This command will create **settings.db.php** on the same folder where settings.php is.
+
+`drupal site:settings:db`
+
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/4%20db%20settings.png)
+
+```
 Arguments:
   name                                                 The site name that is mapped to a repo in sites.yml
   profile                                              commands.site.install.arguments.profile
@@ -92,22 +105,34 @@ Options:
       --account-name=ACCOUNT-NAME                      commands.site.install.arguments.account-name
       --account-mail=ACCOUNT-MAIL                      commands.site.install.arguments.account-mail
       --account-pass=ACCOUNT-PASS                      commands.site.install.arguments.account-pass
-5. Site install
+```
+
+### 5. Site install
 Now it’s time to install the site, it can be done either via Browser, using Drupal console or Drush. Go inside the site’s folder and run:
-drupal site:install profile-name
 
-6. Database dump
+`drupal site:install profile-name`
+
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/5%20site%20install.png)
+
+### 6. Database dump
 This can be done either using Drupal console or Drush. Go inside the site’s folder and run:
-drupal database:dump --file=filename 
 
+`drupal database:dump --file=filename`
+
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/new%20sites/6%20db%20dump.png)
 
 
 ## <a name="head-existing-sites">Working on existing sites</a>
-1. Listing available sites
-This command will list site information for all yml files found in ~/.console/sites.
-drupal site:debug
 
-2. Checking out a repo
+### 1. Listing available sites
+
+This command will list site information for all yml files found in *~/.console/sites*.
+
+`drupal site:debug`
+
+![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/existing%20sites/1%20site%20debug.png)
+
+### 2. Checking out a repo
 This command will checkout the repo configured in ~/.console/sites.
 
 
