@@ -1,6 +1,6 @@
 # Extending Drupal console
 
-We have more than 30 websites when doing development we need some simple way of running commands without having to type too much. Our previous development workflow involved using some bash scripts to do things like:
+We have more than 30 websites when doing development, and we needed some simple way of running commands without having to type too much. Our previous development workflow involved using some bash scripts to do things like:
 
 - Check out the site’s repo
 - Run drush make
@@ -181,7 +181,7 @@ This will be loaded in the Application https://github.com/dennisinteractive/Drup
 
 With very few modifications to ChainCommand.php, I introduced a new property $file and a check for $name in *configure()* https://github.com/dennisinteractive/DrupalConsole/blob/chain_register_beta5/src/Command/Chain/ChainCommand.php#L43.
 
-That means, when you call chain commands the usual way with *--file*, the code will behave the same say as originally. But when the commands are passed via *ChainRegister* (chain.yml), $name and $file are passed via constructor and the *--file* is automatically done for you.
+That means, when you call chain commands the usual way with *--file*, the code will behave the same way as originally. But when the commands are passed via *ChainRegister* (chain.yml), $name and $file are passed via constructor and the *--file* is automatically done for you.
 
 The chain commands will appear
 `drupal list chain`
