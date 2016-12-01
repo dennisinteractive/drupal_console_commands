@@ -96,7 +96,7 @@ class SiteBaseCommand extends Command {
 
     $name = $input->getArgument('name');
     if (!$name) {
-        $name = $this->io->ask($this->trans('Site name (In small letters, no spaces)'));
+        $name = $this->io->ask($this->trans('Site name (In small letters. Don\'t use spaces or hyphens, use underlines.)'));
 
         $input->setArgument('name', $name);
     }
