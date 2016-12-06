@@ -72,11 +72,11 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
 
     // Override default values for these options (if empty).
     $override = array(
-      'db-name' => $this->siteName,
-      'db-user' => 'root',
-      'db-host' => '127.0.0.1',
-      'db-port' => 3306,
-      'db-type' => 'mysql',
+      'db-name' => $this->config['db']['db-name'],
+      'db-user' => $this->config['db']['db-user'],
+      'db-host' => $this->config['db']['db-host'],
+      'db-port' => $this->config['db']['db-port'],
+      'db-type' => $this->config['db']['db-type'],
     );
 
     foreach ($this->getDefinition()->getOptions() as $option) {
@@ -128,8 +128,9 @@ EOF;
       );
     }
     else {
-      throw new SiteCommandException('Error generating %s',
-        $file
+      throw new SiteCommandException(sprintf('Error generating %s',
+          $file
+        )
       );
     }
   }

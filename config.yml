@@ -12,4 +12,6 @@
                     class: \VM\Console\Command\Develop\SiteSettingsMemcacheCommand
                 _site_db_import:
                     class: \VM\Console\Command\Develop\SiteDbImportCommand
+                _site_behat_setup:
+                    class: \VM\Console\Command\Develop\SiteBehatSetupCommand
             name: { }

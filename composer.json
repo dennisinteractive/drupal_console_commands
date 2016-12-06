@@ -15,5 +15,8 @@
     "psr-4": {
       "VM\\": "src"
     }
+  },
+  "require": {
+    "symfony/filesystem": "^3.2"
   }
 }

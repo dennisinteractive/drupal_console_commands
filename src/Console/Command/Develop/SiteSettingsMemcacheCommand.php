@@ -158,8 +158,9 @@ EOF;
       );
     }
     else {
-      throw new SiteCommandException('Error generating %s',
-        $file
+      throw new SiteCommandException(sprintf('Error generating %s',
+          $file
+        )
       );
     }
   }
