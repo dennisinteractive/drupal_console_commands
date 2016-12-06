@@ -17,6 +17,6 @@
     }
   },
   "require": {
-    "symfony/filesystem": "^3.2"
+    "symfony/filesystem": "~2.8"
   }
 }
