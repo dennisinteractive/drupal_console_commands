@@ -2,9 +2,9 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteBehatSetupCommand.
+ * Contains \VM\Console\Develop\SiteBaseConfigCommand.
  *
- * Create behat.yml from template.
+ * Create configuration file from template.
  */
 
 namespace VM\Console\Command\Develop;
@@ -21,7 +21,7 @@ use Drupal\Console\Command\Site\InstallCommand;
 use VM\Console\Command\Exception\SiteCommandException;
 
 /**
- * Class SiteBehatSetupCommand
+ * Class SiteBaseConfigCommand
  *
  * @package VM\Console\Command\Develop
  */
@@ -96,7 +96,7 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
       throw new SiteCommandException($message);
     }
 
-    // Make sure behat.yml doesn't exist.
+    // Make sure filename doesn't exist.
     if (file_exists($this->filename)) {
       $fs = new Filesystem();
       $fs->remove(array($this->filename));
