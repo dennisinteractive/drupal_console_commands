@@ -44,19 +44,24 @@ class SitePHPUnitSetupCommand extends SiteBaseConfigCommand {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    if (empty($this->config['db']['db-url'])) {
-      // Create db-url if it hasn't been provided.
-      // e.g. mysql://username:password@localhost/databasename
+    // Setup default scheme to http if not specified.
+    if (empty($this->config['scheme'])) {
+      $this->runtimeConfig['scheme'] = 'http';
+    }
+
+    // Create db-url if it hasn't been provided.
+    // e.g. mysql://username:password@localhost/databasename
+    if (empty($this->config['db']['url'])) {
       $password = '';
-      if (!empty($this->config['db']['db-password'])) {
-        $password = ':' . $this->config['db']['db-password'];
+      if (!empty($this->config['db']['password'])) {
+        $password = ':' . $this->config['db']['password'];
       }
-      $this->config['db']['db-url'] = sprintf('%s://%s%s@%s/%s',
-        $this->config['db']['db-type'],
-        $this->config['db']['db-user'],
+      $this->runtimeConfig['db']['url'] = sprintf('%s://%s%s@%s/%s',
+        $this->config['db']['type'],
+        $this->config['db']['user'],
         $password,
-        $this->config['db']['db-host'],
-        $this->config['db']['db-name']);
+        $this->config['db']['host'],
+        $this->config['db']['name']);
     }
     parent::execute($input, $output);
   }

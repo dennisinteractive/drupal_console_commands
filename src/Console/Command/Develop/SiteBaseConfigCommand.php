@@ -16,7 +16,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Drupal\Console\Command\Site\InstallCommand;
 use VM\Console\Command\Exception\SiteCommandException;
 
@@ -26,6 +25,13 @@ use VM\Console\Command\Exception\SiteCommandException;
  * @package VM\Console\Command\Develop
  */
 class SiteBaseConfigCommand extends SiteBaseCommand {
+
+  /**
+   * Config that is generated at runtime.
+   *
+   * @var array
+   */
+  protected $runtimeConfig = array();
 
   /**
    * The file name to generate.
@@ -103,8 +109,7 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
     }
 
     $content = file_get_contents($this->template);
-
-    $placeholderMap = $this->config;
+    $placeholderMap = $this->getFlatternedConfigArray();
     $placeHolderData = new ArrayDataSource($placeholderMap);
     $placeholderResolver = new RegexPlaceholderResolver($placeHolderData);
     $content = $placeholderResolver->resolvePlaceholder($content);
@@ -123,5 +128,24 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
         )
       );
     }
+  }
+
+  /**
+   * Returns config flatten in dot notation.
+   *
+   * @return array
+   */
+  protected function getFlatternedConfigArray() {
+    $config = array_merge_recursive($this->config, $this->runtimeConfig);
+    $ritit = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($config));
+    $flattened = array();
+    foreach ($ritit as $leafValue) {
+      $keys = array();
+      foreach (range(0, $ritit->getDepth()) as $depth) {
+        $keys[] = $ritit->getSubIterator($depth)->key();
+      }
+      $flattened[ join('.', $keys) ] = $leafValue;
+    }
+    return $flattened;
   }
 }

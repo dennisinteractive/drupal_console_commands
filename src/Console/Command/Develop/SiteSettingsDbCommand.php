@@ -72,11 +72,11 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
 
     // Override default values for these options (if empty).
     $override = array(
-      'db-name' => $this->config['db']['db-name'],
-      'db-user' => $this->config['db']['db-user'],
-      'db-host' => $this->config['db']['db-host'],
-      'db-port' => $this->config['db']['db-port'],
-      'db-type' => $this->config['db']['db-type'],
+      'db-name' => $this->config['db']['name'],
+      'db-user' => $this->config['db']['user'],
+      'db-host' => $this->config['db']['host'],
+      'db-port' => $this->config['db']['port'],
+      'db-type' => $this->config['db']['type'],
     );
 
     foreach ($this->getDefinition()->getOptions() as $option) {
