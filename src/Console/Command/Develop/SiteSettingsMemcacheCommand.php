@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteSettingsMemcacheCommand.
+ * Contains \VM\Console\Command\Develop\SiteSettingsMemcacheCommand.
  *
  * Creates Memcache configurations.
  */

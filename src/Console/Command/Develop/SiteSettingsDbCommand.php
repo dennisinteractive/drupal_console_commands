@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteSettingsDbCommand.
+ * Contains \VM\Console\Command\Develop\SiteSettingsDbCommand.
  *
  * Create Db configurations.
  */

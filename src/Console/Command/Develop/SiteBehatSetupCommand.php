@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteBehatSetupCommand.
+ * Contains \VM\Console\Command\Develop\SiteBehatSetupCommand.
  *
  * Create behat.yml from template.
  */

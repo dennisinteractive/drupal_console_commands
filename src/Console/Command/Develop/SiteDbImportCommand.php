@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteDbImportCommand.
+ * Contains \VM\Console\Command\Develop\SiteDbImportCommand.
  *
  * Imports local dumps or installs a fresh site if no dump is found.
  */

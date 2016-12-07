@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteComposeCommand.
+ * Contains \VM\Console\Command\Develop\SiteComposeCommand.
  *
  * Runs composer installer.
  */

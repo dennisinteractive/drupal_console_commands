@@ -2,15 +2,12 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SitePHPUnitSetupCommand.
+ * Contains \VM\Console\Command\Develop\SitePHPUnitSetupCommand.
  *
  * Create phpunit.xml from template.
  */
 
 namespace VM\Console\Command\Develop;
-
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class SitePHPUnitSetupCommand
@@ -43,7 +40,7 @@ class SitePHPUnitSetupCommand extends SiteBaseConfigCommand {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function generateConfigFile() {
     // Setup default scheme to http if not specified.
     if (empty($this->config['scheme'])) {
       $this->runtimeConfig['scheme'] = 'http';
@@ -63,6 +60,7 @@ class SitePHPUnitSetupCommand extends SiteBaseConfigCommand {
         $this->config['db']['host'],
         $this->config['db']['name']);
     }
-    parent::execute($input, $output);
+
+    parent::generateConfigFile();
   }
 }

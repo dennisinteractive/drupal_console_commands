@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteCheckoutCommand.
+ * Contains \VM\Console\Command\Develop\SiteCheckoutCommand.
  *
  * Does repo checkouts.
  */

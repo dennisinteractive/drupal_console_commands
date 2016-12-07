@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteBaseCommand.
+ * Contains \VM\Console\Command\Develop\SiteBaseCommand.
  *
  * Base class for site commands.
  */

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \VM\Console\Develop\SiteBaseConfigCommand.
+ * Contains \VM\Console\Command\Develop\SiteBaseConfigCommand.
  *
  * Create configuration file from template.
  */
@@ -90,7 +90,16 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
+    // Generate config file from template.
+    $this->generateConfigFile();
+  }
 
+  /**
+   * Generates config file from template.
+   *
+   * @throws \VM\Console\Command\Exception\SiteCommandException
+   */
+  protected function generateConfigFile() {
     $this->template = $this->destination . $this->template;
     $this->filename = $this->destination . $this->filename;
 
@@ -124,7 +133,7 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
     }
     else {
       throw new SiteCommandException(sprintf('Error generating %s',
-        $this->filename
+          $this->filename
         )
       );
     }
