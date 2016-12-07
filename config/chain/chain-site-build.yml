@@ -30,6 +30,10 @@ commands:
       db-pass: ''
       db-host: '127.0.0.1'
       db-port: '3306'
+# Create phpunit.xml
+  - command: site:phpunit:setup
+    arguments:
+      name: '%{{name}}'
 # Create settings.memcache.php
   - command: site:settings:memcache
     arguments:
