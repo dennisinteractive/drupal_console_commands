@@ -17,6 +17,7 @@
     }
   },
   "require": {
-    "symfony/filesystem": "~2.8"
+    "symfony/filesystem": "~2.8",
+    "dflydev/placeholder-resolver": "^1.0"
   }
 }
