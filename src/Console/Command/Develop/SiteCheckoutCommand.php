@@ -260,7 +260,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    * @throws SiteCommandException
    */
   protected function gitCheckout($branch, $destination) {
-    $command = sprintf('cd %s; git checkout -B %s',
+    $command = sprintf('cd %s; git fetch --all; git checkout %s',
       $destination,
       $branch
     );
