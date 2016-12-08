@@ -9,7 +9,10 @@ We have over 25 sites running off our Drupal 7 distribution and automate some of
 - Import databases
 - Run updates
 
-We needed a new way of doing this using Drupal console, but out of the box it doesn’t provide everything we need, so we thought about extending it.
+As we began looking towards Drupal 8, we looked for ways we could improve our development workflow and toolset, with a view towards improving efficiency and productivity. More specifically related to this post, improving the process of building a site on our VMs and environments, with as little manual work as possible. 
+
+We decided to explore this using Drupal Console (https://drupalconsole.com/), which is a CLI tool to interact and debug Drupal websites. While it met most of our needs, we thought about extending it to allow the creation of global custom commands and use chain commands more easily.
+
 This is how we did it:
 
 - [Using existing commands](#head-using-existing-commands)
