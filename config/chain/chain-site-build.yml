@@ -34,6 +34,10 @@ commands:
   - command: site:phpunit:setup
     arguments:
       name: '%{{name}}'
+# Create behat.yml
+  - command: site:behat:setup
+    arguments:
+      name: '%{{name}}'
 # Create settings.memcache.php
   - command: site:settings:memcache
     arguments:
