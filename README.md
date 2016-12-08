@@ -32,6 +32,10 @@ These are custom commands used to build a site. The information about the site c
 	Runs *composer install*. Alternatively, it will run *composer update* if there is a composer.lock.
 - drupal **site:settings:db** *site-name*
 	Creates *settings.db.php* in the *web/sites/default* folder. This file contains DB credentials and should not be committed.
+- drupal **site:phpunit:setup** *site-name*
+	Creates *phpunit.xml* in the root. This file contains PHPUnit configuration and should not be committed.
+- drupal **site:behat:setup** *site-name*
+	Creates *behat.yml* in the *tests* folder. This file contains Behat configuration and should not be committed.
 - drupal **site:settings:memcache** *site-name*
 	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
 - drupal **site:db:import** *site-name*
