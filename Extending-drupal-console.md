@@ -1,12 +1,12 @@
 # Extending Drupal console
 
-We have more than 30 websites when doing development, and we needed some simple way of running commands without having to type too much. Our previous development workflow involved using some bash scripts to do things like:
+We have over 25 sites running off our Drupal 7 distribution and automate some of the tasks needed for development using a series of bash scripts. E.g.
 
 - Check out the site’s repo
 - Run drush make
-- Run npm and grunt
+- Run npm and grunt tasks
 - Create symlinks
-- Import the database
+- Import databases
 - Run updates
 
 We needed a new way of doing this using Drupal console, but out of the box it doesn’t provide everything we need, so we thought about extending it.
