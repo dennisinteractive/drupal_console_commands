@@ -33,11 +33,12 @@ dev:
   console: /usr/local/bin/drupal
 ```
 
-When I run drupal site:debug I can see the site in the list.
+The above properties you can view by running site debug with the site name e.g. drupal site:debug drupalvm
+
+I noticed that there were only few properties, and I was wondering if I could add more details about a site so that we could use Drupal Console to reduce the amount of commands our developers would need to type when building a site. E.g.instead of the following command  (git clone https://github.com/dennisinteractive/subscriptions.git --branch 8.x /var/www/subscriptions), use drupal site:checkout subscriptions
 
 
-I noticed that there were only few properties, and I was wondering if I could add more details about a site.
-Drupal console doesn’t care what key/values you add, so I went on and created this file with details about which repo to use, branch, database dump location, profile, etc.
+Drupal console doesn’t care what key/values you add, so I went on and created the yml file below with details about which repo to use, branch, database dump location, profile, etc.
 
 <a name="file-subscriptions-yml">File:</a> *~/console/sites/subscriptions.yml
 ```javascript
