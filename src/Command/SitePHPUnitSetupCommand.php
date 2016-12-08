@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SitePHPUnitSetupCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SitePHPUnitSetupCommand.
  *
  * Create phpunit.xml from template.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 /**
  * Class SitePHPUnitSetupCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SitePHPUnitSetupCommand extends SiteBaseConfigCommand {
 

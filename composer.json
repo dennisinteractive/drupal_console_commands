@@ -1,23 +1,23 @@
 {
-  "name": "dennisdigital/drupal_console_commands",
-  "description": "Custom commands for Drupal console.",
-  "keywords": [
-    "Drupal",
-    "Console",
-    "Development",
-    "Symfony"
-  ],
-  "type": "project",
-  "license": "GPL-2.0+",
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "autoload": {
-    "psr-4": {
-      "VM\\": "src"
+    "name": "dennisdigital/drupal_console_commands",
+    "description": "Custom commands for Drupal console.",
+    "type": "drupal-console-library",
+    "license": "GPL-2.0+",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "keywords": [
+      "Drupal",
+      "Console",
+      "Development",
+      "Symfony"
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {"DennisDigital\\Drupal\\Console\\Command\\": "src"}
+    },
+    "require-dev": {
+        "drupal/console-core": "~1.0",
+        "symfony/filesystem": "~2.8",
+        "dflydev/placeholder-resolver": "^1.0"
     }
-  },
-  "require": {
-    "symfony/filesystem": "~2.8",
-    "dflydev/placeholder-resolver": "^1.0"
-  }
 }

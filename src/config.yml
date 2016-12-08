@@ -1,0 +1,19 @@
+application:
+  autowire:
+    commands:
+      forced:
+        'site:checkout':
+          class: \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand
+        'site:compose':
+          class: \DennisDigital\Drupal\Console\Command\SiteComposeCommand
+        'site:settings:db':
+          class: \DennisDigital\Drupal\Console\Command\SiteSettingsDbCommand
+        'site:settings:memcache':
+          class: \DennisDigital\Drupal\Console\Command\SiteSettingsMemcacheCommand
+        'site:db:import':
+          class: \DennisDigital\Drupal\Console\Command\SiteDbImportCommand
+        'site:behat:setup':
+          class: \DennisDigital\Drupal\Console\Command\SiteBehatSetupCommand
+        'site:phpunit:setup':
+          class: \DennisDigital\Drupal\Console\Command\SitePHPUnitSetupCommand
+      name: { }

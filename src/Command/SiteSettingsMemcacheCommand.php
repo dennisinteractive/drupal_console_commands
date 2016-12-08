@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteSettingsMemcacheCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteSettingsMemcacheCommand.
  *
  * Creates Memcache configurations.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteSettingsMemcacheCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteSettingsMemcacheCommand extends SiteBaseCommand {
 

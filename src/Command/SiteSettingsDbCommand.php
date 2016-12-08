@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteSettingsDbCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteSettingsDbCommand.
  *
  * Create Db configurations.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Drupal\Console\Command\Site\InstallCommand;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteSettingsDbCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteSettingsDbCommand extends SiteBaseCommand {
 

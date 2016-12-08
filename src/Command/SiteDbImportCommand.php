@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteDbImportCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteDbImportCommand.
  *
  * Imports local dumps or installs a fresh site if no dump is found.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteDbImportCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteDbImportCommand extends SiteBaseCommand {
   /**

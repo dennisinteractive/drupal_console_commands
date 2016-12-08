@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteBaseConfigCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteBaseConfigCommand.
  *
  * Create configuration file from template.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 use Dflydev\PlaceholderResolver\DataSource\ArrayDataSource;
 use Dflydev\PlaceholderResolver\RegexPlaceholderResolver;
@@ -17,12 +17,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Drupal\Console\Command\Site\InstallCommand;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteBaseConfigCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteBaseConfigCommand extends SiteBaseCommand {
 
@@ -97,7 +97,7 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
   /**
    * Generates config file from template.
    *
-   * @throws \VM\Console\Command\Exception\SiteCommandException
+   * @throws \DennisDigital\Drupal\Console\Exception\SiteCommandException
    */
   protected function generateConfigFile() {
     $this->template = $this->destination . $this->template;

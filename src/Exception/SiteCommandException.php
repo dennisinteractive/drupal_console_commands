@@ -4,7 +4,7 @@
  * Contains \VM\Console\Exception\SiteCommandException.
  */
 
-namespace VM\Console\Command\Exception;
+namespace DennisDigital\Drupal\Console\Exception;
 
 /**
  * Exception for failed command.

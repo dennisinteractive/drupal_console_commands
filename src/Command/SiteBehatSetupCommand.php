@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteBehatSetupCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteBehatSetupCommand.
  *
  * Create behat.yml from template.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 /**
  * Class SiteBehatSetupCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteBehatSetupCommand extends SiteBaseConfigCommand {
 

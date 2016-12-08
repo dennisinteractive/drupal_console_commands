@@ -2,30 +2,24 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteBaseCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteBaseCommand.
  *
  * Base class for site commands.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Validator\Constraints;
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Drupal\Console\Command\Shared\CommandTrait;
 use Drupal\Console\Style\DrupalStyle;
-use Drupal\Console\Config;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteBaseCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteBaseCommand extends Command {
   use CommandTrait;

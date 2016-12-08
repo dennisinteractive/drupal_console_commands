@@ -2,23 +2,21 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteCheckoutCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand.
  *
  * Does repo checkouts.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteCheckoutCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteCheckoutCommand extends SiteBaseCommand {
 
@@ -43,7 +41,6 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     parent::configure();
 
     $this->setName('site:checkout')
-      // @todo use: ->setDescription($this->trans('commands.site.checkout.description'))
       ->setDescription('Checkout a repo');
 
     // Custom options.
@@ -51,13 +48,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         'ignore-changes',
         '',
         InputOption::VALUE_NONE,
-        // @todo use: $this->trans('commands.site.checkout.ignore-changes')
         'Ignore local changes when checking out the site'
       )->addOption(
         'branch',
         '-B',
         InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.checkout.branch')
         'Specify which branch to checkout if different than the global branch found in sites.yml'
       );
   }
