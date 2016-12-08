@@ -56,9 +56,10 @@ dev:
   db-dump: /mnt/nfs/Drupal/sql/d8_subscriptions-latest.sql.gz
 ```
 
-In order to create some custom commands, I need Drupal console to run globally, which means it is installed on my home folder and my commands can be executed independently, with no need of having Drupal core installed.
+In order to create some custom commands, I needed Drupal console to run globally. This requires it to be installed on my home folder, for my commands to be executed without the  need of having Drupal core installed.
 
-Initially I tried to use the latest release 1.0.0-rc9 but things are moving too fast in Drupal console world, since 1.0.0-beta5 they started to remove some code from DrupalConsole https://github.com/hechoendrupal/DrupalConsole and move to separate repos, amongst them: 
+Initially I tried to use the latest release 1.0.0-rc9, but things are moving too fast in Drupal console world. Since 1.0.0-beta5 lots had changed and some code from Drupal Console (https://github.com/hechoendrupal/DrupalConsole ) moved to separate  repos. e.g.
+
 - Drupal Console Core https://github.com/hechoendrupal/drupal-console-core
 - Drupal Console Launcher https://github.com/hechoendrupal/drupal-console-launcher
 
