@@ -21,7 +21,7 @@ This is how we did it:
 - [Chain calling another chain](#head-chain-calling-chain)
 
 # Initial investigation
-I started by looking how Drupal console works, so I created the site configurations in ~/.console/sites/. This is an example that is shipped with Drupal console.
+To understand more about how Drupal Console works, I used the example shipped with Drupal Console to create a site configuration in the following location ~/.console/sites/.
 
 File: *drupalvm.yml*
 ```javascript
