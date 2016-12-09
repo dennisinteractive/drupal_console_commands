@@ -14,6 +14,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Drupal\Console\Command\Site\InstallCommand;
+use Drupal\Console\Utils\ConfigurationManager;
+use Drupal\Console\Extension\Manager;
+use Drupal\Console\Utils\Site;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
