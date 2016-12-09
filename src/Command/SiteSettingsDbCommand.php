@@ -31,6 +31,26 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
   protected $filename = 'settings.db.php';
 
   /**
+   * InstallCommand constructor.
+   * @param Manager              $extensionManager
+   * @param Site                 $site
+   * @param ConfigurationManager $configurationManager
+   * @param string               $appRoot
+   */
+  public function __construct(
+    Manager $extensionManager,
+    Site $site,
+    ConfigurationManager $configurationManager,
+    $appRoot
+  ) {
+    $this->extensionManager = $extensionManager;
+    $this->site = $site;
+    $this->configurationManager = $configurationManager;
+    $this->appRoot = $appRoot;
+    parent::__construct();
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function configure() {
