@@ -15,7 +15,7 @@
         "psr-4": {"DennisDigital\\Drupal\\Console\\": "src"}
     },
     "require": {
-        "drupal/console": "~1.0",
+        "drupal/console": "1.0.0-rc10",
         "drupal/console-core": "~1.0",
         "symfony/filesystem": "~2.8",
         "dflydev/placeholder-resolver": "^1.0"
