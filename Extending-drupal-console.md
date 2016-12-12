@@ -165,7 +165,7 @@ Then I came up with the idea of creating a ChainRegister class https://github.co
 
 It has a mechanism similar to what we currently do with custom commands (above), where you basically list the classes in *~/.console/chain.yml* and the commands became available as normal commands.
 
-This is a temporary solution until the work to register commands as services is finished.
+This was a temporary solution until the work to register commands as services is finished.
 
 File: *~/console/chain.yml*
 ```javascript
@@ -193,14 +193,14 @@ No need to specify *--file* anymore
 `drupal chain:site:new`
 ![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/chain-site-new.png)
 
-On a hangout with [@jmolivas](https://twitter.com/jmolivas "@jmolivas") I pitched the idea and he liked it, this can be used in conjunction with commands as a service. I created a pull request that can be merged to the latest dev https://github.com/hechoendrupal/DrupalConsole/pull/2961. This pull request doesn’t use chain.yml, but for our branch off 1.0.0-beta5 it is still needed.
+On a hangout with [@jmolivas](https://twitter.com/jmolivas "@jmolivas") I pitched the idea and he liked it. This can can be used in conjunction with commands as a service. I created a pull request that can be merged to the latest dev https://github.com/hechoendrupal/DrupalConsole/pull/2961. This pull request doesn’t use chain.yml, but for our branch off 1.0.0-beta5 it is still needed.
 
-What if I want to create a chain that will do two things: Create a new site and run site install. That means calling chain:site:new and then site:install from this new chain.
+But what if I want to create a chain that will do two things? e.g. create a new site and run site install. That means calling chain:site:new and then site:install from this new chain.
 
 ## 4. <a name="head-chain-calling-chain">Chain calling another chain</a> (one may call it a “chain reaction”)
-It kind of works out of the box. You can call other chain commands using exec, but you have to specify all the arguments and options as *--placeholder=”foo:bar”*  (each of them.) and It’s not pretty..
+At the time of experimenting, some bits worked out of the box. You could call other chain commands using exec, but you had to specify all the arguments and options as *--placeholder=”foo:bar”* (each of them.), which was not very pretty.
 
-Imagine for example that we want to call chain-site-new.yml from another chain:
+E.g. Imagine for example that we want to call chain-site-new.yml from another chain:
 
 File: *chain-site-new-install.yml*
 ```javascript
