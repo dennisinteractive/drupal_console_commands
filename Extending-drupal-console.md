@@ -116,12 +116,13 @@ I decided to go with the second option for now and if that worked, issue a pull 
 ## 2. <a name="head-creating-custom-commands">Creating Custom commands.</a>
 After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we need the following:
 
-- **site:checkout** After the new site has been installed, the codebase committed, we need an easy way or running repo commands without having to type the repo’s URL every time, can you imagine how much copy and paste when working on so many sites? How about using the information that is already available on the [site’s yml file](#file-subscriptions-yml)
+- **site:checkout** After the new site has been installed and the codebase committed, we needed an easy way of running repo commands without having to type the repo’s URL every time. Instead of the copying and pasting that occurs when working across the many sites that we have, we thought about using information that is already available on the [site’s yml file](#file-subscriptions-yml)
 - **site:compose** This will take care of running composer install/update
 - **site:settings:db** This will take care of creating *settings.db.php* which will not be committed to the repo, but it will be inserted into *settings.php* as an include.
 - **site:db:import** This is a replacement for *database:restore* with some additional features, mentioned above, such as support to zipped files.
 
-I did some research and found that to make the commands available in Drupal console, we need to list the classes in *~/.console/config.yml*. I have been chatting with [@jmolivas](https://twitter.com/jmolivas "@jmolivas") and there are plans to have these classes automatically registered as a service https://github.com/hechoendrupal/DrupalConsole/issues/1947 
+I did some research and found that to make the commands available in Drupal console, we needed to list the classes in *~/.console/config.yml*. I have been chatting with [@jmolivas](https://twitter.com/jmolivas "@jmolivas")and at the time, there were plans to have these classes automatically registered as a service. See  https://github.com/hechoendrupal/DrupalConsole/issues/1947. 
+
 But for now, the solution is to stick autowire at the bottom of *~/.console/config.yml*, i.e.
 ```javascript
 ...
