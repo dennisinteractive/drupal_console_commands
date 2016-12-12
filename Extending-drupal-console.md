@@ -13,13 +13,6 @@ As we began looking towards Drupal 8, we looked for ways we could improve our de
 
 We decided to explore this using Drupal Console (https://drupalconsole.com/), which is a CLI tool to interact and debug Drupal websites. While it met most of our needs, we thought about extending it to allow the creation of global custom commands and use chain commands more easily.
 
-This is how we did it:
-
-- [Using existing commands](#head-using-existing-commands)
-- [Creating custom commands](#head-creating-custom-commands)
-- [Using chains](#head-using-chains)
-- [Chain calling another chain](#head-chain-calling-chain)
-
 # Initial investigation
 To understand more about how Drupal Console works, I used the example shipped with Drupal Console to create a site configuration in the following location ~/.console/sites/.
 
@@ -67,6 +60,13 @@ I could not figure out how to make my custom commands run globally using Drupal 
 One of the things that is definetely broken is the command site:new https://github.com/hechoendrupal/DrupalConsole/issues/2825.
 
 Still thinking about the development workflow, I started to explore the possibilities.
+
+This is how we did it:
+
+- [Using existing commands](#head-using-existing-commands)
+- [Creating custom commands](#head-creating-custom-commands)
+- [Using chains](#head-using-chains)
+- [Chain calling another chain](#head-chain-calling-chain)
 
 ## 1. <a name="head-using-existing-commands">Using existing commands<a/>
 <a name="cmd-site-new">**site:new**</a>
