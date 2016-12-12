@@ -56,10 +56,10 @@ Initially I tried to use the latest release 1.0.0-rc9, but things are moving too
 - Drupal Console Core https://github.com/hechoendrupal/drupal-console-core
 - Drupal Console Launcher https://github.com/hechoendrupal/drupal-console-launcher
 
-I could not figure out how to make my custom commands run globally using Drupal console launcher, so I decided to branch off 1.0.0-beta5, get everything working, then port to the latest dev.
-One of the things that is definetely broken is the command site:new https://github.com/hechoendrupal/DrupalConsole/issues/2825.
+I was struggling to make my custom commands run globally using Drupal console launcher, I decided to branch off 1.0.0-beta5, get everything working, then port to the latest dev.
+At the time one of the things that is definetely broken is the command site:new https://github.com/hechoendrupal/DrupalConsole/issues/2825.
 
-Still thinking about the development workflow, I started to explore the possibilities.
+With our development workflow in mind, I continued  to explore the following possibilities.
 
 This is how we did it:
 
