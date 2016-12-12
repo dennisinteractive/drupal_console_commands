@@ -75,9 +75,10 @@ As I mentioned above I am using Drupal console 1.0.0-beta5, that still provides 
 So I implemented a new option to pass *--template* and issued a pull request (https://github.com/hechoendrupal/DrupalConsole/issues/2949), so the project template could be passed as parameter i.e. `drupal site:new /var/www/new --composer --template=dennisdigital/drupal-project`
 
 **site:install**
-This will install the site and append the database credentials to the bottom of settings.php. We should not really commit these credentials, because it will vary depending on the environment, i.e. CI, QA, Production.
+This will install the site and append the database credentials to the bottom of settings.php. But our settings.php is committed to our repo and we really should not  commit these credentials. Apart from security concerns, they vary depending on the environment, i.e. CI, QA, Production.
 
-So we need a way of putting these settings onto a separate file that will be included in settings.php, i.e.
+So we placed these credentials into a separate file and then included it  in settings.php e.g.
+File: web/sites/default/settings.php
 
 File: *web/sites/default/settings.php*
 ```php
@@ -102,16 +103,15 @@ $databases['default']['default'] = array(
 ```
 
 **database:restore**
-We store db dumps on a folder that is mounted and becomes accessible inside the VM, the files are stored in gzip format. The reason for that, obviously is to make the downloads faster, specially when working remotely.
+We store db dumps on a folder that is mounted and becomes accessible inside the VM. The files are stored in gzip format. This makes downloading the database for a site to our VMs faster, when working remotely. Our workflow also involves copying the file inside the VM, unzipping and then the importing. All of these steps cannot be handled by database:restore command, so we needed to think of another option to fulfill our needs.
 
-Our workflow involves copying the file inside the VM, unzipping and then importing. All of these steps cannot be handled by database:restore, so we might need to create a custom command to fulfill our needs.
-Another good idea is to only copy the dump from the server again once there is a new dump available. So the idea is to reuse the same local copy of the zipped dump on subsequent database restores.
+One idea was  to only copy the dump from the server again, once there is a new dump available. i.e. reusing the same local copy of the zipped dump on subsequent database restores.
 
-Since some of the functionalities that we need are not available out of the box, I have two options:
-- Forking Drupal console and sending a pull request
-- Creating our own Custom commands
+The two option we thought of were: 
+- Forking Drupal console and sending a pull request with added functionality for the Drupal Console database:restore command.
+- Creating our own Custom command.
 
-I decided to go with the second option for now and if that works, will do the pull request. Besides, at this stage I don’t know if our requirements are relevant for the rest of the community.
+I decided to go with the second option for now and if that worked, issue a pull request. Besides, at this stage I did not know if our requirements were relevant for the rest of the community.
 
 ## 2. <a name="head-creating-custom-commands">Creating Custom commands.</a>
 After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we need the following:
