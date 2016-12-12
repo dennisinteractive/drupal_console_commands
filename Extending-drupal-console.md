@@ -70,12 +70,9 @@ This is how we did it:
 
 ## 1. <a name="head-using-existing-commands">Using existing commands<a/>
 <a name="cmd-site-new">**site:new**</a>
-As I mentioned above I am using Drupal console 1.0.0-beta5, that still provides this command. The problem with it is that I cannot use a different Drupal project template, it will start a new site using drupal-composer/drupal-project as it is hard coded here https://github.com/hechoendrupal/DrupalConsole/blob/1.0.0-rc5/src/Command/Site/NewCommand.php#L99.
+As I mentioned above I am using Drupal console 1.0.0-beta5, that still provides this command. The problem I encountered was that I could not  use a different Drupal project template, since the command would start a new site using **drupal-composer/drupal-project** as it was hard coded here https://github.com/hechoendrupal/DrupalConsole/blob/1.0.0-rc5/src/Command/Site/NewCommand.php#L99
 
-I implemented a new option to pass *--template* and sent a pull request https://github.com/hechoendrupal/DrupalConsole/issues/2949
-
-The project template can be passed as parameter i.e.
-`drupal site:new /var/www/new --composer --template=dennisdigital/drupal-project`
+So I implemented a new option to pass *--template* and issued a pull request (https://github.com/hechoendrupal/DrupalConsole/issues/2949), so the project template could be passed as parameter i.e. `drupal site:new /var/www/new --composer --template=dennisdigital/drupal-project`
 
 **site:install**
 This will install the site and append the database credentials to the bottom of settings.php. We should not really commit these credentials, because it will vary depending on the environment, i.e. CI, QA, Production.
