@@ -143,7 +143,7 @@ Now the command appears in the list
 I implemented all commands from the list above but site:new. I came up with the idea of using chains to do it.
 
 ## 3. <a name="head-using-chains">Using chains</a>
-Using chains to do what [*site:new*](#cmd-site-new) does makes the pull request above redundant, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher and by using chains, we can eliminate some redundant code. 
+Using chains to do what [*site:new*](#cmd-site-new) does makes the pull request above redundant, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher. Also by using chains, we can eliminate some redundant code. 
 
 File: *chain-site-new.yml*
 ```javascript
@@ -155,8 +155,7 @@ commands:
 I am using placeholders for project, version and directory, if the values are omitted when using interactive mode, the default values (after |) will be used.
 ```
 
-But there is a problem: Chain commands need *--file* argument to specify which file to execute which is not very convenient as we have to type too much.
-Imagine a developer wants to build a site using this chain, the command line would look like this:
+But there was a problem: Chain commands need *--file* argument to specify which file to execute which is not very convenient. Imagine a developer wants to build a site using this chain, the command line would look like this:
 
 `drupal chain --file=/some-folder/path-to-file/chain-site-new.yml`
 
