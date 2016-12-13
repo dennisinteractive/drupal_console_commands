@@ -1,6 +1,6 @@
 # Development workflow with Drupal console
 
-Our development workflow in Drupal 7 is based on a bash script that does all sort of things, among them:
+We use a number of bash scripts in our current Drupal 7 development environment to do a number of tasks which include:
 - Check out the site’s repo
 - Run drush make
 - Run npm and grunt
@@ -8,12 +8,9 @@ Our development workflow in Drupal 7 is based on a bash script that does all sor
 - Import the database
 - Run updates
 
-Because it is a monolithic gismo, it’s not possible to only run commands individually, you get all or nothing. These scripts are managed by our DevOps which are quite happy to maintain and introduce new functionalities but this really should be a dev job and it should be done in PHP.
+Because it is a monolithic gismo, it’s not possible to only run commands individually, you get all or nothing. These scripts are currently managed by our DevOps which are quite happy to maintain and introduce new functionalities, but this really should be a dev job and it should be done in PHP.
 
-Another thing that we desperately need to fix is the workflow for creating new sites. Every time we have a new site, it involves DevOps manually running a Drupal installation, creating the initial setup (without any template). They also have to manually configure all the Jenkins scripts because we don’t have a definition of site info in the shape of a file that will contain details that will be used to deploy the site.
-
-At the end, they will provide us the link to the new repo and a database dump that we will use to develop locally. The first thing we have to do is remove all the unneeded stuff.
-The whole process takes ages and it’s prone to human error.
+We also wanted to improve the process for creating new Drupal sites across our infrastructure (Dev, QA, CI, Stage, Live). Our existing process which dates back over 5 years, does not allow the creation of a site from a template, does not allow the setup of a site on a developer environment without that site being installed on the live (non-live) environment and involves a lot of DevOps time to configure the various Jenkins and other scripts used in our development workflow. The process is also prone to human error.
 
 We always wanted to re-write it and now that Drupal console is the new trend, we saw an opportunity to extend it ([check this article to see how we extended Drupal console](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md)), keeping in mind what we were trying to improve:
 - [Easier way of starting new sites](#head-starting-new-sites)
@@ -21,13 +18,11 @@ We always wanted to re-write it and now that Drupal console is the new trend, we
 
 ## <a name="head-starting-new-sites">Starting new sites</a>
 
-I had a look at this Composer template for Drupal projects https://github.com/drupal-composer/drupal-project which apparently is what may people use. It kind of works but it’s really just a starting point.
+I first looked at Composer template for Drupal projects (https://github.com/drupal-composer/drupal-project ) which works, but it’s really just a starting point.
 
-I was going to fork it when I found this fork by pfrenssen https://github.com/pfrenssen/drupal-project which has some nice additions like php unit and behat.
+I was going to fork it when I found this fork https://github.com/pfrenssen/drupal-project by pfrenssen that had some nice additions like php unit and behat.
 
-There is a script handler that automates the creation of settings.php https://github.com/pfrenssen/drupal-project/blob/8.x/scripts/composer/ScriptHandler.php, since I liked this, I decided to fork it and add some extra bits.
-
-Now, the script handler will add the includes for local configurations, so you would commit settings.php but not the includes, since they are relevant to the environment only).These includes are also added to *.gitignore*.
+There was also a script handler that automates the creation of settings.php https://github.com/pfrenssen/drupal-project/blob/8.x/scripts/composer/ScriptHandler.php, since I liked this, I decided to fork it and add some extra functionality to add the includes for local configurations, so you would commit *settings.php* but not the includes, since they are relevant to the environment only).These includes are also added to *.gitignore*.
 
 Here is how *settings.php* will be modified:
 
