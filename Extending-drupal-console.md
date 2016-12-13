@@ -1,6 +1,6 @@
 # Extending Drupal console
 
-We have over 25 sites running off our Drupal 7 distribution and automate some of the tasks needed for development using a series of bash scripts. E.g.
+We have over 25 sites running off our Drupal 7 distribution and we wanted to automate some of the tasks needed for development (previously done using a series of bash scripts) E.g.
 
 - Check out the site’s repo
 - Run drush make
@@ -9,12 +9,12 @@ We have over 25 sites running off our Drupal 7 distribution and automate some of
 - Import databases
 - Run updates
 
-As we began looking towards Drupal 8, we looked for ways we could improve our development workflow and toolset, with a view towards improving efficiency and productivity. More specifically related to this post, improving the process of building a site on our VMs and environments, with as little manual work as possible. 
+As we began moving towards Drupal 8, we looked for ways we could improve our development workflow and toolset, aiming improving efficiency and productivity. More specifically related to this post, improving the process of building a site on our VMs and environments, with as little manual work as possible. 
 
 We decided to explore this using Drupal Console (https://drupalconsole.com/), which is a CLI tool to interact and debug Drupal websites. While it met most of our needs, we thought about extending it to allow the creation of global custom commands and use chain commands more easily.
 
 # Initial investigation
-To understand more about how Drupal Console works, I used the example shipped with Drupal Console to create a site configuration in the following location ~/.console/sites/.
+To understand more about how Drupal Console works, I used the example shipped with Drupal Console to create a site configuration in the following location *~/.console/sites/*.
 
 File: *drupalvm.yml*
 ```javascript
@@ -26,14 +26,13 @@ dev:
   console: /usr/local/bin/drupal
 ```
 
-The above properties you can view by running site debug with the site name e.g. drupal site:debug drupalvm
+You can view the properties above by running site debug with the site name e.g. `drupal site:debug drupalvm`
 
-I noticed that there were only few properties, and I was wondering if I could add more details about a site so that we could use Drupal Console to reduce the amount of commands our developers would need to type when building a site. E.g.instead of the following command  (git clone https://github.com/dennisinteractive/subscriptions.git --branch 8.x /var/www/subscriptions), use drupal site:checkout subscriptions
+I noticed that there were only few properties in the yml file, and I was wondering if I could add more details about a site so that we could use Drupal Console to reduce the amount of commands our developers would need to type when building a site. E.g.instead of the following command `git clone https://github.com/dennisinteractive/subscriptions.git --branch 8.x /var/www/subscriptions`, use `drupal site:checkout subscriptions`
 
+Drupal console doesn’t care what key/values you add, so I went on and created the yml file below with details: which **repo** to use, **branch**, **database dump location**, **profile**, etc.
 
-Drupal console doesn’t care what key/values you add, so I went on and created the yml file below with details about which repo to use, branch, database dump location, profile, etc.
-
-<a name="file-subscriptions-yml">File:</a> *~/console/sites/subscriptions.yml
+<a name="file-subscriptions-yml">File:</a> *~/console/sites/subscriptions.yml*
 ```javascript
 dev:
   name: Subscriptions
