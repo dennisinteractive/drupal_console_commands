@@ -48,17 +48,14 @@ dev:
   db-dump: /mnt/nfs/Drupal/sql/d8_subscriptions-latest.sql.gz
 ```
 
-In order to create some custom commands, I needed Drupal console to run globally. This requires it to be installed on my home folder, for my commands to be executed without the  need of having Drupal core installed.
+In order to create some custom commands, I needed Drupal console to run globally. This requires it to be installed on the home folder, so that the commands can be executed without the need of having *Drupal core* installed.
 
-Initially I tried to use the latest release 1.0.0-rc9, but things are moving too fast in Drupal console world. Since 1.0.0-beta5 lots had changed and some code from Drupal Console (https://github.com/hechoendrupal/DrupalConsole ) moved to separate  repos. e.g.
+Initially I tried to use the latest release *1.0.0-rc9*, but things are moving too fast in Drupal console world. Since *1.0.0-beta5* lots had changed and some code from Drupal Console (https://github.com/hechoendrupal/DrupalConsole ) moved to separate  repos. e.g. Drupal Console Core https://github.com/hechoendrupal/drupal-console-core
 
-- Drupal Console Core https://github.com/hechoendrupal/drupal-console-core
-- Drupal Console Launcher https://github.com/hechoendrupal/drupal-console-launcher
+I was struggling to make my custom commands run globally using Drupal console core, so I decided to branch off 1.0.0-beta5, get everything working, then port to the latest dev branch.
+At that time, one of the things that is definetely broken is the command site:new https://github.com/hechoendrupal/DrupalConsole/issues/2825.
 
-I was struggling to make my custom commands run globally using Drupal console launcher, I decided to branch off 1.0.0-beta5, get everything working, then port to the latest dev.
-At the time one of the things that is definetely broken is the command site:new https://github.com/hechoendrupal/DrupalConsole/issues/2825.
-
-With our development workflow in mind, I continued  to explore the following possibilities.
+With our development workflow in mind, I continued  to explore the possibilities.
 
 This is how we did it:
 
@@ -74,10 +71,9 @@ As I mentioned above I am using Drupal console 1.0.0-beta5, that still provides 
 So I implemented a new option to pass *--template* and issued a pull request (https://github.com/hechoendrupal/DrupalConsole/issues/2949), so the project template could be passed as parameter i.e. `drupal site:new /var/www/new --composer --template=dennisdigital/drupal-project`
 
 **site:install**
-This will install the site and append the database credentials to the bottom of settings.php. But our settings.php is committed to our repo and we really should not  commit these credentials. Apart from security concerns, they vary depending on the environment, i.e. CI, QA, Production.
+This will install the site and append the database credentials to the bottom of settings.php. But our settings.php is committed to our repo and we really should not commit these credentials. Apart from security concerns, they vary depending on the environment, i.e. CI, QA, Production.
 
-So we placed these credentials into a separate file and then included it  in settings.php e.g.
-File: web/sites/default/settings.php
+So we placed these credentials into a separate file and then included it in settings.php e.g.
 
 File: *web/sites/default/settings.php*
 ```php
@@ -102,18 +98,18 @@ $databases['default']['default'] = array(
 ```
 
 **database:restore**
-We store db dumps on a folder that is mounted and becomes accessible inside the VM. The files are stored in gzip format. This makes downloading the database for a site to our VMs faster, when working remotely. Our workflow also involves copying the file inside the VM, unzipping and then the importing. All of these steps cannot be handled by database:restore command, so we needed to think of another option to fulfill our needs.
+We store db dumps on a folder that is mounted and becomes accessible inside the VM. The files are stored in gzip format. This makes downloading the database for a site to our VMs faster, when working remotely. Our workflow also involves copying the file inside the VM, unzipping and then the importing. All of these steps cannot be handled by *database:restore* command, so we needed to think of another option to fulfill our needs.
 
-One idea was  to only copy the dump from the server again, once there is a new dump available. i.e. reusing the same local copy of the zipped dump on subsequent database restores.
+Also, we only need to copy the dump from the server again once there is a new dump available. i.e. reusing the same local copy of the zipped dump on subsequent database restores.
 
 The two option we thought of were: 
-- Forking Drupal console and sending a pull request with added functionality for the Drupal Console database:restore command.
+- Forking Drupal console and sending a pull request with added functionality for the Drupal Console *database:restore* command.
 - Creating our own Custom command.
 
 I decided to go with the second option for now and if that worked, issue a pull request. Besides, at this stage I did not know if our requirements were relevant for the rest of the community.
 
 ## 2. <a name="head-creating-custom-commands">Creating Custom commands.</a>
-After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we need the following:
+After playing with built in commands I started looking into building our custom commands to fulfil our requirements, so we needed the following:
 
 - **site:checkout** After the new site has been installed and the codebase committed, we needed an easy way of running repo commands without having to type the repo’s URL every time. Instead of the copying and pasting that occurs when working across the many sites that we have, we thought about using information that is already available on the [site’s yml file](#file-subscriptions-yml)
 - **site:compose** This will take care of running composer install/update
@@ -139,10 +135,10 @@ Now the command appears in the list
 `drupal list site`
 ![](https://github.com/dennisinteractive/drupal_console_commands/raw/gh-pages/images/drupal-list-site-checkout.png)
 
-I implemented all commands from the list above but site:new. I came up with the idea of using chains to do it.
+I implemented all commands from the list above but *site:new*. I came up with the idea of using **chains** to do it.
 
 ## 3. <a name="head-using-chains">Using chains</a>
-Using chains to do what [*site:new*](#cmd-site-new) does makes the pull request above redundant, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher. Also by using chains, we can eliminate some redundant code. 
+Using chains to do what [*site:new*](#cmd-site-new) does makes the pull request above redundant, but on the other hand we don’t have to wait for it to be ported to Drupal console launcher. Also by using chains, we can reduce the amount of code. 
 
 File: *chain-site-new.yml*
 ```javascript
@@ -194,12 +190,12 @@ No need to specify *--file* anymore
 
 On a hangout with [@jmolivas](https://twitter.com/jmolivas "@jmolivas") I pitched the idea and he liked it. This can can be used in conjunction with commands as a service. I created a pull request that can be merged to the latest dev https://github.com/hechoendrupal/DrupalConsole/pull/2961. This pull request doesn’t use chain.yml, but for our branch off 1.0.0-beta5 it is still needed.
 
-But what if I want to create a chain that will do two things? e.g. create a new site and run site install. That means calling chain:site:new and then site:install from this new chain.
+But what if I want to create a chain that will do two things? e.g. create a new site and run site install. That means calling `chain:site:new` and then `site:install` from this new chain.
 
 ## 4. <a name="head-chain-calling-chain">Chain calling another chain</a> (one may call it a “chain reaction”)
 At the time of experimenting, some bits worked out of the box. You could call other chain commands using exec, but you had to specify all the arguments and options as *--placeholder=”foo:bar”* (each of them.), which was not very pretty.
 
-E.g. Imagine for example that we want to call chain-site-new.yml from another chain:
+E.g. Imagine for example that we want to call *chain-site-new.yml* from another chain:
 
 File: *chain-site-new-install.yml*
 ```javascript
