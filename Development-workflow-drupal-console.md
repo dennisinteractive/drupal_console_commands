@@ -44,7 +44,7 @@ if (file_exists(__DIR__ . '/settings.dev.php')) {
 ```
 
 ### 1. Start the site from a template
-I tried to use site:new out of the box but the project template is hard coded as **drupal-composer/drupal-project**. Then I started using our patched version of [*site:new*](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#cmd-site-new) but with [ChainRegister](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#how-it-works) I can create new sites using chain command: *chain:site:new*.
+I tried to use site:new out of the box but the project template was hard coded as **drupal-composer/drupal-project**. Then I started using our patched version of [*site:new*](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#cmd-site-new) but with [ChainRegister](https://github.com/dennisinteractive/drupal_console_commands/blob/gh-pages/Extending-drupal-console.md#how-it-works) I can create new sites using chain command: *chain:site:new*.
 
 `drupal chain:site:new`
 
@@ -268,7 +268,7 @@ This command will perform the following tasks:
 
 ## Provisioning
 
-By this time I already had all the bits I needed, so I started talking to DevOps to add to the VM.
+By this time I already had all the bits I needed, so I started talking to our DevOps team to add to the VM.
 I created the dev_scripts https://github.com/dennisinteractive/dev_scripts project which is a wrapper that installs Drupal console and the Custom commands + chains.
 
 The installation is quite simple and happens once when provisioning runs for the first time on the VM:
