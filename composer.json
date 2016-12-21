@@ -17,7 +17,7 @@
     "require": {
         "drupal/console": "1.0.0-rc11",
         "drupal/console-core": "1.0.0-rc11",
-        "symfony/filesystem": "~2.8",
+        "symfony/filesystem": "~2.8|~3.0",
         "dflydev/placeholder-resolver": "^1.0"
     }
 }
