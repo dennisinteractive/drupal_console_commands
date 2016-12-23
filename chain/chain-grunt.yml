@@ -1,4 +1,7 @@
-# chain-grunt.yml
+# Usage: drupal site:grunt --placeholder"name:subscriptions"
+command:
+  name: site:grunt
+  description: 'Runs grunt on the specified site'
 commands:
   - command: exec
     arguments:
