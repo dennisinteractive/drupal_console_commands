@@ -1,5 +1,0 @@
-commands:
-# Build from template
-  - command: exec
-    arguments:
-      bin: 'composer create-project %{{project|dennisdigital/drupal-project:8.x-dev}}:%{{version|8.x-dev}} %{{directory|/vagrant/repos/new_site}} --stability dev --no-interaction'
