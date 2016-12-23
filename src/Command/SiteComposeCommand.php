@@ -78,7 +78,7 @@ class SiteComposeCommand extends SiteBaseCommand {
     );
     $this->io->commentBlock($command);
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->shellProcess;
 
     //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {

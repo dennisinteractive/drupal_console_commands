@@ -195,7 +195,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
       $directory
     );
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->shellProcess;
 
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
@@ -233,7 +233,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     );
     $this->io->commentBlock($command);
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->shellProcess;
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->success(sprintf('Repo cloned on %s', $destination));
@@ -261,7 +261,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
       $branch
     );
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->shellProcess;
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->success(sprintf('Checked out %s', $branch));
