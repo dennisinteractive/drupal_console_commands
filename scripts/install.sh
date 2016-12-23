@@ -11,7 +11,8 @@ if [ -e "${BIN_FILE}" ]; then
 fi
 
 # Download latest bin
-curl https://drupalconsole.com/installer -L -o ${BIN_FILE}
+curl https://drupalconsole.com/installer -L -o /tmp/drupal.phar
+sudo mv /tmp/drupal.phar ${BIN_FILE}
 chmod +x ${BIN_FILE}
 
 drupal init --override
