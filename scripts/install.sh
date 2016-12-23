@@ -27,3 +27,6 @@ composer update
 
 # Install custom commands
 composer require dennisdigital/drupal_console_commands:dev-drupal_extend --update-no-dev
+
+# Copy chain commands
+cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ../chain
