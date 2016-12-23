@@ -1,8 +1,0 @@
-commands:
-# Build from template
-  - command: chain:site:new
-    options:
-      placeholder:
-        - 'project:balblabal'
-        - 'version:2'
-        - 'directory:/'
