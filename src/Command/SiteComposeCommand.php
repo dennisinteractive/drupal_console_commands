@@ -51,13 +51,8 @@ class SiteComposeCommand extends SiteBaseCommand {
       throw new SiteCommandException($message);
     }
 
-    // Run composer install or update.
-    if (!file_exists($this->destination . 'composer.lock')) {
-      $this->runCommand('install', $this->destination);
-    }
-    else {
-      $this->runCommand('update', $this->destination);
-    }
+    // Run composer install.
+    $this->runCommand('install', $this->destination);
   }
 
   /**
