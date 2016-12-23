@@ -21,9 +21,9 @@ drupal init --override
 # rm -rf ~/.composer/extend;
 composer create-project drupal/console-extend:dev-master#227eb6e1d0d8d2abee09dde4e9a1044f301c93e1 ~/.console/extend
 
-# Install custom commands
-cd ~/.console/extend; composer require dennisdigital/drupal_console_commands:dev-drupal_extend --update-no-dev
-
+cd ~/.console/extend
+# Temporary fix to avoid conflicts between packages
 composer update
 
-
+# Install custom commands
+composer require dennisdigital/drupal_console_commands:dev-drupal_extend --update-no-dev
