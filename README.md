@@ -2,24 +2,13 @@
 
 Provides custom Drupal console commands and chains. 
 
-- site:build [site_name]
-	Will do the following:
-	- Check out the site's repo
-	- Run the make files
-
-- site:db:import [site_name]
-	Will do the following:
-	- Import the latest Db dump
-	- Run Db updates
-
 ## Requirements
+- Composer https://getcomposer.org/
 - Drupal console https://drupalconsole.com/
-- ChainRegister https://github.com/hechoendrupal/DrupalConsole/pull/2961
 
 ## Installation
 
-This repo should be added as a requirement via composer.json.
-This has been set in Dennis dev_scripts https://github.com/dennisinteractive/dev_scripts
+curl -L https://goo.gl/LFd3eA | sh
 
 # Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
