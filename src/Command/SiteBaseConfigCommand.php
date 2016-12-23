@@ -11,12 +11,9 @@ namespace DennisDigital\Drupal\Console\Command;
 
 use Dflydev\PlaceholderResolver\DataSource\ArrayDataSource;
 use Dflydev\PlaceholderResolver\RegexPlaceholderResolver;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Drupal\Console\Command\Site\InstallCommand;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**

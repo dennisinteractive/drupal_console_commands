@@ -109,28 +109,6 @@ class SiteBaseCommand extends Command {
   }
 
   /**
-   * Helper to copy the arguments from another class.
-   */
-  public function inheritArguments(\Symfony\Component\Console\Command\Command $command) {
-    foreach ($command->getDefinition()->getArguments() as $argument) {
-      if (!$this->getDefinition()->hasArgument($argument->getName())) {
-        $this->getDefinition()->addArgument($argument);
-      }
-    }
-  }
-
-  /**
-   * Helper to copy the options from another class.
-   */
-  public function inheritOptions(\Symfony\Component\Console\Command\Command $command) {
-    foreach ($command->getDefinition()->getOptions() as $option) {
-      if (!$this->getDefinition()->hasOption($option->getName())) {
-        $this->getDefinition()->addOption($option);
-      }
-    }
-  }
-
-  /**
    * Helper to validate parameters.
    *
    * @param InputInterface  $input
