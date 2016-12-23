@@ -9,15 +9,10 @@
 
 namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Drupal\Console\Command\Site\InstallCommand;
-use Drupal\Console\Utils\ConfigurationManager;
-use Drupal\Console\Extension\Manager;
-use Drupal\Console\Utils\Site;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
 /**
  * Class SiteSettingsDbCommand
@@ -25,6 +20,7 @@ use DennisDigital\Drupal\Console\Exception\SiteCommandException;
  * @package DennisDigital\Drupal\Console\Command
  */
 class SiteSettingsDbCommand extends SiteBaseCommand {
+  use SiteInstallArgumentsTrait;
 
   /**
    * The file name to generate.
@@ -32,26 +28,6 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
    * @var
    */
   protected $filename = 'settings.db.php';
-
-  /**
-   * InstallCommand constructor.
-   * @param Manager              $extensionManager
-   * @param Site                 $site
-   * @param ConfigurationManager $configurationManager
-   * @param string               $appRoot
-   */
-  public function __construct(
-    Manager $extensionManager,
-    Site $site,
-    ConfigurationManager $configurationManager,
-    $appRoot
-  ) {
-    $this->extensionManager = $extensionManager;
-    $this->site = $site;
-    $this->configurationManager = $configurationManager;
-    $this->appRoot = $appRoot;
-    parent::__construct();
-  }
 
   /**
    * {@inheritdoc}
@@ -63,10 +39,8 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Generates settings.db.php for a given site.');
 
-    // Inherit arguments and options from InstallCommand().
-    $command = new InstallCommand();
-    $this->inheritArguments($command);
-    $this->inheritOptions($command);
+    // Re-use SiteInstall options and arguments.
+    $this->getSiteInstallArguments();
   }
 
   /**

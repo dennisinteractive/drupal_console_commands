@@ -9,11 +9,11 @@
 
 namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
 /**
  * Class SiteDbImportCommand
@@ -21,6 +21,8 @@ use DennisDigital\Drupal\Console\Exception\SiteCommandException;
  * @package DennisDigital\Drupal\Console\Command
  */
 class SiteDbImportCommand extends SiteBaseCommand {
+  use SiteInstallArgumentsTrait;
+
   /**
    * The Db dump file.
    *
@@ -38,10 +40,8 @@ class SiteDbImportCommand extends SiteBaseCommand {
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Imports local dump or does a fresh install.');
 
-    // Inherit arguments and options from SiteSettingsDbCommand().
-    $command = new SiteSettingsDbCommand();
-    $this->inheritArguments($command);
-    $this->inheritOptions($command);
+    // Re-use SiteInstall options and arguments.
+    $this->getSiteInstallArguments();
 
     $this->addOption(
       'file',
