@@ -63,6 +63,19 @@ class SiteBaseCommand extends Command {
   protected $destination = NULL;
 
   /**
+   * Stores the container.
+   */
+  protected $container;
+
+  /**
+   * @param mixed $container
+   */
+  public function setContainer($container)
+  {
+    $this->container = $container;
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function configure() {
@@ -139,18 +152,17 @@ class SiteBaseCommand extends Command {
   protected function _siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    $application = $this->getApplication();
-    $application->getConfig()->loadSite($siteName);
+    $configurationManager = $this->container
+      ->get('console.configuration_manager');
 
-    // Site environment from config.yml.
-    $config = $application->getConfig()->get(sprintf(
-      'sites.%s.%s',
-        $siteName,
-        $input->getOption('env')
-      )
-    );
+    // $environment = $input->getOption('env')
+    $environment = $configurationManager->getConfiguration()
+      ->get('application.environment');
 
-    if (empty($config)) {
+    $config = $configurationManager->readTarget($siteName . '.' . $environment);
+
+    if (empty($config))
+    {
       $message = sprintf(
         'Site not found. To see a list of available sites, run %s',
         'drupal site:debug'
