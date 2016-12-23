@@ -1,7 +1,9 @@
+command:
+  name: test:main
+  description: 'Example of a chain calling another chain with placeholders'
 commands:
-# Example of a chain calling another chain with placeholders
-# In interactive mode, it will ask you to provide the project, default value is 'main-project'
-  - command: chain:test:child
+  # In interactive mode, it will ask you to provide the project, default value is 'main-project'
+  - command: test:child
     options:
       placeholder:
         - 'project:%{{project|main-project}}'
