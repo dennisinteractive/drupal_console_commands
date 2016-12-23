@@ -204,7 +204,11 @@ class SiteDbImportCommand extends SiteBaseCommand {
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->writeln($shellProcess->getOutput());
-      $this->io->success(sprintf('Site installed on %s', $this->destination));
+      $this->io->success(sprintf(
+        "Site installed on %s\nURL %s",
+        $this->destination,
+        $this->config['host']
+      ));
     }
     else {
       throw new SiteCommandException($shellProcess->getOutput());
