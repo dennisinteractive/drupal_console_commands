@@ -1,4 +1,4 @@
-# Usage: drupal site:npm --placeholder"name:subscriptions"
+# Usage: drupal site:npm --placeholder="name:subscriptions"
 command:
   name: site:npm
   description: 'Runs npm on the specified site'

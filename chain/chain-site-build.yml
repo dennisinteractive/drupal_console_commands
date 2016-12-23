@@ -1,4 +1,4 @@
-# Usage: drupal site:build --placeholder"name:subscriptions"
+# Usage: drupal site:build --placeholder="name:subscriptions"
 command:
   name: site:build
   description: 'Performs multiple commands to build a site'

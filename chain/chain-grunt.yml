@@ -1,4 +1,4 @@
-# Usage: drupal site:grunt --placeholder"name:subscriptions"
+# Usage: drupal site:grunt --placeholder="name:subscriptions"
 command:
   name: site:grunt
   description: 'Runs grunt on the specified site'
