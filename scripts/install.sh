@@ -21,7 +21,7 @@ drupal settings:set environment dev
 
 # Install console extend
 # rm -rf ~/.composer/extend;
-composer create-project drupal/console-extend:dev-master#227eb6e1d0d8d2abee09dde4e9a1044f301c93e1 ~/.console/extend
+composer create-project drupal/console-extend:dev-master#efe180b00827fc1288c2244eee1db3b02c574fe1 ~/.console/extend
 
 cd ~/.console/extend
 # Temporary fix to avoid conflicts between packages
