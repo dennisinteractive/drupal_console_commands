@@ -97,8 +97,8 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
    * @throws \DennisDigital\Drupal\Console\Exception\SiteCommandException
    */
   protected function generateConfigFile() {
-    $this->template = $this->destination . $this->template;
-    $this->filename = $this->destination . $this->filename;
+    $this->template = str_replace('\ ', ' ', $this->destination) . $this->template;
+    $this->filename = str_replace('\ ', ' ', $this->destination) . $this->filename;
 
     // Validation.
     if (!file_exists($this->template)) {

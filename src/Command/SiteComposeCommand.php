@@ -44,7 +44,8 @@ class SiteComposeCommand extends SiteBaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    if (!file_exists($this->destination . 'composer.json')) {
+    $destination = str_replace('\ ', ' ', $this->destination);
+    if (!file_exists($destination . 'composer.json')) {
       $message = sprintf('The file composer.json is missing on %s',
         $this->destination
       );
@@ -73,7 +74,7 @@ class SiteComposeCommand extends SiteBaseCommand {
     );
     $this->io->commentBlock($command);
 
-    $shellProcess = $this->shellProcess;
+    $shellProcess = $this->getShellProcess();
 
     //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {

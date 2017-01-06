@@ -200,7 +200,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
     $this->io->commentBlock($command);
 
     // Run.
-    $shellProcess = $this->shellProcess;
+    $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->writeln($shellProcess->getOutput());

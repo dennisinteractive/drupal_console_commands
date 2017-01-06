@@ -60,7 +60,8 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     $this->destination = $this->settingsPhpDirectory();
 
     // Validation.
-    if (!file_exists($this->destination . 'settings.php')) {
+    $destination = str_replace('\ ', ' ', $this->destination);
+    if (!file_exists($destination . 'settings.php')) {
       $message = sprintf('Could not find %s',
         $this->destination . 'settings.php'
       );
@@ -84,7 +85,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     }
 
     // Remove existing file.
-    $file = $this->destination . $this->filename;
+    $file = str_replace('\ ', ' ', $this->destination) . $this->filename;
     if (file_exists($file)) {
       unlink($file);
     }

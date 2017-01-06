@@ -14,9 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
-use Drupal\Console\Style\DrupalStyle;
-use Drupal\Console\Utils\ShellProcess;
-use Drupal\Console\Command\Shared\CommandTrait;
+use Drupal\Console\Core\Style\DrupalStyle;
+use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
@@ -70,16 +69,10 @@ class SiteBaseCommand extends Command {
   protected $container;
 
   /**
-   * @var ShellProcess
-   */
-  protected $shellProcess;
-
-  /**
    * Constructor.
    */
   public function __construct()
   {
-    $this->shellProcess = new ShellProcess('/');
     parent::__construct();
   }
 
@@ -278,7 +271,7 @@ class SiteBaseCommand extends Command {
     );
 
     $this->io->comment('Searching for settings.php in the sites folder');
-    $shellProcess = $this->shellProcess;
+    $shellProcess = $this->getShellProcess();
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
         $output = $shellProcess->getOutput();
@@ -305,5 +298,14 @@ class SiteBaseCommand extends Command {
     }
 
     return $settingsPath;
+  }
+
+  /**
+   * Get the shell process.
+   *
+   * @return Drupal\Console\Core\Command\Exec\ExecCommand
+   */
+  protected function getShellProcess() {
+    return $this->container->get('console.shell_process');
   }
 }
