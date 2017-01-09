@@ -97,11 +97,11 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
    * @throws \DennisDigital\Drupal\Console\Exception\SiteCommandException
    */
   protected function generateConfigFile() {
-    $this->template = str_replace('\ ', ' ', $this->destination) . $this->template;
-    $this->filename = str_replace('\ ', ' ', $this->destination) . $this->filename;
+    $this->template = $this->destination . $this->template;
+    $this->filename = $this->destination . $this->filename;
 
     // Validation.
-    if (!file_exists($this->template)) {
+    if (!$this->fileExists($this->template)) {
       $message = sprintf('Could not find %s',
         $this->template
       );
@@ -109,21 +109,21 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
     }
 
     // Make sure filename doesn't exist.
-    if (file_exists($this->filename)) {
+    if ($this->fileExists($this->filename)) {
       $fs = new Filesystem();
       $fs->remove(array($this->filename));
     }
 
-    $content = file_get_contents($this->template);
+    $content = $this->fileGetContents($this->template);
     $placeholderMap = $this->getFlatternedConfigArray();
     $placeHolderData = new ArrayDataSource($placeholderMap);
     $placeholderResolver = new RegexPlaceholderResolver($placeHolderData);
     $content = $placeholderResolver->resolvePlaceholder($content);
 
-    file_put_contents($this->filename, $content);
+    $this->filePutContents($this->filename, $content);
 
     // Check file.
-    if (file_exists($this->filename)) {
+    if ($this->fileExists($this->filename)) {
       $this->io->success(sprintf('Generated %s',
           $this->filename)
       );

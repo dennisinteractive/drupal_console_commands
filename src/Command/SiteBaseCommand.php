@@ -9,6 +9,7 @@
 
 namespace DennisDigital\Drupal\Console\Command;
 
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -267,7 +268,7 @@ class SiteBaseCommand extends Command {
 
     $command = sprintf(
       'cd %s; find . -name settings.php',
-      $webSitesPath
+      $this->shellPath($webSitesPath)
     );
 
     $this->io->comment('Searching for settings.php in the sites folder');
@@ -307,5 +308,68 @@ class SiteBaseCommand extends Command {
    */
   protected function getShellProcess() {
     return $this->container->get('console.shell_process');
+  }
+
+  /**
+   * Check if a file exists.
+   *
+   * @param $file_name
+   * @return bool
+   */
+  protected function fileExists($file_name) {
+    return file_exists($this->cleanFileName($file_name));
+  }
+
+  /**
+   * Write contents to specified file.
+   *
+   * @param $file_name
+   * @param $contents
+   * @return int
+   */
+  protected function filePutContents($file_name, $contents) {
+    return file_put_contents($this->cleanFileName($file_name), $contents);
+  }
+
+  /**
+   * Get contents of specified file.
+   *
+   * @param $file_name
+   * @return string
+   */
+  protected function fileGetContents($file_name) {
+    return file_get_contents($this->cleanFileName($file_name));
+  }
+
+  /**
+   * Remove specified file.
+   *
+   * @param $file_name
+   * @return bool
+   */
+  protected function fileUnlink($file_name) {
+    return unlink($this->cleanFileName($file_name));
+  }
+
+  /*
+   * Clean the provided file_name.
+   * - Removes any escaped spaces for use with PHP file functions.
+   *
+   * @param $file_name
+   * @return string
+   */
+  protected function cleanFileName($file_name) {
+    return str_replace('\ ', ' ', $file_name);
+  }
+
+  /*
+   * Prepare file names for shell commands.
+   * - Escapes spaces with backslashes
+   *
+   * @param $file_name
+   * @return string
+   */
+  protected function shellPath($file_name) {
+    return addcslashes($this->cleanFileName($file_name), ' ');
   }
 }

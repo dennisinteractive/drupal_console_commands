@@ -93,7 +93,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
     // Check if the file exits.
     if (!$this->is_absolute_path($this->filename)) {
       $filename = realpath(getcwd() . trim($this->filename, '.'));
-      if (!file_exists($filename)) {
+      if (!$this->fileExists($filename)) {
         throw new SiteCommandException(sprintf('Dump file %s doesn\'t exist',
             $this->filename)
         );
@@ -123,7 +123,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
 
     // If a dump file wasn't found or not specified, do a fresh site install
-    if (!file_exists($this->filename)) {
+    if (!$this->fileExists($this->filename)) {
       //@todo Use drupal site:install instead of Drush.
       $command = sprintf(
         'cd %s; ' .
@@ -131,7 +131,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
         'chmod 777 settings.php; ' .
         'drush si -y %s %s;' .
         'drush cim;',
-        $this->destination,
+        $this->shellPath($this->destination),
         $this->profile,
         $options
       );
@@ -150,7 +150,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
           $baseNameSql = str_replace('.sql.gz', '.sql', $baseNameGz);
 
           $this->io->write(sprintf('Checking if dump exists locally: '));
-          if (file_exists('/tmp/' . $baseNameGz)) {
+          if ($this->fileExists('/tmp/' . $baseNameGz)) {
             $this->io->writeln('Yes');
           }
           else {

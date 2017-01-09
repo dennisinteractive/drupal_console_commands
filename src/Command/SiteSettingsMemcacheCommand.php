@@ -65,7 +65,7 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
     $this->destination = $this->settingsPhpDirectory();
 
     // Validation.
-    if (!file_exists(str_replace('\ ', ' ', $this->destination) . 'settings.php')) {
+    if (!$this->fileExists($this->destination . 'settings.php')) {
       $message = sprintf('The file settings.php is missing on %s',
         $this->destination
       );
@@ -77,9 +77,9 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
     }
 
     // Remove existing file.
-    $file = str_replace('\ ', ' ', $this->destination) . $this->filename;
-    if (file_exists($file)) {
-      unlink($file);
+    $file = $this->destination . $this->filename;
+    if ($this->fileExists($file)) {
+      $this->fileUnlink($file);
     }
 
     // Prepare content.
@@ -148,10 +148,10 @@ else {
 }
 EOF;
 
-    file_put_contents($file, $content);
+    $this->filePutContents($file, $content);
 
     // Check file.
-    if (file_exists($file)) {
+    if ($this->fileExists($file)) {
       $this->io->success(sprintf('Generated %s',
         $file)
       );

@@ -105,8 +105,8 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     switch ($this->repo['type']) {
       case 'git':
         // Check if repo exists and has any changes.
-        if (file_exists($this->destination) &&
-          file_exists($this->destination . '.' . $this->repo['type'])
+        if ($this->fileExists($this->destination) &&
+          $this->fileExists($this->destination . '.' . $this->repo['type'])
         ) {
           if ($input->hasOption('ignore-changes') &&
             !$input->getOption('ignore-changes')
@@ -192,7 +192,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function gitDiff($directory) {
     $command = sprintf(
       'cd %s; git diff-files --name-status -r --ignore-submodules',
-      $directory
+      $this->shellPath($directory)
     );
 
     $shellProcess = $this->getShellProcess();
@@ -229,7 +229,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     $command = sprintf('git clone --branch %s %s %s',
       $branch,
       $repo,
-      $destination
+      $this->shellPath($destination)
     );
     $this->io->commentBlock($command);
 
@@ -257,7 +257,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    */
   protected function gitCheckout($branch, $destination) {
     $command = sprintf('cd %s; git fetch --all; git checkout %s',
-      $destination,
+      $this->shellPath($destination),
       $branch
     );
 
