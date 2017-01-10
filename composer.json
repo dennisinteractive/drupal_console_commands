@@ -24,6 +24,6 @@
     ],
     "require": {
         "dflydev/placeholder-resolver": "^1.0",
-        "drupal/console-launcher": "dev-master"
+        "drupal/console-launcher": "dennis-master-dev"
     }
 }
