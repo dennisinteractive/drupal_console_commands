@@ -2,25 +2,27 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteDbImportCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteDbImportCommand.
  *
  * Imports local dumps or installs a fresh site if no dump is found.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
 /**
  * Class SiteDbImportCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteDbImportCommand extends SiteBaseCommand {
+  use SiteInstallArgumentsTrait;
+
   /**
    * The Db dump file.
    *
@@ -38,10 +40,8 @@ class SiteDbImportCommand extends SiteBaseCommand {
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Imports local dump or does a fresh install.');
 
-    // Inherit arguments and options from SiteSettingsDbCommand().
-    $command = new SiteSettingsDbCommand();
-    $this->inheritArguments($command);
-    $this->inheritOptions($command);
+    // Re-use SiteInstall options and arguments.
+    $this->getSiteInstallArguments();
 
     $this->addOption(
       'file',
@@ -93,7 +93,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
     // Check if the file exits.
     if (!$this->is_absolute_path($this->filename)) {
       $filename = realpath(getcwd() . trim($this->filename, '.'));
-      if (!file_exists($filename)) {
+      if (!$this->fileExists($filename)) {
         throw new SiteCommandException(sprintf('Dump file %s doesn\'t exist',
             $this->filename)
         );
@@ -123,7 +123,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
 
     // If a dump file wasn't found or not specified, do a fresh site install
-    if (!file_exists($this->filename)) {
+    if (!$this->fileExists($this->filename)) {
       //@todo Use drupal site:install instead of Drush.
       $command = sprintf(
         'cd %s; ' .
@@ -131,7 +131,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
         'chmod 777 settings.php; ' .
         'drush si -y %s %s;' .
         'drush cim;',
-        $this->destination,
+        $this->shellPath($this->destination),
         $this->profile,
         $options
       );
@@ -150,7 +150,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
           $baseNameSql = str_replace('.sql.gz', '.sql', $baseNameGz);
 
           $this->io->write(sprintf('Checking if dump exists locally: '));
-          if (file_exists('/tmp/' . $baseNameGz)) {
+          if ($this->fileExists('/tmp/' . $baseNameGz)) {
             $this->io->writeln('Yes');
           }
           else {
@@ -200,11 +200,15 @@ class SiteDbImportCommand extends SiteBaseCommand {
     $this->io->commentBlock($command);
 
     // Run.
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->writeln($shellProcess->getOutput());
-      $this->io->success(sprintf('Site installed on %s', $this->destination));
+      $this->io->success(sprintf(
+        "Site installed on %s\nURL %s",
+        $this->destination,
+        $this->config['host']
+      ));
     }
     else {
       throw new SiteCommandException($shellProcess->getOutput());

@@ -1,3 +1,7 @@
+# Usage: drupal site:build --placeholder="name:subscriptions"
+command:
+  name: site:build
+  description: 'Performs multiple commands to build a site'
 commands:
 # Checkout site
   - command: site:checkout
@@ -11,12 +15,12 @@ commands:
     arguments:
       name: '%{{name}}'
 # Run npm
-  - command: chain:site:npm
+  - command: site:npm
     options:
       placeholder:
         - 'name:%{{name}}'
 # Run grunt
-  - command: chain:site:grunt
+  - command: site:grunt
     options:
       placeholder:
         - 'name:%{{name}}'
@@ -24,6 +28,7 @@ commands:
   - command: site:settings:db
     arguments:
       name: '%{{name}}'
+    # @todo these settings should come from yml file.
     options:
       db-name: '%{{name}}'
       db-user: 'root'

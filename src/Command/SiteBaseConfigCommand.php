@@ -2,27 +2,24 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteBaseConfigCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteBaseConfigCommand.
  *
  * Create configuration file from template.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 use Dflydev\PlaceholderResolver\DataSource\ArrayDataSource;
 use Dflydev\PlaceholderResolver\RegexPlaceholderResolver;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Drupal\Console\Command\Site\InstallCommand;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteBaseConfigCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteBaseConfigCommand extends SiteBaseCommand {
 
@@ -97,14 +94,14 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
   /**
    * Generates config file from template.
    *
-   * @throws \VM\Console\Command\Exception\SiteCommandException
+   * @throws \DennisDigital\Drupal\Console\Exception\SiteCommandException
    */
   protected function generateConfigFile() {
     $this->template = $this->destination . $this->template;
     $this->filename = $this->destination . $this->filename;
 
     // Validation.
-    if (!file_exists($this->template)) {
+    if (!$this->fileExists($this->template)) {
       $message = sprintf('Could not find %s',
         $this->template
       );
@@ -112,21 +109,21 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
     }
 
     // Make sure filename doesn't exist.
-    if (file_exists($this->filename)) {
+    if ($this->fileExists($this->filename)) {
       $fs = new Filesystem();
       $fs->remove(array($this->filename));
     }
 
-    $content = file_get_contents($this->template);
+    $content = $this->fileGetContents($this->template);
     $placeholderMap = $this->getFlatternedConfigArray();
     $placeHolderData = new ArrayDataSource($placeholderMap);
     $placeholderResolver = new RegexPlaceholderResolver($placeHolderData);
     $content = $placeholderResolver->resolvePlaceholder($content);
 
-    file_put_contents($this->filename, $content);
+    $this->filePutContents($this->filename, $content);
 
     // Check file.
-    if (file_exists($this->filename)) {
+    if ($this->fileExists($this->filename)) {
       $this->io->success(sprintf('Generated %s',
           $this->filename)
       );

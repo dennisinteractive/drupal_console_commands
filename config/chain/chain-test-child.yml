@@ -1,7 +1,0 @@
-commands:
-# Example of chain that is called by another chain
-# This chain shows the variables passed either via placeholders or interactive mode
-  - command: exec
-    arguments:
-      bin: 'echo "This is a test: Project:%{{project|foo}} Directory:%{{directory|bar}}"'
-      

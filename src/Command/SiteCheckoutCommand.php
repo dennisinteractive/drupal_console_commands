@@ -2,23 +2,22 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteCheckoutCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand.
  *
  * Does repo checkouts.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteCheckoutCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteCheckoutCommand extends SiteBaseCommand {
 
@@ -43,7 +42,6 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     parent::configure();
 
     $this->setName('site:checkout')
-      // @todo use: ->setDescription($this->trans('commands.site.checkout.description'))
       ->setDescription('Checkout a repo');
 
     // Custom options.
@@ -51,13 +49,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         'ignore-changes',
         '',
         InputOption::VALUE_NONE,
-        // @todo use: $this->trans('commands.site.checkout.ignore-changes')
         'Ignore local changes when checking out the site'
       )->addOption(
         'branch',
         '-B',
         InputOption::VALUE_OPTIONAL,
-        // @todo use: $this->trans('commands.site.checkout.branch')
         'Specify which branch to checkout if different than the global branch found in sites.yml'
       );
   }
@@ -109,8 +105,8 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     switch ($this->repo['type']) {
       case 'git':
         // Check if repo exists and has any changes.
-        if (file_exists($this->destination) &&
-          file_exists($this->destination . '.' . $this->repo['type'])
+        if ($this->fileExists($this->destination) &&
+          $this->fileExists($this->destination . '.' . $this->repo['type'])
         ) {
           if ($input->hasOption('ignore-changes') &&
             !$input->getOption('ignore-changes')
@@ -196,10 +192,10 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function gitDiff($directory) {
     $command = sprintf(
       'cd %s; git diff-files --name-status -r --ignore-submodules',
-      $directory
+      $this->shellPath($directory)
     );
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
@@ -233,11 +229,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     $command = sprintf('git clone --branch %s %s %s',
       $branch,
       $repo,
-      $destination
+      $this->shellPath($destination)
     );
     $this->io->commentBlock($command);
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->success(sprintf('Repo cloned on %s', $destination));
@@ -261,11 +257,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    */
   protected function gitCheckout($branch, $destination) {
     $command = sprintf('cd %s; git fetch --all; git checkout %s',
-      $destination,
+      $this->shellPath($destination),
       $branch
     );
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->success(sprintf('Checked out %s', $branch));

@@ -2,26 +2,25 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteSettingsDbCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteSettingsDbCommand.
  *
  * Create Db configurations.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Drupal\Console\Command\Site\InstallCommand;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
 /**
  * Class SiteSettingsDbCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteSettingsDbCommand extends SiteBaseCommand {
+  use SiteInstallArgumentsTrait;
 
   /**
    * The file name to generate.
@@ -40,10 +39,8 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       // @todo use: ->setDescription($this->trans('commands.site.settings.db.description'))
       ->setDescription('Generates settings.db.php for a given site.');
 
-    // Inherit arguments and options from InstallCommand().
-    $command = new InstallCommand();
-    $this->inheritArguments($command);
-    $this->inheritOptions($command);
+    // Re-use SiteInstall options and arguments.
+    $this->getSiteInstallArguments();
   }
 
   /**
@@ -63,7 +60,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
     $this->destination = $this->settingsPhpDirectory();
 
     // Validation.
-    if (!file_exists($this->destination . 'settings.php')) {
+    if (!$this->fileExists($this->destination . 'settings.php')) {
       $message = sprintf('Could not find %s',
         $this->destination . 'settings.php'
       );
@@ -88,8 +85,8 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
 
     // Remove existing file.
     $file = $this->destination . $this->filename;
-    if (file_exists($file)) {
-      unlink($file);
+    if ($this->fileExists($file)) {
+      $this->fileUnlink($file);
     }
 
     // Prepare content.
@@ -119,10 +116,10 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
 );
 EOF;
 
-    file_put_contents($file, $content);
+    $this->filePutContents($file, $content);
 
     // Check file.
-    if (file_exists($file)) {
+    if ($this->fileExists($file)) {
       $this->io->success(sprintf('Generated %s',
           $file)
       );

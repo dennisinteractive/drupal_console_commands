@@ -1,8 +1,0 @@
-commands:
-# Imports db or installs a site
-  - command: site:db:import
-    arguments:
-      name: '%{{name}}'
-      profile: '%{{profile|config_installer}}'
-    options:
-      account-pass: dennis3

@@ -2,23 +2,21 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteComposeCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteComposeCommand.
  *
  * Runs composer installer.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VM\Console\Command\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteComposeCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteComposeCommand extends SiteBaseCommand {
 
@@ -46,7 +44,7 @@ class SiteComposeCommand extends SiteBaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    if (!file_exists($this->destination . 'composer.json')) {
+    if (!$this->fileExists($this->destination . 'composer.json')) {
       $message = sprintf('The file composer.json is missing on %s',
         $this->destination
       );
@@ -70,12 +68,12 @@ class SiteComposeCommand extends SiteBaseCommand {
   protected function runCommand($command, $destination) {
     $command = sprintf(
       'cd %s; composer %s;',
-      $destination,
+      $this->shellPath($destination),
       $command
     );
     $this->io->commentBlock($command);
 
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->getShellProcess();
 
     //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {

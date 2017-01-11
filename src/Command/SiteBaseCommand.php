@@ -2,33 +2,30 @@
 
 /**
  * @file
- * Contains \VM\Console\Command\Develop\SiteBaseCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\SiteBaseCommand.
  *
  * Base class for site commands.
  */
 
-namespace VM\Console\Command\Develop;
+namespace DennisDigital\Drupal\Console\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Validator\Constraints;
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Drupal\Console\Command\Shared\CommandTrait;
-use Drupal\Console\Style\DrupalStyle;
-use Drupal\Console\Config;
-use VM\Console\Command\Exception\SiteCommandException;
+use Drupal\Console\Core\Style\DrupalStyle;
+use Drupal\Console\Core\Command\Shared\CommandTrait;
+use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
  * Class SiteBaseCommand
  *
- * @package VM\Console\Command\Develop
+ * @package DennisDigital\Drupal\Console\Command
  */
 class SiteBaseCommand extends Command {
   use CommandTrait;
+
   /**
    * IO interface.
    *
@@ -65,6 +62,27 @@ class SiteBaseCommand extends Command {
    * @var string
    */
   protected $destination = NULL;
+
+  /**
+   * Stores the container.
+   */
+  protected $container;
+
+  /**
+   * Constructor.
+   */
+  public function __construct()
+  {
+    parent::__construct();
+  }
+
+  /**
+   * @param mixed $container
+   */
+  public function setContainer($container)
+  {
+    $this->container = $container;
+  }
 
   /**
    * {@inheritdoc}
@@ -113,28 +131,6 @@ class SiteBaseCommand extends Command {
   }
 
   /**
-   * Helper to copy the arguments from another class.
-   */
-  public function inheritArguments(\Symfony\Component\Console\Command\Command $command) {
-    foreach ($command->getDefinition()->getArguments() as $argument) {
-      if (!$this->getDefinition()->hasArgument($argument->getName())) {
-        $this->getDefinition()->addArgument($argument);
-      }
-    }
-  }
-
-  /**
-   * Helper to copy the options from another class.
-   */
-  public function inheritOptions(\Symfony\Component\Console\Command\Command $command) {
-    foreach ($command->getDefinition()->getOptions() as $option) {
-      if (!$this->getDefinition()->hasOption($option->getName())) {
-        $this->getDefinition()->addOption($option);
-      }
-    }
-  }
-
-  /**
    * Helper to validate parameters.
    *
    * @param InputInterface  $input
@@ -165,18 +161,17 @@ class SiteBaseCommand extends Command {
   protected function _siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    $application = $this->getApplication();
-    $application->getConfig()->loadSite($siteName);
+    $configurationManager = $this->container
+      ->get('console.configuration_manager');
 
-    // Site environment from config.yml.
-    $config = $application->getConfig()->get(sprintf(
-      'sites.%s.%s',
-        $siteName,
-        $input->getOption('env')
-      )
-    );
+    // $environment = $input->getOption('env')
+    $environment = $configurationManager->getConfiguration()
+      ->get('application.environment');
 
-    if (empty($config)) {
+    $config = $configurationManager->readTarget($siteName . '.' . $environment);
+
+    if (empty($config))
+    {
       $message = sprintf(
         'Site not found. To see a list of available sites, run %s',
         'drupal site:debug'
@@ -272,11 +267,11 @@ class SiteBaseCommand extends Command {
 
     $command = sprintf(
       'cd %s; find . -name settings.php',
-      $webSitesPath
+      $this->shellPath($webSitesPath)
     );
 
     $this->io->comment('Searching for settings.php in the sites folder');
-    $shellProcess = $this->get('shell_process');
+    $shellProcess = $this->getShellProcess();
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
         $output = $shellProcess->getOutput();
@@ -303,5 +298,77 @@ class SiteBaseCommand extends Command {
     }
 
     return $settingsPath;
+  }
+
+  /**
+   * Get the shell process.
+   *
+   * @return Drupal\Console\Core\Command\Exec\ExecCommand
+   */
+  protected function getShellProcess() {
+    return $this->container->get('console.shell_process');
+  }
+
+  /**
+   * Check if a file exists.
+   *
+   * @param $file_name
+   * @return bool
+   */
+  protected function fileExists($file_name) {
+    return file_exists($this->cleanFileName($file_name));
+  }
+
+  /**
+   * Write contents to specified file.
+   *
+   * @param $file_name
+   * @param $contents
+   * @return int
+   */
+  protected function filePutContents($file_name, $contents) {
+    return file_put_contents($this->cleanFileName($file_name), $contents);
+  }
+
+  /**
+   * Get contents of specified file.
+   *
+   * @param $file_name
+   * @return string
+   */
+  protected function fileGetContents($file_name) {
+    return file_get_contents($this->cleanFileName($file_name));
+  }
+
+  /**
+   * Remove specified file.
+   *
+   * @param $file_name
+   * @return bool
+   */
+  protected function fileUnlink($file_name) {
+    return unlink($this->cleanFileName($file_name));
+  }
+
+  /*
+   * Clean the provided file_name.
+   * - Removes any escaped spaces for use with PHP file functions.
+   *
+   * @param $file_name
+   * @return string
+   */
+  protected function cleanFileName($file_name) {
+    return str_replace('\ ', ' ', $file_name);
+  }
+
+  /*
+   * Prepare file names for shell commands.
+   * - Escapes spaces with backslashes
+   *
+   * @param $file_name
+   * @return string
+   */
+  protected function shellPath($file_name) {
+    return addcslashes($this->cleanFileName($file_name), ' ');
   }
 }
