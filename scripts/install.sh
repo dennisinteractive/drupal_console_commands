@@ -34,7 +34,7 @@ composer create-project --repository='{"type": "vcs", "url": "git@github.com:den
 
 # Install custom commands
 cd ~/.console/extend
-composer require dennisdigital/drupal_console_commands:dev-drupal_extend --update-no-dev
+composer require dennisdigital/drupal_console_commands:dev-drupal_extend
 
 # Copy chain commands
 cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ../chain
