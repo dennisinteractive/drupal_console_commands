@@ -23,6 +23,7 @@ This has been set in Dennis dev_scripts https://github.com/dennisinteractive/dev
 
 # Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
+e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/example/site-example.yml
 
 - drupal **chain:site:new**
 	Builds a new site using Drupal project as template https://github.com/dennisinteractive/drupal-project
