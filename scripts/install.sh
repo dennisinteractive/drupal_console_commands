@@ -18,8 +18,6 @@ fi
 # Using our fork of launcher with nested chain fix.
 composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-launcher.git", "vendor-alias": "drupal"}' drupal/console-launcher:dev-dennis-master#8cdb59c82915bf26a2f33d9f26628abb55b724b4 ~/.console/launcher
 sudo ln -s ~/.console/launcher/bin/drupal /usr/local/bin/drupal
-
-sudo mv /tmp/drupal.phar ${BIN_FILE}
 chmod +x ${BIN_FILE}
 
 # Setup drupal
