@@ -14,16 +14,9 @@
     "autoload": {
         "psr-4": {"DennisDigital\\Drupal\\Console\\": "src"}
     },
-    "repositories": [
-      {
-        "type": "vcs",
-        "url": "git@github.com:dennisinteractive/drupal-console-launcher.git",
-        "vendor-alias": "drupal",
-        "no-api": true
-      }
-    ],
     "require": {
-        "dflydev/placeholder-resolver": "^1.0",
-        "drupal/console-launcher": "dennis-master-dev"
+        "drupal/console-core": "1.0.0-rc14",
+        "symfony/filesystem": ">=2.7 <3.2",
+        "dflydev/placeholder-resolver": "^1.0"
     }
 }
