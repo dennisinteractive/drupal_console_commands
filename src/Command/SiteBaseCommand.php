@@ -16,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
+use Drupal\Console\Core\Utils\ConfigurationManager;
+use Drupal\Console\Core\Utils\ShellProcess;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 
 /**
@@ -69,19 +71,27 @@ class SiteBaseCommand extends Command {
   protected $container;
 
   /**
-   * Constructor.
+   * Configuration Manager.
+   *
+   * @var ConfigurationManager
    */
-  public function __construct()
-  {
-    parent::__construct();
-  }
+  protected $configurationManager;
 
   /**
-   * @param mixed $container
+   * Shell Process.
+   *
+   * @var ShellProcess
    */
-  public function setContainer($container)
+  protected $shellProcess;
+
+  /**
+   * Constructor.
+   */
+  public function __construct(ConfigurationManager $configurationManager, ShellProcess $shellProcess)
   {
-    $this->container = $container;
+    $this->configurationManager = $configurationManager;
+    $this->shellProcess = $shellProcess;
+    parent::__construct();
   }
 
   /**
@@ -161,14 +171,10 @@ class SiteBaseCommand extends Command {
   protected function _siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    $configurationManager = $this->container
-      ->get('console.configuration_manager');
-
-    // $environment = $input->getOption('env')
-    $environment = $configurationManager->getConfiguration()
+    $environment = $this->configurationManager->getConfiguration()
       ->get('application.environment');
 
-    $config = $configurationManager->readTarget($siteName . '.' . $environment);
+    $config = $this->configurationManager->readTarget($siteName . '.' . $environment);
 
     if (empty($config))
     {
@@ -271,7 +277,7 @@ class SiteBaseCommand extends Command {
     );
 
     $this->io->comment('Searching for settings.php in the sites folder');
-    $shellProcess = $this->getShellProcess();
+    $shellProcess = $this->shellProcess;
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
         $output = $shellProcess->getOutput();
@@ -298,15 +304,6 @@ class SiteBaseCommand extends Command {
     }
 
     return $settingsPath;
-  }
-
-  /**
-   * Get the shell process.
-   *
-   * @return Drupal\Console\Core\Command\Exec\ExecCommand
-   */
-  protected function getShellProcess() {
-    return $this->container->get('console.shell_process');
   }
 
   /**

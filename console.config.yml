@@ -4,16 +4,37 @@ application:
       forced:
         'site:checkout':
           class: \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand
+          arguments: ['@console.configuration_manager', '@console.shell_process']
+          tags:
+            - { name: drupal.command }
         'site:compose':
           class: \DennisDigital\Drupal\Console\Command\SiteComposeCommand
+          arguments: ['@console.configuration_manager', '@console.shell_process']
+          tags:
+            - { name: drupal.command }
         'site:settings:db':
           class: \DennisDigital\Drupal\Console\Command\SiteSettingsDbCommand
+          arguments: ['@console.configuration_manager', '@console.shell_process']
+          tags:
+            - { name: drupal.command }
         'site:settings:memcache':
           class: \DennisDigital\Drupal\Console\Command\SiteSettingsMemcacheCommand
+          arguments: ['@console.configuration_manager', '@console.shell_process']
+          tags:
+            - { name: drupal.command }
         'site:db:import':
           class: \DennisDigital\Drupal\Console\Command\SiteDbImportCommand
+          arguments: ['@console.configuration_manager', '@console.shell_process']
+          tags:
+            - { name: drupal.command }
         'site:behat:setup':
           class: \DennisDigital\Drupal\Console\Command\SiteBehatSetupCommand
+          arguments: ['@console.configuration_manager', '@console.shell_process']
+          tags:
+            - { name: drupal.command }
         'site:phpunit:setup':
           class: \DennisDigital\Drupal\Console\Command\SitePHPUnitSetupCommand
+          arguments: ['@console.configuration_manager', '@console.shell_process']
+          tags:
+            - { name: drupal.command }
       name: { }
