@@ -8,7 +8,7 @@ Provides custom Drupal console commands and chains.
 
 ## Installation
 
-curl -L https://goo.gl/LFd3eA | sh
+curl -L https://goo.gl/UnjUuW sh
 
 # Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
