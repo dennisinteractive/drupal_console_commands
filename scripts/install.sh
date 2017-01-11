@@ -10,8 +10,15 @@ if [ -e "${BIN_FILE}" ]; then
   sudo rm ${BIN_FILE}
 fi
 
-# Download latest bin
-curl https://drupalconsole.com/installer -L -o /tmp/drupal.phar
+# Install launcher
+if [ -e ~/.console/launcher ]; then
+  rm -fr ~/.console/launcher
+fi
+#composer create-project drupal/console-launcher:dev-master#88a32775ac0e892859f7da7dfb00901986e399b8 ~/.console/launcher
+# Using our fork of launcher with nested chain fix.
+composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-launcher.git", "vendor-alias": "drupal"}' drupal/console-launcher:dev-dennis-master#8cdb59c82915bf26a2f33d9f26628abb55b724b4 ~/.console/launcher
+sudo ln -s ~/.console/launcher/bin/drupal /usr/local/bin/drupal
+
 sudo mv /tmp/drupal.phar ${BIN_FILE}
 chmod +x ${BIN_FILE}
 
@@ -20,14 +27,15 @@ drupal init --override
 drupal settings:set environment dev
 
 # Install console extend
-# rm -rf ~/.composer/extend;
-composer create-project drupal/console-extend:dev-master#efe180b00827fc1288c2244eee1db3b02c574fe1 ~/.console/extend
-
-cd ~/.console/extend
-# Temporary fix to avoid conflicts between packages
-composer update
+if [ -e ~/.console/extend ]; then
+  rm -fr ~/.console/extend
+fi
+#composer create-project drupal/console-extend:dev-master#efe180b00827fc1288c2244eee1db3b02c574fe1 ~/.console/extend
+# Using our fork of extend with nested chain fix.
+composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-extend.git", "vendor-alias": "drupal"}' drupal/console-extend:dev-dennis-master#622eee8ef886f2ddcfd727dac0adea9d5f338c3b ~/.console/extend
 
 # Install custom commands
+cd ~/.console/extend
 composer require dennisdigital/drupal_console_commands:dev-drupal_extend --update-no-dev
 
 # Copy chain commands
