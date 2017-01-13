@@ -8,7 +8,6 @@ commands:
     arguments:
       name: '%{{name}}'
     options:
-      destination-directory: '/vagrant/repos/%{{name}}'
       branch: '%{{branch|8.x}}'
 # Run composer
   - command: site:compose
