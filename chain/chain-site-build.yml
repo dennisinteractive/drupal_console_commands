@@ -28,13 +28,6 @@ commands:
   - command: site:settings:db
     arguments:
       name: '%{{name}}'
-    # @todo these settings should come from yml file.
-    options:
-      db-name: '%{{name}}'
-      db-user: 'root'
-      db-pass: ''
-      db-host: '127.0.0.1'
-      db-port: '3306'
 # Create phpunit.xml
   - command: site:phpunit:setup
     arguments:
