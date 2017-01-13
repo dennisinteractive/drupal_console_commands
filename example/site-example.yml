@@ -1,0 +1,18 @@
+dev:
+  name: example
+  profile: standard
+  root: /var/www/example
+  host: example.local
+  user: admin
+  pass: password
+  repo:
+    type: git
+    url: git@github.com:user/example.git
+    branch: 8.x
+  db:
+    dump: /mnt/nfs/Drupal/sql/d8_example.sql.gz
+    host: 127.0.0.1
+    name: example
+    user: root
+    port: 3306
+    type: mysql
