@@ -246,11 +246,6 @@ class SiteBaseCommand extends Command {
       $this->destination .= '/';
     }
 
-    // Append site name.
-    if (strpos($this->destination, $this->siteName, 0) === FALSE) {
-      $this->destination .= $this->siteName . '/';
-    }
-
     return $this->destination;
   }
 
