@@ -126,11 +126,11 @@ class SiteDbImportCommand extends SiteBaseCommand {
     if (!$this->fileExists($this->filename)) {
       //@todo Use drupal site:install instead of Drush.
       $command = sprintf(
-        'cd %s; ' .
-        'chmod 777 ../default; ' .
-        'chmod 777 settings.php; ' .
-        'drush si -y %s %s;' .
-        'drush cim;',
+        'cd %s && ' .
+        'chmod 777 ../default && ' .
+        'chmod 777 settings.php && ' .
+        'drush si -y %s %s && ' .
+        'drush cim',
         $this->shellPath($this->destination),
         $this->profile,
         $options

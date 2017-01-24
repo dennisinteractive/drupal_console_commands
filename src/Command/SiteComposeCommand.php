@@ -67,7 +67,7 @@ class SiteComposeCommand extends SiteBaseCommand {
    */
   protected function runCommand($command, $destination) {
     $command = sprintf(
-      'cd %s; composer %s;',
+      'cd %s && composer %s',
       $this->shellPath($destination),
       $command
     );

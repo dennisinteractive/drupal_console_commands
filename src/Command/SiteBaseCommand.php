@@ -261,7 +261,7 @@ class SiteBaseCommand extends Command {
     $settingsPath = $webSitesPath . 'default';
 
     $command = sprintf(
-      'cd %s; find . -name settings.php',
+      'cd %s && find . -name settings.php',
       $this->shellPath($webSitesPath)
     );
 
