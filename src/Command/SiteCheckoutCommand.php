@@ -36,6 +36,13 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected $branch;
 
   /**
+   * Stores current branch of the checked out code.
+   *
+   * @var array currentBranch.
+   */
+  protected $currentBranch;
+
+  /**
    * {@inheritdoc}
    */
   protected function configure() {
@@ -64,23 +71,31 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
 
+    // Validate repo.
+    $this->_validateRepo();
+
+    $remoteBranches = $this->getRemoteBranches();
+    $defaultBranch = $this->getDefaultBranch();
+    $this->currentBranch = $this->getCurrentBranch();
+
     $branch = $input->getOption('branch');
     if (!$branch) {
-        // Typical branches.
-        $branches = ['8.x', 'master'];
 
-        if (isset($this->config['repo']['branch'])) {
-          // Populate branches from config.
-          $siteBranch = $this->config['repo']['branch'];
-        }
+      $options = array_values(array_unique(array_merge(
+        ['8.x'],
+        [$defaultBranch],
+        [$this->currentBranch],
+        $remoteBranches
+      )));
 
-        $branch = $this->io->choice(
-            $this->trans('Select a branch'),
-            array_values(array_unique(array_merge([$siteBranch], $branches))),
-            isset($siteBranch) ? $siteBranch : '8.x',
-            true
-        );
-        $input->setOption('branch', reset($branch));
+      $branch = $this->io->choice(
+        $this->trans('Select a branch'),
+        $options,
+        isset($this->currentBranch) ? $this->currentBranch : $defaultBranch,
+        TRUE
+      );
+
+      $input->setOption('branch', reset($branch));
     }
   }
 
@@ -90,11 +105,13 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    // Validate repo.
-    $this->_validateRepo();
-
     // Validate branch.
     $this->_validateBranch($input);
+
+    if ($this->branch == $this->currentBranch) {
+      $this->io->commentBlock('Current branch selected, skipping checkout command.');
+      return;
+    }
 
     $this->io->comment(sprintf('Checking out %s (%s) on %s',
       $this->siteName,
@@ -273,4 +290,68 @@ class SiteCheckoutCommand extends SiteBaseCommand {
 
     return TRUE;
   }
+
+  /**
+   * Pulls a list of branches from remote.
+   *
+   * @param $repo
+   *
+   * @return mixed
+   * @throws SiteCommandException
+   */
+  protected function getRemoteBranches() {
+    $command = sprintf('git ls-remote --heads %s',
+      $this->repo['url']
+    );
+
+    $shellProcess = $this->getShellProcess();
+
+    if ($shellProcess->exec($command, TRUE)) {
+      preg_match_all("|refs/heads/(.*)|", $shellProcess->getOutput(), $matches);
+      if (!empty($matches[1] && is_array($matches[1]))) {
+        return $matches[1];
+      }
+    }
+    else {
+      throw new SiteCommandException($shellProcess->getOutput());
+
+    }
+  }
+
+  /**
+   * Helper to retrieve the default branch from yml.
+   *
+   * @return mixed
+   */
+  protected function getDefaultBranch() {
+    // Get branch from yml.
+    if (isset($this->config['repo']['branch'])) {
+      // Populate branches from config.
+      return $this->config['repo']['branch'];
+    }
+  }
+
+  /**
+   * Helper to retrieve the current working branch on the site's directory.
+   *
+   * @return mixed
+   */
+  protected function getCurrentBranch() {
+    if ($this->fileExists($this->destination)) {
+      // Get branch from site directory.
+      $command = sprintf('cd %s && git branch',
+        $this->shellPath($this->destination)
+      );
+
+      $shellProcess = $this->getShellProcess();
+
+      if ($shellProcess->exec($command, TRUE)) {
+        preg_match_all("|\*\s(.*)|", $shellProcess->getOutput(), $matches);
+        if (!empty($matches[1] && is_array($matches[1]))) {
+          return reset($matches[1]);
+        }
+      }
+    }
+  }
+
 }
