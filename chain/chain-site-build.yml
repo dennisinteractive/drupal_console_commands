@@ -1,6 +1,6 @@
 # Usage: drupal site:build --placeholder="name:subscriptions"
 command:
-  name: site:build
+  name: chain_site:build
   description: 'Performs multiple commands to build a site'
 commands:
 # Checkout site
