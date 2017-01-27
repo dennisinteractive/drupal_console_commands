@@ -1,6 +1,6 @@
 # Drupal console commands
 
-Provides custom Drupal console commands and chains. 
+Provides custom Drupal console commands and chains.
 
 ## Requirements
 - Composer https://getcomposer.org/
@@ -38,8 +38,21 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:grunt** *site-name*
 	Runs grunt
 - drupal **site:build**
-	A wrapper that will call all the commands above and do some additional tasks.
-
+	A wrapper that will call all the commands below:
+    - site:checkout
+    - site:rebuild
+- drupal **site:rebuild**
+	A wrapper that will call all the commands below:
+    - site:compose
+    - site:npm
+    - site:grunt
+    - site:settings:db
+    - site:phpunit:setup
+    - site:behat:setup
+    - site:settings:memcache
+    - site:db:import
+    - drush updb
+    - drush cr
 
 # Useful arguments and options
 - **-h** Show all the available arguments and options
