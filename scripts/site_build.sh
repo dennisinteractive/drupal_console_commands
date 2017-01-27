@@ -15,11 +15,12 @@ SITENAME=$1;
 
 if [ "$2" = "" ]
   then
-    drupal site:checkout ${SITENAME}
+    CMD="drupal site:checkout ${SITENAME}"
   else
-    drupal site:checkout ${SITENAME} -B $2
+    CMD="drupal site:checkout ${SITENAME} -B $2"
 fi
 
+$CMD && \
 drupal site:compose ${SITENAME} && \
 drupal site:npm --placeholder="name:${SITENAME}" && \
 drupal site:grunt --placeholder="name:${SITENAME}" && \
