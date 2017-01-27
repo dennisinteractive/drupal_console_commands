@@ -37,3 +37,6 @@ composer require dennisdigital/drupal_console_commands:dev-master
 
 # Copy chain commands
 cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ../chain
+
+# Site build script
+sudo ln -s ~/.console/extend/vendor/dennisdigital/drupal_console_commands/scripts/site_build.sh /usr/local/bin/site_build
