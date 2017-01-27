@@ -69,14 +69,14 @@ class SiteBuildCommand extends SiteBaseCommand {
 
     $commands = [
       'drupal site:checkout %s',
-//      'drupal site:compose %s',
-//      'drupal site:npm %s',
-//      'drupal site:grunt %s',
-//      'drupal site:settings:db %s',
-//      'drupal site:phpunit:setup %s',
-//      'drupal site:behat:setup %s',
-//      'drupal site:settings:memcache %s',
-//      'drupal site:db:import %s',
+      'drupal site:compose %s',
+      'drupal site:npm %s',
+      'drupal site:grunt %s',
+      'drupal site:settings:db %s',
+      'drupal site:phpunit:setup %s',
+      'drupal site:behat:setup %s',
+      'drupal site:settings:memcache %s',
+      'drupal site:db:import %s',
     ];
 
     foreach ($commands as $item) {
@@ -103,7 +103,7 @@ class SiteBuildCommand extends SiteBaseCommand {
   }
 
   protected function process($command) {
-    $this->process = new Process($command, null, null, 'subscriptions');
+    $this->process = new Process($command);
     //$this->process->setWorkingDirectory($this->destination);
     $this->process->enableOutput();
     $this->process->setTimeout(null);
