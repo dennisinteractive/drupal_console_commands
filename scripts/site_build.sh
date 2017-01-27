@@ -10,4 +10,5 @@ if [ "$2" = "" ]
     CMD="drupal site:checkout ${SITENAME} -B $2"
 fi
 
+$CMD && \
 site_rebuild ${SITENAME}
