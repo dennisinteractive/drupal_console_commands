@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
@@ -25,6 +26,11 @@ use DennisDigital\Drupal\Console\Exception\SiteCommandException;
  */
 class SiteBaseCommand extends Command {
   use CommandTrait;
+
+  /**
+   * @var ConfigurationManager
+   */
+  protected $configurationManager;
 
   /**
    * IO interface.
@@ -111,6 +117,9 @@ class SiteBaseCommand extends Command {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     $this->io = new DrupalStyle($input, $output);
+
+    $this->configurationManager = $this->container
+      ->get('console.configuration_manager');
 
     $name = $input->getArgument('name');
     if (!$name) {
