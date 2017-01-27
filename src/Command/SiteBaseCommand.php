@@ -121,11 +121,18 @@ class SiteBaseCommand extends Command {
     $this->configurationManager = $this->container
       ->get('console.configuration_manager');
 
+    $sitesDirectory = $this->configurationManager->getSitesDirectory();
+    $options = $this->siteList($sitesDirectory);
+
     $name = $input->getArgument('name');
     if (!$name) {
-        $name = $this->io->ask($this->trans('Site name (In small letters. Don\'t use spaces or hyphens, use underlines.)'));
-
-        $input->setArgument('name', $name);
+      $name = $this->io->choice(
+        $this->trans('Select a site'),
+        $options,
+        reset($options),
+        TRUE
+      );
+      $input->setArgument('name', reset($name));
     }
 
     $this->validateSiteParams($input, $output);
@@ -174,10 +181,10 @@ class SiteBaseCommand extends Command {
       ->get('console.configuration_manager');
 
     // $environment = $input->getOption('env')
-    $environment = $configurationManager->getConfiguration()
+    $environment = $this->configurationManager->getConfiguration()
       ->get('application.environment');
 
-    $config = $configurationManager->readTarget($siteName . '.' . $environment);
+    $config = $this->configurationManager->readTarget($siteName . '.' . $environment);
 
     if (empty($config))
     {
@@ -375,4 +382,39 @@ class SiteBaseCommand extends Command {
   protected function shellPath($file_name) {
     return addcslashes($this->cleanFileName($file_name), ' ');
   }
+
+  /**
+   * Extracted from DebugCommand.
+   * This function lists all sites found in ~/.console/sites folder
+   * It will only return sites that have 'repo' configured
+   *
+   * @param string $sitesDirectory
+   *
+   * @return array
+   */
+  private function siteList($sitesDirectory) {
+    $finder = new Finder();
+    $finder->in($sitesDirectory);
+    $finder->name("*.yml");
+
+    $tableRows = [];
+    foreach ($finder as $site) {
+      $siteName = $site->getBasename('.yml');
+      $environments = $this->configurationManager
+        ->readSite($site->getRealPath());
+
+      if (!$environments || !is_array($environments)) {
+        continue;
+      }
+
+      foreach ($environments as $environment => $config) {
+        if (isset($config['repo'])) {
+          $tableRows[] = $siteName;
+        }
+      }
+    }
+
+    return $tableRows;
+  }
+
 }
