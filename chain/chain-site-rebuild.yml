@@ -49,7 +49,7 @@ commands:
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush entup -y;'
-# Run entity updates
+# Import configuration
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush cim -y;'
