@@ -45,11 +45,11 @@ commands:
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
-# Run entity updates
-  - command: exec
-    arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; drush entup -y;'
 # Clear cache
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush cr;'
+# Run entity updates
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush entup -y;'
