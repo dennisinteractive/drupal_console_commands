@@ -49,6 +49,10 @@ commands:
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush entup -y;'
+# Run entity updates
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush cim -y;'
 # Clear cache
   - command: exec
     arguments:
