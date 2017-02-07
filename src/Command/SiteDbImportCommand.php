@@ -129,8 +129,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
         'cd %s && ' .
         'chmod 777 ../default && ' .
         'chmod 777 settings.php && ' .
-        'drush si -y %s %s && ' .
-        'drush cim',
+        'drush si -y %s %s',
         $this->shellPath($this->destination),
         $this->profile,
         $options
