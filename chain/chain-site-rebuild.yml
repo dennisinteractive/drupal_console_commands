@@ -41,10 +41,14 @@ commands:
       name: '%{{name}}'
     options:
       account-pass: dennis3
-# Run updates
+# Run db updates
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
+# Run entity updates
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush entup -y;'
 # Clear cache
   - command: exec
     arguments:
