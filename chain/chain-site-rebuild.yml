@@ -45,10 +45,6 @@ commands:
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
-# Run entity updates
-  - command: exec
-    arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; drush entup -y;'
 # Import configuration
   - command: exec
     arguments:
