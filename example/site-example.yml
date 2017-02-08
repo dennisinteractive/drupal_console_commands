@@ -3,8 +3,9 @@ dev:
   profile: standard
   root: /var/www/example
   host: example.local
-  user: admin
-  pass: password
+  account-user: admin
+  account-pass: password
+  account-mail: mail@example.local
   repo:
     type: git
     url: git@github.com:user/example.git

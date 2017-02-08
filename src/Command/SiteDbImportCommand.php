@@ -105,6 +105,19 @@ class SiteDbImportCommand extends SiteBaseCommand {
 
     $this->destination = $this->settingsPhpDirectory();
 
+    // Override default values for these options (if empty).
+    $override = array(
+      'account-name' => $this->config['account-name'],
+      'account-pass' => $this->config['account-pass'],
+      'account-mail' => $this->config['account-mail'],
+    );
+    foreach ($this->getDefinition()->getOptions() as $option) {
+      $name = $option->getName();
+      if (array_key_exists($name, $override) && is_null($input->getOption($name))) {
+        $input->setOption($name, $override[$name]);
+      }
+    }
+
     // Populate options.
     $options = '';
     foreach ($this->getDefinition()->getOptions() as $option) {
