@@ -9,50 +9,8 @@ commands:
       name: '%{{name}}'
     options:
       branch: '%{{branch|8.x}}'
-# Run composer
-  - command: site:compose
-    arguments:
-      name: '%{{name}}'
-# Run npm
-  - command: site:npm
+# Run site:rebuild
+  - command: site:rebuild
     options:
       placeholder:
         - 'name:%{{name}}'
-# Run grunt
-  - command: site:grunt
-    options:
-      placeholder:
-        - 'name:%{{name}}'
-# Create settings.db.php
-  - command: site:settings:db
-    arguments:
-      name: '%{{name}}'
-# Create phpunit.xml
-  - command: site:phpunit:setup
-    arguments:
-      name: '%{{name}}'
-# Create behat.yml
-  - command: site:behat:setup
-    arguments:
-      name: '%{{name}}'
-# Create settings.memcache.php
-  - command: site:settings:memcache
-    arguments:
-      name: '%{{name}}'
-    options:
-      memcache-prefix: '%{{name}}'
-# Imports db or installs a site
-  - command: site:db:import
-    arguments:
-      name: '%{{name}}'
-      profile: '%{{profile|config_installer}}'
-    options:
-      account-pass: dennis3
-# Run updates
-  - command: exec
-    arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
-# Clear cache
-  - command: exec
-    arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; drush cr;'
