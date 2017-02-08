@@ -39,8 +39,6 @@ commands:
   - command: site:db:import
     arguments:
       name: '%{{name}}'
-    options:
-      account-pass: dennis3
 # Run db updates
   - command: exec
     arguments:
