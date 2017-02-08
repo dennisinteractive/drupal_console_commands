@@ -177,9 +177,6 @@ class SiteBaseCommand extends Command {
   protected function _siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    $configurationManager = $this->container
-      ->get('console.configuration_manager');
-
     // $environment = $input->getOption('env')
     $environment = $this->configurationManager->getConfiguration()
       ->get('application.environment');
