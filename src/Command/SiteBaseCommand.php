@@ -88,6 +88,8 @@ class SiteBaseCommand extends Command {
   public function setContainer($container)
   {
     $this->container = $container;
+    $this->configurationManager = $this->container
+      ->get('console.configuration_manager');
   }
 
   /**
@@ -117,9 +119,6 @@ class SiteBaseCommand extends Command {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     $this->io = new DrupalStyle($input, $output);
-
-    $this->configurationManager = $this->container
-      ->get('console.configuration_manager');
 
     $sitesDirectory = $this->configurationManager->getSitesDirectory();
     $options = $this->siteList($sitesDirectory);
