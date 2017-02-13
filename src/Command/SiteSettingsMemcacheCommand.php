@@ -87,65 +87,11 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
 
     $content = <<<EOF
 <?php
-//@TODO These memcache settings are for D7.
-/**
- * Memcache Settings.
- */
-include_once('./includes/cache.inc');
-include_once('./profiles/dennis_distro/modules/contrib/memcache/memcache.inc');
-
-// uncomment the line below to disable caching
-// \$conf['cachestatus'] = 1;
-
-if ((isset(\$conf['cachestatus'])) && (\$conf['cachestatus'] > 0)) {
-  \$conf['cache_backends'][] = 'includes/cache-install.inc';
-  // Default to throwing away cache data
-  \$conf['cache_default_class'] = 'DrupalFakeCache';
-  // Rely on the DB cache for form caching - otherwise forms fail.
-  \$conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
-  // Rely on the external cache for page caching.
-  \$conf['cache_class_cache_page'] = 'DrupalFakeCache';
-}
-else {
-  \$conf['cache_default_class'] = 'MemCacheDrupal';
-  \$conf['memcache_key_prefix'] = '$memcache_prefix';
-  \$conf['cache_class_cache_form'] = 'DrupalDatabaseCache';
-  \$conf['cache_class_cache_update'] ='DrupalDatabaseCache';
-
-  \$conf['memcache_servers'] = array(
-    '127.0.0.1:11211' => 'default',
-    '127.0.0.1:11212' => 'menu',
-    '127.0.0.1:11213' => 'filter',
-    '127.0.0.1:11214' => 'form',
-    '127.0.0.1:11215' => 'block',
-    '127.0.0.1:11216' => 'update',
-    '127.0.0.1:11217' => 'views',
-    '127.0.0.1:11218' => 'viewsdata',
-    '127.0.0.1:11219' => 'apachesolr',
-    '127.0.0.1:11220' => 'path',
-    '127.0.0.1:11221' => 'field',
-    '127.0.0.1:11222' => 'rules',
-    '127.0.0.1:11223' => 'token',
-    '127.0.0.1:11224' => 'image',
-  );
-
-  \$conf['memcache_bins'] = array(
-    'cache' => 'default',
-    'cache_menu'   => 'menu',
-    'cache_filter' => 'filter',
-    'cache_form'   => 'form',
-    'cache_block'  => 'block',
-    'cache_update' => 'update',
-    'cache_views'  => 'views',
-    'cache_views_data'  => 'viewsdata',
-    'cache_apachesolr'  => 'apachesolr',
-    'cache_path'  => 'path',
-    'cache_field'  => 'field',
-    'cache_rules'  => 'rules',
-    'cache_token'  => 'token',
-    'cache_image'  => 'image',
-  );
-}
+\$settings['memcache']['servers'] = ['127.0.0.1:11211' => 'default'];
+\$settings['memcache']['bins'] = ['default' => 'default'];
+\$settings['memcache']['key_prefix'] = '$memcache_prefix';
+\$settings['cache']['default'] = 'cache.backend.memcache';
+\$settings['memcache']['stampede_protection'] = TRUE;
 EOF;
 
     $this->filePutContents($file, $content);
