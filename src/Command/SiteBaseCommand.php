@@ -214,7 +214,7 @@ class SiteBaseCommand extends Command {
       $this->profile = $input->getArgument('profile');
     }
     elseif (isset($this->config['profile'])) {
-      // Use config from sites.yml.
+      // Use config from ~/.console/sites/{site}.yml.
       $this->profile = $this->config['profile'];
     }
     else {
