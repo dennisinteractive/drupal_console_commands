@@ -226,7 +226,17 @@ class SiteDbImportCommand extends SiteBaseCommand {
       throw new SiteCommandException($shellProcess->getOutput());
     }
 
-    // Update site uuid from config if installing a new site.
+    // Update site uuid.
+    $this->setSiteUUID();
+  }
+
+  /**
+   * Updates the site UUID if installing a new site.
+   *
+   * @throws \DennisDigital\Drupal\Console\Exception\SiteCommandException
+   */
+  protected function setSiteUUID() {
+    $shellProcess = $this->getShellProcess();
     if (!$this->fileExists($this->filename)) {
       $command = sprintf(
         'cd %s && ' .
