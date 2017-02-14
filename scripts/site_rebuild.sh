@@ -1,5 +1,5 @@
 #!/bin/sh
-# Alternative way to using chains
+# Alternative way to using chains. The benefit of using a bash script is that the intactive mode of the commands work.
 
 SITENAME=$1;
 
