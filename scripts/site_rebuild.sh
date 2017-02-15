@@ -11,6 +11,7 @@ drupal site:phpunit:setup ${SITENAME} && \
 drupal site:behat:setup ${SITENAME} && \
 drupal site:settings:memcache ${SITENAME} && \
 drupal site:db:import ${SITENAME} && \
+cd /vagrant/repos/${SITENAME}/web && drush cim -y && \
 cd /vagrant/repos/${SITENAME}/web && drush updb -y && \
 cd /vagrant/repos/${SITENAME}/web && drush cim -y && \
 cd /vagrant/repos/${SITENAME}/web && drush cr
