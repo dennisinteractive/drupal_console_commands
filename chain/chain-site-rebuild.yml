@@ -39,11 +39,15 @@ commands:
   - command: site:db:import
     arguments:
       name: '%{{name}}'
+# Import configuration
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush cim -y;'
 # Run db updates
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
-# Import configuration
+# Import configuration again to fix a problem with config import when new modules are added to core.extensions.yml
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush cim -y;'
