@@ -227,41 +227,5 @@ class SiteDbImportCommand extends SiteBaseCommand {
       throw new SiteCommandException($shellProcess->getOutput());
     }
 
-    // Update site uuid.
-    $this->setSiteUUID();
-  }
-
-  /**
-   * Updates the site UUID if installing a new site.
-   *
-   * @throws \DennisDigital\Drupal\Console\Exception\SiteCommandException
-   */
-  protected function setSiteUUID() {
-    $shellProcess = $this->getShellProcess();
-    if (!$this->fileExists($this->filename)) {
-      $command = sprintf(
-        'cd %s && ' .
-        'drush config-get system.site uuid --source=sync --format=json',
-        $this->shellPath($this->destination)
-      );
-      if ($shellProcess->exec($command, TRUE)) {
-        // Run command to set uuid from sync config if available.
-        $json = json_decode($shellProcess->getOutput());
-        if (!empty($json->{'system.site:uuid'})) {
-          $command = sprintf(
-            'cd %s && ' .
-            'drush config-set "system.site" uuid "%s" -y',
-            $this->shellPath($this->destination),
-            $json->{'system.site:uuid'}
-          );
-          if (!$shellProcess->exec($command, TRUE)) {
-            throw new SiteCommandException($shellProcess->getOutput());
-          }
-        }
-      }
-      else {
-        throw new SiteCommandException($shellProcess->getOutput());
-      }
-    }
   }
 }
