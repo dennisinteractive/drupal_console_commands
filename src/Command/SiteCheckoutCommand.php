@@ -279,9 +279,9 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     $command = sprintf(
         'cd %s && ' .
         'git fetch --all && ' .
-        'git checkout %s && ' .
-        'chmod 777 ../default && ' .
-        'chmod 777 settings.php && ',
+        'chmod 777 web/sites/default && ' .
+        'chmod 777 web/sites/default/settings.php && ' .
+        'git checkout %s ',
       $this->shellPath($destination),
       $branch
     );
