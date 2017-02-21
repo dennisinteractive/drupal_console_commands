@@ -276,7 +276,12 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    * @throws SiteCommandException
    */
   protected function gitCheckout($branch, $destination) {
-    $command = sprintf('cd %s && git fetch --all && git checkout %s',
+    $command = sprintf(
+        'cd %s && ' .
+        'git fetch --all && ' .
+        'chmod 777 web/sites/default && ' .
+        'chmod 777 web/sites/default/settings.php && ' .
+        'git checkout %s ',
       $this->shellPath($destination),
       $branch
     );

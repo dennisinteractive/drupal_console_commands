@@ -226,5 +226,6 @@ class SiteDbImportCommand extends SiteBaseCommand {
     else {
       throw new SiteCommandException($shellProcess->getOutput());
     }
+
   }
 }
