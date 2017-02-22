@@ -33,8 +33,6 @@ commands:
   - command: site:settings:memcache
     arguments:
       name: '%{{name}}'
-    options:
-      memcache-prefix: '%{{name}}'
 # Imports db or installs a site
   - command: site:db:import
     arguments:
