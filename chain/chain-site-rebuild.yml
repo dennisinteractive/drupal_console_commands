@@ -3,6 +3,14 @@ command:
   name: site:rebuild
   description: 'Performs multiple commands to build a site (without git checkout)'
 commands:
+# Clear php opcode cache
+  - command: exec
+    arguments:
+      bin: 'sudo service php-fpm restart'
+# Clear memcache
+  - command: exec
+    arguments:
+      bin: 'sudo service memcached restart'
 # Run composer
   - command: site:compose
     arguments:
