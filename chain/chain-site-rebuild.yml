@@ -21,6 +21,10 @@ commands:
   - command: site:settings:db
     arguments:
       name: '%{{name}}'
+# Enable development settings
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web/sites; cp -n ./example.settings.local.php ./default/settings.local.php;'
 # Create phpunit.xml
   - command: site:phpunit:setup
     arguments:
