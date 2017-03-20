@@ -3,7 +3,7 @@ dev:
   profile: standard
   root: /var/www/example
   host: example.local
-  account-user: admin
+  account-name: admin
   account-pass: password
   account-mail: mail@example.local
   repo:
