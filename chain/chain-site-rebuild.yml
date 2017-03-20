@@ -45,6 +45,10 @@ commands:
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush site-set @vm;'
+# Run db updates
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
 # Import configuration
   - command: exec
     arguments:
