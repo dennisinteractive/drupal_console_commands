@@ -49,18 +49,10 @@ commands:
   - command: exec
     arguments:
       bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
-# Import configuration
+# Import configuration twice to fix a problem with config import when new modules are added to core.extensions.yml
   - command: exec
     arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; drush cim -y;'
-# Run db updates
-  - command: exec
-    arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; drush updb -y;'
-# Import configuration again to fix a problem with config import when new modules are added to core.extensions.yml
-  - command: exec
-    arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; drush cim -y;'
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush cim -y;drush cim -y'
 # Clear cache
   - command: exec
     arguments:
