@@ -41,6 +41,10 @@ commands:
   - command: site:db:import
     arguments:
       name: '%{{name}}'
+# Clear cache
+  - command: exec
+    arguments:
+      bin: 'cd /vagrant/repos/%{{name}}/web; drush cr;'
 # Set default drush alias
   - command: exec
     arguments:
