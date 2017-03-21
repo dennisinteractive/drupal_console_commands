@@ -176,7 +176,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
 
             // Copy file to /tmp.
             $command .= sprintf(
-              'cp %s /tmp; ',
+              'cp -L %s /tmp; ',
               $this->filename
             );
           }
