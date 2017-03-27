@@ -302,8 +302,6 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   /**
    * Pulls a list of branches from remote.
    *
-   * @param $repo
-   *
    * @return mixed
    * @throws SiteCommandException
    */
