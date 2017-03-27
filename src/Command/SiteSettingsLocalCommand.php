@@ -86,14 +86,17 @@ class SiteSettingsLocalCommand extends SiteBaseCommand {
     // Load the file.
     $content = $this->fileGetContents($file);
 
+    $host= $this->config['host'];
+    $cdn = $this->config['cdn'];
+
     // Append configuration.
     $content .= <<<EOF
 
 // Set Stage file proxy origin.
-\$config['stage_file_proxy.settings']['origin'] = 'cdn.subscriptions.dennis.co.uk';
+\$config['stage_file_proxy.settings']['origin'] = '$cdn';
 
 // Change CDN domain to local.
-\$config['cdn.settings']['mapping']['domain'] = 'subscriptions.vm8.didev.co.uk';
+\$config['cdn.settings']['mapping']['domain'] = '$host';
 
 EOF;
 
