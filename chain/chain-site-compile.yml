@@ -1,6 +1,6 @@
 # Usage: drupal site:compile --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
 command:
-  name: site:complile
+  name: site:compile
   description: 'Compiles the source, downloading and extracting the packages.'
 commands:
 # Run composer

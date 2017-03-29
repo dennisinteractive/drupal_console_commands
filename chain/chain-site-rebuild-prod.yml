@@ -4,7 +4,7 @@ command:
   description: 'Peforms necessary steps to build the site from a given source.'
 commands:
 # Compile the packages.
-  - command: site:complile
+  - command: site:compile
     options:
       placeholder:
         - 'name:%{{name}}'
