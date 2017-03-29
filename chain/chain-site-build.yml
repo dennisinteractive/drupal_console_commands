@@ -1,4 +1,4 @@
-# Usage: drupal site:build --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
+# Usage: drupal site:build --placeholder="name:subscriptions" --placeholder="root:\/vagrant\/repos"
 command:
   name: site:build
   description: 'Builds a new site.'
@@ -14,4 +14,4 @@ commands:
     options:
       placeholder:
         - 'name:%{{name}}'
-        - 'root:%{{root|/vagrant/repos}}'
+        - 'root:%{{root|\/vagrant\/repos}}'
