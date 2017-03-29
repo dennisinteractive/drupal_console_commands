@@ -1,0 +1,26 @@
+# Usage: drupal site:rebuild:fresh --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
+command:
+  name: site:rebuild:fresh
+  description: 'Peforms necessary steps to build the site from a given source.'
+commands:
+# Compile the packages.
+  - command: site:complile
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+        - 'root:%{{root|/vagrant/repos}}'
+# Generate the settings.
+  - command: site:configure
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+# Imports db or installs a site
+  - command: site:db:import
+    arguments:
+      name: '%{{name}}'
+# Build the site based on existing setup.
+  - command: site:construct
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+        - 'root:%{{root|/vagrant/repos}}'

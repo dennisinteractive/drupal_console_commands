@@ -1,0 +1,25 @@
+# Usage: drupal site:construct --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
+command:
+  name: site:construct
+  description: 'Sets the site up based on current configuration and database.'
+commands:
+# Clear cache
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; drush cr;'
+# Set default drush alias
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; drush site-set @vm;'
+# Run db updates
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; drush updb -y;'
+# Import configuration twice to fix a problem with config import when new modules are added to core.extensions.yml
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; drush cim -y; drush cim -y'
+# Clear cache
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; drush cr;'

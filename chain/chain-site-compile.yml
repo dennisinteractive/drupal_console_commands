@@ -1,0 +1,17 @@
+# Usage: drupal site:compile --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
+command:
+  name: site:complile
+  description: 'Compiles the source, downloading and extracting the packages.'
+commands:
+# Run composer
+  - command: site:compose
+    arguments:
+      name: '%{{name}}'
+# Run npm
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;'
+# Run grunt
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "grunt" \;'
