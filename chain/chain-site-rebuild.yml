@@ -1,6 +1,6 @@
 # Usage: drupal site:rebuild --placeholder="name:subscriptions" --placeholder="root:\/vagrant\/repos"
 command:
-  name: site:rebuild:fresh
+  name: site:rebuild
   description: 'Peforms necessary steps to build the site from a given source.'
 commands:
 # Compile the packages.
