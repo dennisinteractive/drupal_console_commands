@@ -10,7 +10,7 @@ commands:
     options:
       branch: '%{{branch|8.x}}'
 # Run site:rebuild
-  - command: site:rebuild:fresh
+  - command: site:rebuild
     options:
       placeholder:
         - 'name:%{{name}}'

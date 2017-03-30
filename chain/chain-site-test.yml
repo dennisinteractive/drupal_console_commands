@@ -1,0 +1,21 @@
+# Usage: drupal site:test --placeholder="name:subscriptions" --placeholder="root:\/vagrant\/repos"
+command:
+  name: site:test
+  description: 'Sets the test suites up and then runs them.'
+commands:
+# Create phpunit.xml
+  - command: site:phpunit:setup
+    arguments:
+      name: '%{{name}}'
+# Create behat.yml
+  - command: site:behat:setup
+    arguments:
+      name: '%{{name}}'
+# Run phpunit
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}; ./behat;'
+# Run Behat
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}/tests; phpunit;'
