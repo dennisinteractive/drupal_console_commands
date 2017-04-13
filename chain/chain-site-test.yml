@@ -11,11 +11,11 @@ commands:
   - command: site:behat:setup
     arguments:
       name: '%{{name}}'
-# Run phpunit
-  - command: exec
-    arguments:
-      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}; ./behat;'
 # Run Behat
   - command: exec
     arguments:
-      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}/tests; phpunit;'
+      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}/tests; ./behat;'
+# Run phpunit
+  - command: exec
+    arguments:
+      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}; phpunit;'
