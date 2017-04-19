@@ -1,8 +1,0 @@
-# Usage: drupal site:npm --placeholder="name:subscriptions"
-command:
-  name: site:npm
-  description: 'Runs npm on the specified site'
-commands:
-  - command: exec
-    arguments:
-      bin: 'cd /vagrant/repos/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;'
