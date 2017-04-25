@@ -16,18 +16,20 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 
 - drupal **site:new**
 	Builds a new site using Drupal project as template https://github.com/dennisinteractive/drupal-project
-- drupal **site:checkout** *site-mame*
+- drupal **site:checkout** *site-mame* --
 	Performs a git clone and checks out the specified branch
 - drupal **site:compose** *site-name*
 	Runs *composer install*. Alternatively, it will run *composer update* if there is a composer.lock.
 - drupal **site:settings:db** *site-name*
 	Creates *settings.db.php* in the *web/sites/default* folder. This file contains DB credentials and should not be committed.
+- drupal **site:settings:local** *site-name*
+	Creates *settings.local.php* in the *web/sites/default* folder. This file contains local settings overrides and should not be committed.
+- drupal **site:settings:memcache** *site-name*
+	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
 - drupal **site:phpunit:setup** *site-name*
 	Creates *phpunit.xml* in the root. This file contains PHPUnit configuration and should not be committed.
 - drupal **site:behat:setup** *site-name*
 	Creates *behat.yml* in the *tests* folder. This file contains Behat configuration and should not be committed.
-- drupal **site:settings:memcache** *site-name*
-	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
 - drupal **site:db:import** *site-name*
 	If a database dump is available, it will drop the current database and import the dump. The db-dump information comes from *~/.console/sites/site-name.yml*.
 	The command will copy the dump from the original place to */tmp*. If you run the command again, it will only copy the file once the original has changed. This is very useful when working remotely on slow networks.
@@ -38,21 +40,42 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:grunt** *site-name*
 	Runs grunt
 - drupal **site:build**
-	A wrapper that will call all the commands below:
+	A chain that will call all the commands below:
     - site:checkout
     - site:rebuild
 - drupal **site:rebuild**
-	A wrapper that will call all the commands below:
+	A chain that will call all the commands below:
+    - site:compile
+    - site:configure
+    - site:db:import
+    - site:construct
+- drupal **site:rebuild-prod**
+	A chain that will call all the commands below:
+    - site:compile
+    - site:construct
+- drupal **site:compile**
+	A chain that will call all the commands below:
     - site:compose
-    - site:npm
-    - site:grunt
+    - 'exec' command that runs npm in supported directories.
+    - 'exec' command that runs grunt in supported directories.
+- drupal **site:configure**
+	A chain that will call all the commands below:
     - site:settings:db
+    - site:settings:local
+    - site:settings:memcache
+- drupal **site:construct**
+	A chain that will call all the commands below:
+    - 'exec' command that clears drupal caches.
+    - 'exec' command that sets drush aliases.
+    - 'exec' command that runs drupal updates.
+    - 'exec' command that imports drupal config twice.
+    - 'exec' command that clears drupal caches.
+- drupal **site:test**
+	A chain that will call all the commands below:
     - site:phpunit:setup
     - site:behat:setup
-    - site:settings:memcache
-    - site:db:import
-    - drush updb
-    - drush cr
+    - 'exec' command that runs behat tests.
+    - 'exec' command that runs phpunit tests.
 
 # Useful arguments and options
 - **-h** Show all the available arguments and options
