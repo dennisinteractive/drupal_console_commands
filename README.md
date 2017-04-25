@@ -35,10 +35,6 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 	The command will copy the dump from the original place to */tmp*. If you run the command again, it will only copy the file once the original has changed. This is very useful when working remotely on slow networks.
 	If no db-dump information is available or there is no dump at the location, it will run a site install.
 	Supported extensions: **.sql**, **.sql.gz**.
-- drupal **site:npm** *site-name*
-	Runs npm install
-- drupal **site:grunt** *site-name*
-	Runs grunt
 - drupal **site:build**
 	A chain that will call all the commands below:
     - site:checkout
