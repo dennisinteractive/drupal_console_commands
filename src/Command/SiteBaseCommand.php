@@ -25,6 +25,7 @@ use DennisDigital\Drupal\Console\Exception\SiteCommandException;
  * @package DennisDigital\Drupal\Console\Command
  */
 class SiteBaseCommand extends Command {
+
   use CommandTrait;
 
   /**
@@ -38,36 +39,48 @@ class SiteBaseCommand extends Command {
    * @var null
    */
   protected $io = NULL;
+
   /**
    * Global location for sites.yml.
    *
    * @var array
    */
   protected $configFile = NULL;
+
   /**
    * Stores the contents of sites.yml.
    *
    * @var array
    */
   protected $config = NULL;
+
   /**
    * Stores the site name.
    *
    * @var string
    */
   protected $siteName = NULL;
+
   /**
    * Stores the profile name.
    *
    * @var string
    */
   protected $profile = NULL;
+
   /**
    * Stores the destination directory.
    *
    * @var string
    */
   protected $destination = NULL;
+
+  /**
+   * Stores the site url.
+   *
+   * @var string
+   */
+  protected $url = NULL;
 
   /**
    * Stores the container.
@@ -111,6 +124,12 @@ class SiteBaseCommand extends Command {
       InputOption::VALUE_OPTIONAL,
       // @todo use: $this->trans('commands.site.checkout.name.options')
       'Specify the destination of the site if different than the global destination found in sites.yml'
+    );
+    $this->addOption(
+      'site-url',
+      '',
+      InputOption::VALUE_REQUIRED,
+      'The absolute url for this site.'
     );
   }
 
@@ -162,6 +181,9 @@ class SiteBaseCommand extends Command {
 
     // Validate destination.
     $this->_validateDestination($input);
+
+    // Validate url.
+    $this->_validateUrl($input);
   }
 
   /**
@@ -262,6 +284,32 @@ class SiteBaseCommand extends Command {
   }
 
   /**
+   * Helper to validate destination parameter.
+   *
+   * @param InputInterface $input
+   *
+   * @throws SiteCommandException
+   *
+   * @return string Destination
+   */
+  protected function _validateUrl(InputInterface $input) {
+    $scheme = isset($this->config['scheme']) && !empty($this->config['scheme']) ? $this->config['scheme'] : 'http';
+
+    if (isset($this->config['host']) && !empty($this->config['host'])) {
+      $host = $this->config['host'];
+      $url = "{$scheme}://{$host}";
+    }
+
+    if ($url && filter_var($url, FILTER_VALIDATE_URL) !== FALSE) {
+      $this->url = $url;
+      $input->setOption('site-url', $this->url);
+
+    };
+
+    return $this->url;
+  }
+
+  /**
    * Helper to return the path to settings.php
    * It will try to match a folder with same name as site name
    * If not found, it will try to match a folder called "default".
@@ -334,6 +382,10 @@ class SiteBaseCommand extends Command {
    * @return int
    */
   protected function filePutContents($file_name, $contents) {
+    // Ensure the folder exists.
+    if (!file_exists(dirname($file_name)) || is_writable(dirname($file_name)) !== TRUE) {
+      mkdir(dirname($file_name), 0664, TRUE);
+    }
     return file_put_contents($this->cleanFileName($file_name), $contents);
   }
 

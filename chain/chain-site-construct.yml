@@ -10,7 +10,7 @@ commands:
 # Set default drush alias
   - command: exec
     arguments:
-      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}/web; drush site-set @vm;'
+      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}/web; drush site-set @site;'
 # Run db updates
   - command: exec
     arguments:
