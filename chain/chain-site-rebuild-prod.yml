@@ -1,4 +1,4 @@
-# Usage: drupal site:rebuild:prod --placeholder="name:subscriptions" --placeholder="root:\/vagrant\/repos"
+# Usage: drupal site:rebuild:prod --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
 command:
   name: site:rebuild:prod
   description: 'Peforms necessary steps to build the site from a given source.'
@@ -8,10 +8,10 @@ commands:
     options:
       placeholder:
         - 'name:%{{name}}'
-        - 'root:%{{root|\/vagrant\/repos}}'
+        - 'root:%{{root|/vagrant/repos}}'
 # Build the site based on existing setup.
   - command: site:construct
     options:
       placeholder:
         - 'name:%{{name}}'
-        - 'root:%{{root|\/vagrant\/repos}}'
+        - 'root:%{{root|/vagrant/repos}}'
