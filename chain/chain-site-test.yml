@@ -18,4 +18,4 @@ commands:
 # Run phpunit
   - command: exec
     arguments:
-      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}; phpunit;'
+      bin: 'cd %{{root|\/vagrant\/repos}}/%{{name}}; ./vendor/bin/phpunit;'
