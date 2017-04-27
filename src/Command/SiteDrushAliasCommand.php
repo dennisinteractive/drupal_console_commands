@@ -76,8 +76,6 @@ class SiteDrushAliasCommand extends SiteBaseCommand {
  * Drush alias for site {$this->siteName}.
  */
 \$aliases["site"] = array (
-  'root' => '{$this->destination}web',
-  'uri' => '{$this->url}',
   'user' => 1,
 );
 EOF;
