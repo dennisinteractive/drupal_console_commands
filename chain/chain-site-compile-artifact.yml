@@ -1,4 +1,4 @@
-# Usage: drupal site:compile:prod --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
+# Usage: drupal site:compile:artifact --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
 command:
   name: site:compile:artifact
   description: 'Compiles the source, downloading and extracting the packages.'
