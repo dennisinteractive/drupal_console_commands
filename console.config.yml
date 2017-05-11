@@ -22,4 +22,6 @@ application:
           class: \DennisDigital\Drupal\Console\Command\SitePHPUnitSetupCommand
         'site:npm':
           class: \DennisDigital\Drupal\Console\Command\SiteNPMCommand
+        'site:grunt':
+          class: \DennisDigital\Drupal\Console\Command\SiteGruntCommand
       name: { }
