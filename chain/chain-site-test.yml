@@ -4,11 +4,7 @@ command:
   description: 'Sets the test suites up and then runs them.'
 commands:
 # Create phpunit.xml
-  - command: site:phpunit:setup
-    arguments:
-      name: '%{{name}}'
-# Create behat.yml
-  - command: site:behat:setup
+  - command: site:test:setup
     arguments:
       name: '%{{name}}'
 # Run Behat

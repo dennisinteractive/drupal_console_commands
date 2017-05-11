@@ -1,7 +1,7 @@
 # Usage: drupal site:build --placeholder="name:subscriptions"
 command:
   name: site:build
-  description: 'Builds a new site.'
+  description: 'Builds a site.'
 commands:
 # Checkout site
   - command: site:checkout

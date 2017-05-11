@@ -1,10 +1,20 @@
 # Usage: drupal site:rebuild --placeholder="name:subscriptions"
 command:
   name: site:rebuild
-  description: 'Peforms necessary steps to build the site from a given source.'
+  description: 'Performs necessary steps to rebuild the site from a given source.'
 commands:
-# Compile the packages.
-  - command: site:compile
+# Run composer.
+  - command: site:compose
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+# Run NPM.
+  - command: site:npm
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+# Run Grunt.
+  - command: site:grunt
     options:
       placeholder:
         - 'name:%{{name}}'
@@ -13,12 +23,17 @@ commands:
     options:
       placeholder:
         - 'name:%{{name}}'
+# Tests setup.
+  - command: site:test:setup
+    options:
+      placeholder:
+        - 'name:%{{name}}'
 # Imports db or installs a site
   - command: site:db:import
     arguments:
       name: '%{{name}}'
-# Build the site based on existing setup.
-  - command: site:construct
+# Run updates.
+  - command: site:update
     options:
       placeholder:
         - 'name:%{{name}}'

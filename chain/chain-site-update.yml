@@ -1,6 +1,6 @@
-# Usage: drupal site:construct --placeholder="name:subscriptions"
+# Usage: drupal site:update --placeholder="name:subscriptions"
 command:
-  name: site:construct
+  name: site:update
   description: 'Sets the site up based on current configuration and database.'
 commands:
 # Clear cache

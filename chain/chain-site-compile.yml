@@ -10,10 +10,10 @@ commands:
     options:
       destination-directory: '${{site_destination_directory}}'
 # Run npm
-  - command: exec
+  - command: site:npm
     arguments:
-      bin: 'cd ${{site_destination_directory}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;'
+      name: '%{{name}}'
 # Run grunt
-  - command: exec
+  - command: site:grunt
     arguments:
-      bin: 'cd ${{site_destination_directory}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "grunt" \;'
+      name: '%{{name}}'

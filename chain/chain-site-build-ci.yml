@@ -1,0 +1,24 @@
+# Usage: drupal site:build:ci --placeholder="name:subscriptions"
+command:
+  name: site:rebuild:ci
+  description: 'Builds site for CI.'
+commands:
+# Generate the settings.
+  - command: site:configure
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+# Imports db or installs a site
+  - command: site:db:import
+    arguments:
+      name: '%{{name}}'
+# Run updates.
+  - command: site:update
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+# Run tests.
+  - command: site:test
+    options:
+      placeholder:
+        - 'name:%{{name}}'
