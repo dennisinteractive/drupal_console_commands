@@ -20,4 +20,6 @@ application:
           class: \DennisDigital\Drupal\Console\Command\SiteBehatSetupCommand
         'site:phpunit:setup':
           class: \DennisDigital\Drupal\Console\Command\SitePHPUnitSetupCommand
+        'site:npm':
+          class: \DennisDigital\Drupal\Console\Command\SiteNPMCommand
       name: { }

@@ -49,6 +49,8 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 	A chain that will call all the commands below:
     - site:compile
     - site:construct
+- drupal **site:npm**
+  Runs NPM.
 - drupal **site:compile**
 	A chain that will call all the commands below:
     - site:compose
