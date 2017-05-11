@@ -1,4 +1,4 @@
-# Usage: drupal site:compile --placeholder="name:subscriptions" --placeholder="root:/vagrant/repos"
+# Usage: drupal site:compile --placeholder="name:subscriptions"
 command:
   name: site:compile
   description: 'Compiles the source, downloading and extracting the packages.'
@@ -8,12 +8,12 @@ commands:
     arguments:
       name: '%{{name}}'
     options:
-      destination-directory: '%{{root|/vagrant/repos}}/%{{name}}'
+      destination-directory: '${{site_destination_directory}}'
 # Run npm
   - command: exec
     arguments:
-      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;'
+      bin: 'cd ${{site_destination_directory}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;'
 # Run grunt
   - command: exec
     arguments:
-      bin: 'cd %{{root|/vagrant/repos}}/%{{name}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "grunt" \;'
+      bin: 'cd ${{site_destination_directory}}/web; find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "grunt" \;'

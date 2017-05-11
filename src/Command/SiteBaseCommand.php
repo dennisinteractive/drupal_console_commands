@@ -275,6 +275,15 @@ class SiteBaseCommand extends Command {
       $this->destination = '/tmp/' . $this->siteName;
     }
 
+    // Allow destination to be overriden by environment variable. i.e.
+    // export site_destination_directory="/directory/"
+    if (!getenv('site_destination_directory')) {
+      putenv("site_destination_directory=$this->destination");
+    }
+    else {
+      $this->destination = getenv('site_destination_directory');
+    }
+
     // Make sure we have a slash at the end.
     if (substr($this->destination, -1) != '/') {
       $this->destination .= '/';

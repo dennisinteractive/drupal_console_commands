@@ -77,6 +77,13 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - **-h** Show all the available arguments and options
 - **--no-interaction** Will execute the command without asking any optional argument
 
+# Environment variables
+By default, the commands will use parameters from the site.yml, but it is possible to override them using environment variables.
+
+For example, to override the root directory you can set the variable before calling `site:build`
+
+`export site_destination_directory="/directory/"`
+
 # Usage example
 ```
 drupal site:build
