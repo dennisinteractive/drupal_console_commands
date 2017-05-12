@@ -3,7 +3,7 @@ command:
   name: site:test
   description: 'Sets the test suites up and then runs them.'
 commands:
-# Create phpunit.xml
+# Set up testing suites
   - command: site:test:setup
     arguments:
       name: '%{{name}}'
