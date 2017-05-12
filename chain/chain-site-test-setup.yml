@@ -1,6 +1,6 @@
 # Usage: drupal site:test:setup --placeholder="name:subscriptions"
 command:
-  name: site:test
+  name: site:test:setup
   description: 'Sets the test suites.'
 commands:
 # Create phpunit.xml
