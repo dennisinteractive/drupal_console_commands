@@ -1,6 +1,6 @@
 # Usage: drupal site:build:ci --placeholder="name:subscriptions"
 command:
-  name: site:rebuild:ci
+  name: site:build:ci
   description: 'Builds site for CI.'
 commands:
 # Generate the settings.

@@ -1,6 +1,6 @@
 # Usage: drupal site:build:prod --placeholder="name:subscriptions"
 command:
-  name: site:rebuild:prod
+  name: site:build:prod
   description: 'Runs updates on Production.'
 commands:
 # Run updates.

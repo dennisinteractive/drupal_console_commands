@@ -1,6 +1,6 @@
 # Usage: drupal site:build:qa --placeholder="name:subscriptions"
 command:
-  name: site:rebuild:qa
+  name: site:build:qa
   description: 'Builds site for QA.'
 commands:
 # Generate the settings.

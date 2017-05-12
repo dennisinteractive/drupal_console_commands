@@ -1,6 +1,6 @@
 # Usage: drupal site:build:staging --placeholder="name:subscriptions"
 command:
-  name: site:rebuild:staging
+  name: site:build:staging
   description: 'Builds site for Staging.'
 commands:
 # Generate the settings.
