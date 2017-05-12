@@ -90,6 +90,11 @@ class SiteDbImportCommand extends SiteBaseCommand {
       throw new SiteCommandException('Please specify a file to import the dump from');
     }
 
+    // If the dump is on s3, download it locally.
+    if (substr($this->filename, 0, 5) == 's3://') {
+      $this->filename = $this->s3_download($this->filename);
+    }
+
     // Check if the file exits.
     if (!$this->is_absolute_path($this->filename)) {
       $filename = realpath(getcwd() . trim($this->filename, '.'));
@@ -196,6 +201,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
           $this->filename = '/tmp/' . $baseNameSql;
           break;
       }
+
       if (is_null($input->getOption('db-name'))) {
         $input->setOption('db-name', $this->siteName);
       }
@@ -228,4 +234,36 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
 
   }
+
+  /**
+   * Downloads the dump from s3 bucket.
+   *
+   * @param $filename
+   *
+   * @return string The absolute path for the dump.
+   *
+   * @throws SiteCommandException
+   */
+  protected function s3_download($filename) {
+    $tmp_folder = '/tmp/';
+    $shellProcess = $this->getShellProcess();
+
+    // First get the contents of the file to know which dump to use.
+    $command = sprintf(
+      'cd %s && ' .
+      's3cmd --force get %s',
+      $tmp_folder,
+      $filename
+    );
+
+    if ($shellProcess->exec($command, TRUE)) {
+      $this->io->writeln($shellProcess->getOutput());
+    }
+    else {
+      throw new SiteCommandException($shellProcess->getOutput());
+    }
+
+    return $tmp_folder . basename($this->filename);
+  }
+
 }
