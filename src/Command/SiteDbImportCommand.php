@@ -56,8 +56,6 @@ class SiteDbImportCommand extends SiteBaseCommand {
     // @todo ensure all configuration options for S3 including
     // access and secret keys to be passed in to ensure S3
     // wrapper can access the required buckets.
-    //
-    // Until then we will continue to use 's3cmd' for S3 only.
     $options = [
       'region' => 'eu-west-1',
       'version' => 'latest',
@@ -263,8 +261,6 @@ class SiteDbImportCommand extends SiteBaseCommand {
     $tmp_folder = '/tmp/';
 
     // Save the dbdump to a local destination.
-    //
-    // @todo Use of 's3cmd' can be removed once s3 wrapper is aware of access creds.
     if ('s3' === parse_url($filename, PHP_URL_SCHEME)) {
       $command = sprintf(
         'cd %s && ' .
@@ -301,10 +297,6 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
 
     return $tmp_folder . basename($filename);
-  }
-
-  protected function remoteFileExists($filename) {
-
   }
 
 }
