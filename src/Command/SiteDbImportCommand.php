@@ -12,6 +12,7 @@ namespace DennisDigital\Drupal\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Aws\S3\S3Client;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
@@ -61,7 +62,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
       'region' => 'eu-west-1',
       'version' => 'latest',
     ];
-    $client = new Aws\S3\S3Client($options);
+    $client = new S3Client($options);
     $client->registerStreamWrapper();
   }
 
@@ -260,12 +261,11 @@ class SiteDbImportCommand extends SiteBaseCommand {
    */
   protected function download($filename) {
     $tmp_folder = '/tmp/';
-    $meta = stream_get_meta_data($filename);
 
     // Save the dbdump to a local destination.
     //
     // @todo Use of 's3cmd' can be removed once s3 wrapper is aware of access creds.
-    if ($meta['wrapper_type'] === 's3') {
+    if ('s3' === parse_url($filename, PHP_URL_SCHEME)) {
       $command = sprintf(
         'cd %s && ' .
         's3cmd --force get %s',
