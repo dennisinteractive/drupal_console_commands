@@ -281,17 +281,30 @@ class SiteDbImportCommand extends SiteBaseCommand {
         throw new SiteCommandException($shellProcess->getOutput());
       }
     }
-    elseif (file_exists($filename)) {
-      $saved = file_put_contents($filename, $tmp_folder . basename($filename));
-      if ($saved !== FALSE) {
+    else {
+      // Open a stream in read-only mode
+      if ($stream = fopen($filename, 'r')) {
+        // Open the destination file to save the output to.
+        $output_file = fopen ($tmp_folder . basename($filename), "a");
+        if ($output_file)
+          while(!feof($stream)) {
+            fwrite($output_file, fread($stream, 1024), 1024);
+          }
+        fclose($stream);
+        if ($output_file) {
+          fclose($output_file);
+        }
+      }
+      else {
         throw new SiteCommandException("The DB dump could not be saved to the local destination.");
       }
     }
-    else {
-      throw new SiteCommandException("The DB dump file does not exist.");
-    }
 
     return $tmp_folder . basename($filename);
+  }
+
+  protected function remoteFileExists($filename) {
+
   }
 
 }
