@@ -49,6 +49,20 @@ class SiteDbImportCommand extends SiteBaseCommand {
       InputOption::VALUE_REQUIRED,
       $this->trans('commands.database.restore.options.file')
     );
+
+    // Register S3 wrapper for use by php file functions.
+    //
+    // @todo ensure all configuration options for S3 including
+    // access and secret keys to be passed in to ensure S3
+    // wrapper can access the required buckets.
+    //
+    // Until then we will continue to use 's3cmd' for S3 only.
+    $options = [
+      'region' => 'eu-west-1',
+      'version' => 'latest',
+    ];
+    $client = new Aws\S3\S3Client($options);
+    $client->registerStreamWrapper();
   }
 
   /**
@@ -90,9 +104,9 @@ class SiteDbImportCommand extends SiteBaseCommand {
       throw new SiteCommandException('Please specify a file to import the dump from');
     }
 
-    // If the dump is on s3, download it locally.
-    if (substr($this->filename, 0, 5) == 's3://') {
-      $this->filename = $this->s3_download($this->filename);
+    // If the db dump is not local, download it locally.
+    if (!stream_is_local($this->filename)) {
+      $this->filename = $this->download($this->filename);
     }
 
     // Check if the file exits.
@@ -244,26 +258,40 @@ class SiteDbImportCommand extends SiteBaseCommand {
    *
    * @throws SiteCommandException
    */
-  protected function s3_download($filename) {
+  protected function download($filename) {
     $tmp_folder = '/tmp/';
-    $shellProcess = $this->getShellProcess();
+    $meta = stream_get_meta_data($filename);
 
-    // First get the contents of the file to know which dump to use.
-    $command = sprintf(
-      'cd %s && ' .
-      's3cmd --force get %s',
-      $tmp_folder,
-      $filename
-    );
+    // Save the dbdump to a local destination.
+    //
+    // @todo Use of 's3cmd' can be removed once s3 wrapper is aware of access creds.
+    if ($meta['wrapper_type'] === 's3') {
+      $command = sprintf(
+        'cd %s && ' .
+        's3cmd --force get %s',
+        $tmp_folder,
+        $filename
+      );
 
-    if ($shellProcess->exec($command, TRUE)) {
-      $this->io->writeln($shellProcess->getOutput());
+      $shellProcess = $this->getShellProcess();
+      if ($shellProcess->exec($command, TRUE)) {
+        $this->io->writeln($shellProcess->getOutput());
+      }
+      else {
+        throw new SiteCommandException($shellProcess->getOutput());
+      }
+    }
+    elseif (file_exists($filename)) {
+      $saved = file_put_contents($filename, $tmp_folder . basename($filename));
+      if ($saved !== FALSE) {
+        throw new SiteCommandException("The DB dump could not be saved to the local destination.");
+      }
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new SiteCommandException("The DB dump file does not exist.");
     }
 
-    return $tmp_folder . basename($this->filename);
+    return $tmp_folder . basename($filename);
   }
 
 }

@@ -16,6 +16,7 @@
     },
     "require": {
         "symfony/filesystem": ">=2.7 <3.2",
-        "dflydev/placeholder-resolver": "^1.0"
+        "dflydev/placeholder-resolver": "^1.0",
+        "aws/aws-sdk-php": "^3.26"
     }
 }
