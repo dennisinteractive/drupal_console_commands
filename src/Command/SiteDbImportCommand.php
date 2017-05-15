@@ -12,6 +12,7 @@ namespace DennisDigital\Drupal\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Aws\S3\S3Client;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
@@ -49,6 +50,18 @@ class SiteDbImportCommand extends SiteBaseCommand {
       InputOption::VALUE_REQUIRED,
       $this->trans('commands.database.restore.options.file')
     );
+
+    // Register S3 wrapper for use by php file functions.
+    //
+    // @todo ensure all configuration options for S3 including
+    // access and secret keys to be passed in to ensure S3
+    // wrapper can access the required buckets.
+    $options = [
+      'region' => 'eu-west-1',
+      'version' => 'latest',
+    ];
+    $client = new S3Client($options);
+    $client->registerStreamWrapper();
   }
 
   /**
@@ -88,6 +101,11 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
     else {
       throw new SiteCommandException('Please specify a file to import the dump from');
+    }
+
+    // If the db dump is not local, download it locally.
+    if (!stream_is_local($this->filename)) {
+      $this->filename = $this->download($this->filename);
     }
 
     // Check if the file exits.
@@ -196,6 +214,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
           $this->filename = '/tmp/' . $baseNameSql;
           break;
       }
+
       if (is_null($input->getOption('db-name'))) {
         $input->setOption('db-name', $this->siteName);
       }
@@ -228,4 +247,56 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
 
   }
+
+  /**
+   * Downloads the dump from s3 bucket.
+   *
+   * @param $filename
+   *
+   * @return string The absolute path for the dump.
+   *
+   * @throws SiteCommandException
+   */
+  protected function download($filename) {
+    $tmp_folder = '/tmp/';
+
+    // Save the dbdump to a local destination.
+    if ('s3' === parse_url($filename, PHP_URL_SCHEME)) {
+      $command = sprintf(
+        'cd %s && ' .
+        's3cmd --force get %s',
+        $tmp_folder,
+        $filename
+      );
+
+      $shellProcess = $this->getShellProcess();
+      if ($shellProcess->exec($command, TRUE)) {
+        $this->io->writeln($shellProcess->getOutput());
+      }
+      else {
+        throw new SiteCommandException($shellProcess->getOutput());
+      }
+    }
+    else {
+      // Open a stream in read-only mode
+      if ($stream = fopen($filename, 'r')) {
+        // Open the destination file to save the output to.
+        $output_file = fopen ($tmp_folder . basename($filename), "a");
+        if ($output_file)
+          while(!feof($stream)) {
+            fwrite($output_file, fread($stream, 1024), 1024);
+          }
+        fclose($stream);
+        if ($output_file) {
+          fclose($output_file);
+        }
+      }
+      else {
+        throw new SiteCommandException("The DB dump could not be saved to the local destination.");
+      }
+    }
+
+    return $tmp_folder . basename($filename);
+  }
+
 }
