@@ -1,0 +1,10 @@
+# Usage: drupal site:build:prod --placeholder="name:subscriptions"
+command:
+  name: site:build:prod
+  description: 'Runs updates on Production.'
+commands:
+# Run updates.
+  - command: site:update
+    options:
+      placeholder:
+        - 'name:%{{name}}'

@@ -1,0 +1,17 @@
+# Usage: drupal site:build:artifact --placeholder="name:subscriptions"
+command:
+  name: site:build:artifact
+  description: 'Prepare artifacts.'
+commands:
+# Run composer.
+  - command: site:compose
+    arguments:
+      name: '%{{name}}'
+# Run NPM.
+  - command: site:npm
+    arguments:
+      name: '%{{name}}'
+# Run Grunt.
+  - command: site:grunt
+    arguments:
+      name: '%{{name}}'
