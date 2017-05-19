@@ -3,11 +3,6 @@ command:
   name: site:build:staging
   description: 'Builds site for Staging.'
 commands:
-# Generate the settings.
-  - command: site:configure
-    options:
-      placeholder:
-        - 'name:%{{name}}'
 # Imports db or installs a site
   - command: site:db:import
     arguments:

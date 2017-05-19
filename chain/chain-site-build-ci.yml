@@ -3,11 +3,6 @@ command:
   name: site:build:ci
   description: 'Builds site for CI.'
 commands:
-# Generate the settings.
-  - command: site:configure
-    options:
-      placeholder:
-        - 'name:%{{name}}'
 # Imports db or installs a site
   - command: site:db:import
     arguments:
