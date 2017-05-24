@@ -29,7 +29,12 @@ class SiteDbImportCommand extends SiteBaseCommand {
    *
    * @var
    */
-  protected $filename = NULL;
+  protected $file = NULL;
+
+  /**
+   * The temporary path to this db.
+   */
+  protected $tmpFolder = '/tmp/';
 
   /**
    * {@inheritdoc}
@@ -90,35 +95,25 @@ class SiteDbImportCommand extends SiteBaseCommand {
     parent::execute($input, $output);
 
     // Check if a dump file has been specified.
-    if ($input->hasOption('file') &&
-      !is_null($input->getOption('file'))
-    ) {
-      $this->filename = $input->getOption('file');
+    if ($input->hasOption('file') && !is_null($input->getOption('file'))) {
+      $this->file = $input->getOption('file');
     }
+    // Check if a dump file is set in the yaml config
     elseif (isset($this->config['db']['dump'])) {
       // Use config from sites.yml.
-      $this->filename = $this->config['db']['dump'];
+      $this->file = $this->config['db']['dump'];
     }
     else {
       throw new SiteCommandException('Please specify a file to import the dump from');
     }
 
-    // If the db dump is not local, download it locally.
-    if (!stream_is_local($this->filename)) {
-      $this->filename = $this->download($this->filename);
-    }
+    // If we're installing from a dump that's not already in
+    // our local destination, copy it to our local destination.
+    if (!empty($this->file)) {
+      $this->file = $this->copy($this->file);
 
-    // Check if the file exits.
-    if (!$this->is_absolute_path($this->filename)) {
-      $filename = realpath(getcwd() . trim($this->filename, '.'));
-      if (!$this->fileExists($filename)) {
-        throw new SiteCommandException(sprintf('Dump file %s doesn\'t exist',
-            $this->filename)
-        );
-      }
-      else {
-        $this->filename = $filename;
-      }
+      // If the file is gzipped we need to unzip it.
+      $this->file = $this->unzip($this->file);
     }
 
     $this->destination = $this->settingsPhpDirectory();
@@ -154,7 +149,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
     }
 
     // If a dump file wasn't found or not specified, do a fresh site install
-    if (!$this->fileExists($this->filename)) {
+    if (empty($this->file) || !$this->fileExists($this->file)) {
       //@todo Use drupal site:install instead of Drush.
       $command = sprintf(
         'cd %s && ' .
@@ -169,62 +164,16 @@ class SiteDbImportCommand extends SiteBaseCommand {
       $this->io->comment('Installing site');
     }
     else {
-      $command = '';
-      // Check the format of the dump.
-      switch (mime_content_type($this->filename)) {
-        case 'application/x-gzip':
-
-          // The basename without any path.
-          $baseNameGz = basename($this->filename);
-
-          // The basename with sql extension.
-          $baseNameSql = str_replace('.sql.gz', '.sql', $baseNameGz);
-
-          $this->io->write(sprintf('Checking if dump exists locally: '));
-          if ($this->fileExists('/tmp/' . $baseNameGz)) {
-            $this->io->writeln('Yes');
-          }
-          else {
-            $this->io->writeln('No');
-          }
-
-          $this->io->write(sprintf('Checking if local dump is up to date: '));
-          if (filesize('/tmp/' . $baseNameGz) != filesize($this->filename)) {
-            $this->io->writeln('No');
-
-            // Copy file to /tmp.
-            $command .= sprintf(
-              'cp -L %s /tmp; ',
-              $this->filename
-            );
-          }
-          else {
-            $this->io->writeln('Yes');
-          }
-
-          // Unzip sql file and keep zipped in the folder.
-          $command .= sprintf(
-            'cd /tmp; ' .
-            'gunzip -c %s > %s; ',
-            $baseNameGz,
-            $baseNameSql
-          );
-
-          // Use the file extracted on tmp folder.
-          $this->filename = '/tmp/' . $baseNameSql;
-          break;
-      }
-
       if (is_null($input->getOption('db-name'))) {
         $input->setOption('db-name', $this->siteName);
       }
-      $command .= sprintf(
+      $command = sprintf(
         'cd %s; ' .
         'drush sql-create %s -y; ' .
         'drush sql-cli < %s; ',
         $this->destination,
         $input->getOption('db-name'),
-        $this->filename
+        $this->file
       );
       $this->io->comment('Importing dump');
     }
@@ -249,24 +198,42 @@ class SiteDbImportCommand extends SiteBaseCommand {
   }
 
   /**
-   * Downloads the dump from s3 bucket.
+   * Downloads or copies the dump to a local destination.
    *
-   * @param $filename
+   * Can be copied from a remote or local desintaiton.
    *
-   * @return string The absolute path for the dump.
+   * @param $file
+   *   The file to be copied.
+   *
+   * @return string
+   *   The absolute path for the dump.
    *
    * @throws SiteCommandException
    */
-  protected function download($filename) {
-    $tmp_folder = '/tmp/';
+  protected function copy($file) {
+    // Sanitise the input file path.
+    $file = $this->cleanFileName($file);
+    $filename = basename($file);
 
-    // Save the dbdump to a local destination.
-    if ('s3' === parse_url($filename, PHP_URL_SCHEME)) {
+    // Return canonicalized absolute pathname for local files.
+    if (stream_is_local($file)) {
+      $file = realpath($file);
+    }
+
+    // Check we're not explicitly using a file in the local destination.
+    if (substr($file, 0, strlen($this->tmpFolder)) === $this->tmpFolder) {
+      return $file;
+    }
+
+    // Save the db dump from S3 to the local destination.
+    // We use S3cmd because the stream_wrapper isn't authenticated
+    // and because it validates the checksum for us.
+    if ('s3' === parse_url($file, PHP_URL_SCHEME)) {
       $command = sprintf(
         'cd %s && ' .
-        's3cmd --force get %s',
-        $tmp_folder,
-        $filename
+        's3cmd --force --check-md5 get %s',
+        $this->tmpFolder,
+        $file
       );
 
       $shellProcess = $this->getShellProcess();
@@ -277,26 +244,87 @@ class SiteDbImportCommand extends SiteBaseCommand {
         throw new SiteCommandException($shellProcess->getOutput());
       }
     }
+    // For all other methods including remote and local files
+    // we copy chunk by chunk to the local destination.
     else {
+      // Check the file isn't already downloaded.
+      $this->io->write(sprintf('Checking if db dump needs updating: '));
+      if ($this->fileExists($this->tmpFolder . $filename) && md5_file($this->tmpFolder . $filename) === md5_file($file)) {
+        $this->io->writeln('No');
+        return $this->tmpFolder . $filename;
+      }
+      $this->io->writeln('Yes');
+
       // Open a stream in read-only mode
-      if ($stream = fopen($filename, 'r')) {
+      if ($stream = fopen($file, 'r')) {
         // Open the destination file to save the output to.
-        $output_file = fopen ($tmp_folder . basename($filename), "a");
-        if ($output_file)
-          while(!feof($stream)) {
+        $output_file = fopen($this->tmpFolder . $filename, "a");
+        if ($output_file) {
+          while (!feof($stream)) {
             fwrite($output_file, fread($stream, 1024), 1024);
           }
+        }
         fclose($stream);
         if ($output_file) {
           fclose($output_file);
         }
       }
       else {
-        throw new SiteCommandException("The DB dump could not be saved to the local destination.");
+        throw new SiteCommandException("The DB dump does not exist or is not readable.");
       }
     }
 
-    return $tmp_folder . basename($filename);
+    // Check that the db dump has been saved.
+    if (!$this->fileExists($this->tmpFolder . $filename)) {
+      throw new SiteCommandException("The DB dump could not be saved to the local destination.");
+    }
+    $this->io->success(sprintf('The DB dump was copied to %s.', $this->tmpFolder . $filename));
+
+    return $this->tmpFolder . $filename;
+  }
+
+  /**
+   * @param $file
+   *   The zipped file to be extracted.
+   *
+   * @return string
+   *   The unzipped file.
+   *
+   * @throws SiteCommandException
+   */
+  public function unzip($file) {
+    // The basename without any path.
+    $baseNameGz = basename($file);
+    // The basename with sql extension.
+    $baseNameSql = rtrim($baseNameGz, '.gz');
+
+    // Unzip sql file and keep zipped in the folder.
+    if (mime_content_type($this->file) === 'application/x-gzip') {
+      $command = sprintf(
+        'cd %s; ' .
+        'gunzip -c %s > %s; ',
+        $this->tmpFolder,
+        $baseNameGz,
+        $baseNameSql
+      );
+    }
+    // Return the file without modification.
+    else {
+      return $file;
+    }
+
+    // Run unzip command.
+    $shellProcess = $this->getShellProcess();
+    if ($shellProcess->exec($command, TRUE)) {
+      $this->io->writeln($shellProcess->getOutput());
+      $this->io->success(sprintf("The DB dump was unzipped to %s", $this->tmpFolder . $baseNameSql));
+    }
+    else {
+      throw new SiteCommandException($shellProcess->getOutput());
+    }
+
+    // Use the file extracted on tmp folder.
+    return $this->tmpFolder . $baseNameSql;
   }
 
 }
