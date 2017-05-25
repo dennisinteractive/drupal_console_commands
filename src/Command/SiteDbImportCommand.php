@@ -248,37 +248,35 @@ class SiteDbImportCommand extends SiteBaseCommand {
     // we copy chunk by chunk to the local destination.
     else {
       // Check the file isn't already downloaded.
-      $this->io->write(sprintf('Checking if db dump needs updating: '));
+      $this->io->write(sprintf('Checking if db dump needs updating:'));
       if ($this->fileExists($this->tmpFolder . $basename) && md5_file($this->tmpFolder . $basename) === md5_file($filename)) {
-        $this->io->writeln('No');
-        return $this->tmpFolder . $basename;
-      }
-      $this->io->writeln('Yes');
-
-      // Open a stream in read-only mode
-      if ($stream = fopen($filename, 'r')) {
-        // Open the destination file to save the output to.
-        $output_file = fopen($this->tmpFolder . $basename, "a");
-        if ($output_file) {
-          while (!feof($stream)) {
-            fwrite($output_file, fread($stream, 1024), 1024);
-          }
-        }
-        fclose($stream);
-        if ($output_file) {
-          fclose($output_file);
-        }
+        $this->io->comment('No');
       }
       else {
-        throw new SiteCommandException("The DB dump does not exist or is not readable.");
+        $this->io->comment('Yes');
+        // Open a stream in read-only mode
+        if ($this->fileExists($filename) && $stream = fopen($filename, 'r')) {
+          // Open the destination file to save the output to.
+          $output_file = fopen($this->tmpFolder . $basename, "a");
+          if ($output_file) {
+            while (!feof($stream)) {
+              fwrite($output_file, fread($stream, 1024), 1024);
+            }
+          }
+          fclose($stream);
+          if ($output_file) {
+            fclose($output_file);
+          }
+        }
       }
     }
 
-    // Check that the db dump has been saved.
+    // Final check to see if copy was successful.
     if (!$this->fileExists($this->tmpFolder . $basename)) {
-      throw new SiteCommandException("The DB dump could not be saved to the local destination.");
+      $this->io->error(sprintf('Could not copy the dump to %s', $this->tmpFolder . $basename));
+
+      return FALSE;
     }
-    $this->io->success(sprintf('The DB dump was copied to %s.', $this->tmpFolder . $basename));
 
     return $this->tmpFolder . $basename;
   }
@@ -293,6 +291,10 @@ class SiteDbImportCommand extends SiteBaseCommand {
    * @throws SiteCommandException
    */
   public function unzip($filename) {
+    if (!$this->fileExists($filename)) {
+      return FALSE;
+    }
+
     // The basename without any path.
     $baseNameGz = basename($filename);
     // The basename with sql extension.
