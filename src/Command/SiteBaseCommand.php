@@ -311,8 +311,6 @@ class SiteBaseCommand extends Command {
 
     if ($url && filter_var($url, FILTER_VALIDATE_URL) !== FALSE) {
       $this->url = $url;
-      $input->setOption('site-url', $this->url);
-
     };
 
     return $this->url;
@@ -334,7 +332,7 @@ class SiteBaseCommand extends Command {
       $this->shellPath($webSitesPath)
     );
 
-    $this->io->comment('Searching for settings.php in the sites folder');
+    $this->io->writeln('Searching for settings.php in the sites folder');
     $shellProcess = $this->getShellProcess();
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
