@@ -3,6 +3,10 @@ command:
   name: site:update
   description: 'Sets the site up based on current configuration and database.'
 commands:
+# We must ensure we run this command first in all chains to setup our console environment.
+  - command: site:base:setup
+    arguments:
+      name: '%{{name}}'
 # Set default drush alias.
   - command: exec
     arguments:

@@ -3,6 +3,10 @@ command:
   name: site:test
   description: 'Sets the test suites up and then runs them.'
 commands:
+# We must ensure we run this command first in all chains to setup our console environment.
+  - command: site:base:setup
+    arguments:
+      name: '%{{name}}'
 # Set up testing suites
   - command: site:test:setup
     arguments:
