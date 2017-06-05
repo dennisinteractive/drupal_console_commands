@@ -4,7 +4,6 @@ command:
   description: 'Runs updates on Production.'
 commands:
 # Run updates.
-  - command: site:update
-    options:
-      placeholder:
-        - 'name:%{{name}}'
+   - command: site:update
+     arguments:
+       name: '%{{name}}'

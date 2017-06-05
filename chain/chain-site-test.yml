@@ -1,21 +1,15 @@
-# Usage: drupal site:test --placeholder="name:subscriptions" --placeholder="behat_params:--tags=bannerimage"
+# Usage: drupal site:test --placeholder="name:subscriptions" --placeholder="tags:--tags=bannerimage"
 command:
   name: site:test
   description: 'Sets the test suites up and then runs them.'
 commands:
-# We must ensure we run this command first in all chains to setup our console environment.
-  - command: site:base:setup
-    arguments:
-      name: '%{{name}}'
 # Set up testing suites
   - command: site:test:setup
+    options:
+       placeholder:
+         - 'name:%{{name}}'
+# Run Tests
+  - command: site:test:exec
     arguments:
       name: '%{{name}}'
-# Run Behat
-  - command: exec
-    arguments:
-      bin: 'cd ${{site_destination_directory}}/tests; ./behat %{{behat_params|-n}};'
-# Run phpunit
-  - command: exec
-    arguments:
-      bin: 'cd ${{site_destination_directory}}; ./vendor/bin/phpunit;'
+      tags: '%{{tags|-n}}'

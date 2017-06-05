@@ -2,8 +2,6 @@ application:
   autowire:
     commands:
       forced:
-        'site:base:setup':
-          class: \DennisDigital\Drupal\Console\Command\SiteSetupCommand
         'site:checkout':
           class: \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand
         'site:compose':
@@ -26,4 +24,8 @@ application:
           class: \DennisDigital\Drupal\Console\Command\SiteNPMCommand
         'site:grunt':
           class: \DennisDigital\Drupal\Console\Command\SiteGruntCommand
+        'site:test:exec':
+          class: \DennisDigital\Drupal\Console\Command\SiteTestExecCommand
+        'site:update':
+          class: \DennisDigital\Drupal\Console\Command\SiteUpdateCommand
       name: { }
