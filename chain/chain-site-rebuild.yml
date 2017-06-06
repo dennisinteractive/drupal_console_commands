@@ -31,6 +31,5 @@ commands:
       name: '%{{name}}'
 # Run updates.
   - command: site:update
-    options:
-      placeholder:
-        - 'name:%{{name}}'
+    arguments:
+      name: '%{{name}}'
