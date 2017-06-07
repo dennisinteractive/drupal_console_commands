@@ -2,6 +2,8 @@ application:
   autowire:
     commands:
       forced:
+        "site:build":
+          class: \DennisDigital\Drupal\Console\Command\SiteBuildCommand
         'site:checkout':
           class: \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand
         'site:compose':

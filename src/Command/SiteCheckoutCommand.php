@@ -105,9 +105,6 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    // Validate repo.
-    $this->_validateRepo();
-
     // Validate branch.
     $this->_validateBranch($input);
 
@@ -302,6 +299,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   /**
    * Pulls a list of branches from remote.
    *
+<<<<<<< HEAD
+=======
+   * @param $repo
+   *
+>>>>>>> site_build_command
    * @return mixed
    * @throws SiteCommandException
    */

@@ -88,6 +88,11 @@ class SiteBaseCommand extends Command {
   protected $container;
 
   /**
+   * @var ConfigurationManager
+   */
+  protected $configurationManager;
+
+  /**
    * Constructor.
    */
   public function __construct()
@@ -139,6 +144,12 @@ class SiteBaseCommand extends Command {
   protected function interact(InputInterface $input, OutputInterface $output) {
     $this->io = new DrupalStyle($input, $output);
 
+<<<<<<< HEAD
+=======
+    $this->configurationManager = $this->container
+      ->get('console.configuration_manager');
+
+>>>>>>> site_build_command
     $sitesDirectory = $this->configurationManager->getSitesDirectory();
     $options = $this->siteList($sitesDirectory);
 
@@ -154,7 +165,6 @@ class SiteBaseCommand extends Command {
     }
 
     $this->validateSiteParams($input, $output);
-
   }
 
   /**
@@ -197,7 +207,11 @@ class SiteBaseCommand extends Command {
    */
   protected function _siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
+<<<<<<< HEAD
 
+=======
+//var_dump($this->config);
+>>>>>>> site_build_command
     // $environment = $input->getOption('env')
     $environment = $this->configurationManager->getConfiguration()
       ->get('application.environment');
@@ -446,10 +460,17 @@ class SiteBaseCommand extends Command {
    * It will only return sites that have 'repo' configured
    *
    * @param string $sitesDirectory
+<<<<<<< HEAD
    *
    * @return array
    */
   private function siteList($sitesDirectory) {
+=======
+   * @return array
+   */
+  private function siteList($sitesDirectory)
+  {
+>>>>>>> site_build_command
     $finder = new Finder();
     $finder->in($sitesDirectory);
     $finder->name("*.yml");
@@ -473,5 +494,8 @@ class SiteBaseCommand extends Command {
 
     return $tableRows;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> site_build_command
 }
