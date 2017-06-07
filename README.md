@@ -63,10 +63,11 @@ Chains that can be reused on various environments
     - site:drush:alias
 
 - drupal **site:update** Used to run updates and import configuration
-    - drush cr (Clear caches)
-    - drush site-set @site (Set default drush alias)
-    - drush updb (Runs updates)
-    - drush cim (Imports configuration)
+    - drush site-set @site (Set default drush alias) 
+    - drush sset system.maintenance_mode 1 (Enable maintenance mode)
+    - drush cr (Clear caches) 
+    - drush updb -y (Runs updates)
+    - drush sset system.maintenance_mode 0 (Disable maintenance mode)
     - drush cr (Clear caches)
 
 - drupal **site:test:setup** Sets the test suites
@@ -75,8 +76,8 @@ Chains that can be reused on various environments
 
 - drupal **site:test** Runs test suites
     - site:test:setup
-    - behat (Runs behat tests)
-    - phpunit (Runs phpunit tests)
+    - ./behat %s' (Runs behat tests)
+    - ./vendor/bin/phpunit (Runs phpunit tests)
 
 ## Environment specific chains
 Each environment will have its own chain that executes the relevant commands and chains
@@ -107,21 +108,18 @@ Each environment will have its own chain that executes the relevant commands and
 
 ### CI
 - drupal **site:build:ci** Builds a site for CI
-    - site:configure (chain)
     - site:db:import
     - site:update (chain)
     - site:test (chain)
 
 ### QA
 - drupal **site:build:qa** Builds a site for QA
-    - site:configure (chain)
     - site:db:import
     - site:update (chain)
     - site:test (chain)
 
 ### Staging
 - drupal **site:build:staging** Builds a site for Staging
-    - site:configure (chain)
     - site:db:import
     - site:update (chain)
 

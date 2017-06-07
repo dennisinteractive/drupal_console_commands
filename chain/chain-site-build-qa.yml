@@ -3,22 +3,17 @@ command:
   name: site:build:qa
   description: 'Builds site for QA.'
 commands:
-# Generate the settings.
-  - command: site:configure
-    options:
-      placeholder:
-        - 'name:%{{name}}'
 # Imports db or installs a site
   - command: site:db:import
     arguments:
       name: '%{{name}}'
 # Run updates.
   - command: site:update
-    options:
-      placeholder:
-        - 'name:%{{name}}'
+    arguments:
+       name: '%{{name}}'
 # Run tests.
   - command: site:test
     options:
       placeholder:
         - 'name:%{{name}}'
+        - 'tags:%{{tags|-n}}'
