@@ -13,7 +13,6 @@ commands:
       name: '%{{name}}'
 # Run tests.
   - command: site:test
-    options:
-      placeholder:
-         - 'name:%{{name}}'
-         - 'tags:%{{tags|-n}}'
+    arguments:
+      name: '%{{name}}'
+      tags: '%{{tags|-n}}'

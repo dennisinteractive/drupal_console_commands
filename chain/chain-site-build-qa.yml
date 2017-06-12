@@ -10,10 +10,9 @@ commands:
 # Run updates.
   - command: site:update
     arguments:
-       name: '%{{name}}'
+      name: '%{{name}}'
 # Run tests.
   - command: site:test
-    options:
-      placeholder:
-        - 'name:%{{name}}'
-        - 'tags:%{{tags|-n}}'
+    arguments:
+      name: '%{{name}}'
+      tags: '%{{tags|-n}}'

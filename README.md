@@ -23,11 +23,11 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:compose** *site-name*
 	Runs *composer*
 
-- drupal **site:npm** **site:new**
-    Runs NPM
+- drupal **site:npm**
+  Runs NPM
 
-- drupal **site:grunt** **site:new**
-    Runs Grunt
+- drupal **site:grunt**
+  Runs Grunt
 
 - drupal **site:settings:db** *site-name*
 	Creates *settings.db.php* in the *web/sites/default* folder. This file contains DB credentials and should not be committed.
@@ -52,6 +52,21 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 	The command will copy the dump from the original place to */tmp*. If you run the command again, it will only copy the file once the original has changed. This is very useful when working remotely on slow networks.
 	If no db-dump information is available or there is no dump at the location, it will run a site install.
 	Supported extensions: **.sql**, **.sql.gz**.
+	
+- drupal **site:update** *site-name*
+  Used to run updates and import configuration
+      - drush site-set @site (Set default drush alias) 
+      - drush sset system.maintenance_mode 1 (Enable maintenance mode)
+      - drush cr (Clear caches) 
+      - drush updb -y (Runs updates)
+      - drush cim -y; drush cim -y (Import configuration - twice to fix a problem with config import when new modules are added to core.extensions.yml)
+      - drush sset system.maintenance_mode 0 (Disable maintenance mode)
+      - drush cr (Clear caches)
+      
+- drupal **site:test** *site-name*
+      Runs test suites
+      - ./behat %s' (Runs behat tests)
+      - ./vendor/bin/phpunit (Runs phpunit tests)
 
 ## Chains
 Chains that can be reused on various environments
@@ -62,22 +77,9 @@ Chains that can be reused on various environments
     - site:settings:memcache
     - site:drush:alias
 
-- drupal **site:update** Used to run updates and import configuration
-    - drush site-set @site (Set default drush alias) 
-    - drush sset system.maintenance_mode 1 (Enable maintenance mode)
-    - drush cr (Clear caches) 
-    - drush updb -y (Runs updates)
-    - drush sset system.maintenance_mode 0 (Disable maintenance mode)
-    - drush cr (Clear caches)
-
 - drupal **site:test:setup** Sets the test suites
     - site:phpunit:setup
     - site:behat:setup
-
-- drupal **site:test** Runs test suites
-    - site:test:setup
-    - ./behat %s' (Runs behat tests)
-    - ./vendor/bin/phpunit (Runs phpunit tests)
 
 ## Environment specific chains
 Each environment will have its own chain that executes the relevant commands and chains
@@ -94,7 +96,7 @@ Each environment will have its own chain that executes the relevant commands and
     - site:configure (chain)
     - site:test:setup (chain)
     - site:db:import
-    - site:update (chain)
+    - site:update
 
 ### Artifact
 - drupal **site:build** Builds a site for artifacts
@@ -109,23 +111,23 @@ Each environment will have its own chain that executes the relevant commands and
 ### CI
 - drupal **site:build:ci** Builds a site for CI
     - site:db:import
-    - site:update (chain)
-    - site:test (chain)
+    - site:update
+    - site:test
 
 ### QA
 - drupal **site:build:qa** Builds a site for QA
     - site:db:import
-    - site:update (chain)
-    - site:test (chain)
+    - site:update
+    - site:test
 
 ### Staging
 - drupal **site:build:staging** Builds a site for Staging
     - site:db:import
-    - site:update (chain)
+    - site:update
 
 ### Production
 - drupal **site:build:prod** Runs updates on production
-  - site:update (chain)
+  - site:update
 
 ## Useful arguments and options
 - **-h** Show all the available arguments and options
