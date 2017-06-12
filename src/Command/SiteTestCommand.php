@@ -19,7 +19,7 @@ use DennisDigital\Drupal\Console\Exception\SiteCommandException;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteTestExecCommand extends SiteBaseCommand {
+class SiteTestCommand extends SiteBaseCommand {
 
   /**
    * Stores the behat tags.
@@ -34,7 +34,7 @@ class SiteTestExecCommand extends SiteBaseCommand {
   protected function configure() {
     parent::configure();
 
-    $this->setName('site:test:exec')
+    $this->setName('site:test')
       ->setDescription('Runs Tests.');
 
     $this->addArgument(

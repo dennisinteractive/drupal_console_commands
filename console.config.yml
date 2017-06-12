@@ -25,7 +25,7 @@ application:
         'site:grunt':
           class: \DennisDigital\Drupal\Console\Command\SiteGruntCommand
         'site:test:exec':
-          class: \DennisDigital\Drupal\Console\Command\SiteTestExecCommand
+          class: \DennisDigital\Drupal\Console\Command\SiteTestCommand
         'site:update':
           class: \DennisDigital\Drupal\Console\Command\SiteUpdateCommand
       name: { }
