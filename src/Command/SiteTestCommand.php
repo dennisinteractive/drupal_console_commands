@@ -84,7 +84,7 @@ class SiteTestCommand extends SiteBaseCommand {
 
     $command = sprintf(
       'cd %stests && ' .
-      './behat %s && ' .
+      './behat %s; ' .
       'cd %s; ./vendor/bin/phpunit;',
       $this->shellPath($this->destination),
       $this->behatTags,
