@@ -85,11 +85,13 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
     // Prepare content.
     $memcache_prefix = $input->getOption('memcache-prefix');
 
-    // Load template.
+    // Load from template.
     $template = getcwd() . '/src/Command/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
     $content = file_get_contents($template);
+
     // Replace tokens.
     $content = str_replace('${memcache_prefix}', $memcache_prefix, $content);
+
     // Write file.
     $this->filePutContents($file, $content);
 

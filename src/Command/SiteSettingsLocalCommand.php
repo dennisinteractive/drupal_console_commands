@@ -86,20 +86,19 @@ class SiteSettingsLocalCommand extends SiteBaseCommand {
     // Load the file.
     $content = $this->fileGetContents($file);
 
-    $host= $this->config['host'];
-    $cdn = $this->config['cdn'];
+    $cdn = isset($this->config['cdn']) ? $this->config['cdn'] : '';
+    $host = isset($this->config['host']) ? $this->config['host'] : '';
 
-    // Append configuration.
-    $content .= <<<EOF
+    // Load from template.
+    $template = getcwd() . '/src/Command/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
+    $content .= PHP_EOL . file_get_contents($template) . PHP_EOL;
 
-// Set Stage file proxy origin.
-\$config['stage_file_proxy.settings']['origin'] = '$cdn';
+    // Replace tokens.
+    $content = str_replace('<?php', '', $content);
+    $content = str_replace('${cdn}', $cdn, $content);
+    $content = str_replace('${host}', $host, $content);
 
-// Change CDN domain to local.
-\$config['cdn.settings']['mapping']['domain'] = '$host';
-
-EOF;
-
+    // Write file.
     $this->filePutContents($file, $content);
 
     // Check file.
