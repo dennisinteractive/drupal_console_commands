@@ -18,6 +18,7 @@ use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Drupal;
 
 /**
  * Class SiteBaseCommand
@@ -88,6 +89,11 @@ class SiteBaseCommand extends Command {
   protected $container;
 
   /**
+   * Stores the drupal core version.
+   */
+  protected $drupalVersion;
+
+  /**
    * Constructor.
    */
   public function __construct()
@@ -154,6 +160,9 @@ class SiteBaseCommand extends Command {
     }
 
     $this->validateSiteParams($input, $output);
+
+    $detector = new Drupal\Detector();
+    $this->drupalVersion = $detector->getDrupalVersion($this->config['root']);
 
   }
 

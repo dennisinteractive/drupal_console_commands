@@ -85,14 +85,12 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
     // Prepare content.
     $memcache_prefix = $input->getOption('memcache-prefix');
 
-    $content = <<<EOF
-<?php
-\$settings['memcache']['servers'] = ['127.0.0.1:11211' => 'default'];
-\$settings['memcache']['bins'] = ['default' => 'default'];
-\$settings['memcache']['key_prefix'] = '$memcache_prefix';
-\$settings['memcache']['stampede_protection'] = TRUE;
-EOF;
-
+    // Load template.
+    $template = getcwd() . '/src/Command/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
+    $content = file_get_contents($template);
+    // Replace tokens.
+    $content = str_replace('${memcache_prefix}', $memcache_prefix, $content);
+    // Write file.
     $this->filePutContents($file, $content);
 
     // Check file.
