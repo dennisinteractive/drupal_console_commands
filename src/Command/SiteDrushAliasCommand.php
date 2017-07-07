@@ -70,21 +70,18 @@ class SiteDrushAliasCommand extends SiteBaseCommand {
       $this->fileUnlink($file);
     }
 
-    $content = <<<EOF
-<?php
-/**
- * Drush alias for site {$this->siteName}.
- *
- * Generates environment specific values for
- * the generic Drush alias.
- */
-\$aliases["site"] = array (
-  'root' => '{$this->destination}web',		
-  'uri' => '{$this->url}',
-  'user' => 1,
-);
-EOF;
+    // Load from template.
+    $template = getcwd() . '/src/Command/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
+    if (!file_exists($template)) {
+      return;
+    }
+    $content = file_get_contents($template) . PHP_EOL;
 
+    // Replace tokens.
+    $content = str_replace('${root}', $this->destination . 'web', $content);
+    $content = str_replace('${uri}', $this->url, $content);
+
+    // Write file.
     $this->filePutContents($file, $content);
 
     // Check file.
