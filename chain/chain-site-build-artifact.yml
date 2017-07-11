@@ -9,6 +9,7 @@ commands:
       name: '%{{name}}'
     options:
       branch: '%{{branch|8.x}}'
+      destination-directory: '%{{root}}'
 # Run composer.
   - command: site:compose
     arguments:
