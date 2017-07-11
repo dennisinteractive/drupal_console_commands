@@ -180,7 +180,7 @@ class SiteBaseCommand extends Command {
     $this->_validateProfile($input);
 
     // Validate destination.
-    $this->_validateDestination($input);
+    $this->validateDestination($input);
 
     // Validate url.
     $this->_validateUrl($input);
@@ -260,7 +260,7 @@ class SiteBaseCommand extends Command {
    *
    * @return string Destination
    */
-  protected function _validateDestination(InputInterface $input) {
+  protected function validateDestination(InputInterface $input) {
     if ($input->hasOption('destination-directory') &&
       !is_null($input->getOption('destination-directory'))
     ) {

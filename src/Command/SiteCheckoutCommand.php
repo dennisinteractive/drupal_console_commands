@@ -217,7 +217,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected function gitDiff() {
     $command = sprintf(
       'cd %s && git diff-files --name-status -r --ignore-submodules',
-      $this->shellPath($this->directory)
+      $this->shellPath($this->destination)
     );
 
     $shellProcess = $this->getShellProcess();
@@ -227,7 +227,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         $message = sprintf('You have uncommitted changes on %s' . PHP_EOL .
           'Please commit or revert your changes before checking out the site.' . PHP_EOL .
           'If you want to check out the site without committing the changes use --ignore-changes.',
-          $this->directory
+          $this->destination
         );
         throw new SiteCommandException($message);
       }
