@@ -76,7 +76,7 @@ class SiteTestCommand extends SiteBaseCommand {
     parent::execute($input, $output);
 
     // Validate url.
-    $this->_validateTags($input);
+    $this->validateTags($input);
 
     $this->io->comment(sprintf('Running Tests on %s',
       $this->destination
@@ -110,7 +110,7 @@ class SiteTestCommand extends SiteBaseCommand {
    *
    * @return string Behat tag(s)
    */
-  protected function _validateTags(InputInterface $input) {
+  protected function validateTags(InputInterface $input) {
 
     $behatTags = $input->getArgument('tags');
 
