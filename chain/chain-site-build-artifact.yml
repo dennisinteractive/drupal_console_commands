@@ -3,6 +3,12 @@ command:
   name: site:build:artifact
   description: 'Prepare artifacts.'
 commands:
+# Checkout site
+  - command: site:checkout
+    arguments:
+      name: '%{{name}}'
+    options:
+      branch: '%{{branch|8.x}}'
 # Run composer.
   - command: site:compose
     arguments:

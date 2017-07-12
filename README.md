@@ -99,11 +99,8 @@ Each environment will have its own chain that executes the relevant commands and
     - site:update
 
 ### Artifact
-- drupal **site:build** Builds a site for artifacts
-    - site:checkout
-    - site:rebuild (chain)
-
 - drupal **site:build:artifact** Prepare artifacts
+    - site:checkout
     - site:compose
     - site:npm
     - site:grunt
