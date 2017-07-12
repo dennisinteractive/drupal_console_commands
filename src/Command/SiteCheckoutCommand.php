@@ -29,18 +29,18 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   protected $repo;
 
   /**
-   * Stores branch information.
+   * Stores tag/branch ref.
    *
-   * @var array Branch.
+   * @var string ref.
    */
-  protected $branch;
+  protected $ref;
 
   /**
-   * Stores current branch of the checked out code.
+   * Stores current tag/branch of the checked out code.
    *
-   * @var array currentBranch.
+   * @var string currentRef.
    */
-  protected $currentBranch;
+  protected $currentRef;
 
   /**
    * {@inheritdoc}
@@ -62,6 +62,11 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         '-B',
         InputOption::VALUE_OPTIONAL,
         'Specify which branch to checkout if different than the global branch found in sites.yml'
+      )->addOption(
+        'tag',
+        '-T',
+        InputOption::VALUE_OPTIONAL,
+        'Specify which tag to checkout'
       );
   }
 
@@ -72,26 +77,24 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     parent::interact($input, $output);
 
     // Validate repo.
-    $this->_validateRepo();
+    $this->validateRepo();
 
-    $remoteBranches = $this->getRemoteBranches();
-    $defaultBranch = $this->getDefaultBranch();
-    $this->currentBranch = $this->getCurrentBranch();
-
-    $branch = $input->getOption('branch');
-    if (!$branch) {
+    if (!$this->getRefOption($input)) {
+      $remoteBranches = $this->getRemoteBranches();
+      $defaultBranch = $this->getDefaultBranch();
+      $this->currentRef = $this->getCurrentRef();
 
       $options = array_values(array_unique(array_merge(
         ['8.x'],
         [$defaultBranch],
-        [$this->currentBranch],
+        [$this->currentRef],
         $remoteBranches
       )));
 
       $branch = $this->io->choice(
         $this->trans('Select a branch'),
         $options,
-        isset($this->currentBranch) ? $this->currentBranch : $defaultBranch,
+        isset($this->currentRef) ? $this->currentRef : $defaultBranch,
         TRUE
       );
 
@@ -106,19 +109,19 @@ class SiteCheckoutCommand extends SiteBaseCommand {
     parent::execute($input, $output);
 
     // Validate repo.
-    $this->_validateRepo();
+    $this->validateRepo();
 
-    // Validate branch.
-    $this->_validateBranch($input);
+    // Validate ref.
+    $this->validateRef($input);
 
-    if ($this->branch == $this->currentBranch) {
+    if ($this->ref == $this->currentRef) {
       $this->io->commentBlock('Current branch selected, skipping checkout command.');
       return;
     }
 
     $this->io->comment(sprintf('Checking out %s (%s) on %s',
       $this->siteName,
-      $this->branch,
+      $this->ref,
       $this->destination
     ));
 
@@ -132,17 +135,14 @@ class SiteCheckoutCommand extends SiteBaseCommand {
             !$input->getOption('ignore-changes')
           ) {
             // Check for uncommitted changes.
-            $this->gitDiff($this->destination);
+            $this->gitDiff();
           }
           // Check out branch on existing repo.
-          $this->gitCheckout($this->branch, $this->destination);
+          $this->gitCheckout();
         }
         else {
           // Clone repo.
-          $this->gitClone($this->branch,
-            $this->repo['url'],
-            $this->destination
-          );
+          $this->gitClone();
         }
         break;
 
@@ -161,7 +161,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
    *
    * @return string Repo url
    */
-  protected function _validateRepo() {
+  protected function validateRepo() {
     if (isset($this->config['repo'])) {
       $this->repo = $this->config['repo'];
     }
@@ -173,46 +173,51 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   }
 
   /**
-   * Helper to validate branch option.
+   * Helper to validate tag and branch options.
    *
    * @param InputInterface $input
    *
    * @throws SiteCommandException
    */
-  protected function _validateBranch(InputInterface $input) {
-    if ($input->hasOption('branch') &&
-      !is_null($input->getOption('branch'))
-    ) {
+  protected function validateRef(InputInterface $input) {
+    if ($ref = $this->getRefOption($input)) {
       // Use config from parameter.
-      $this->branch = $input->getOption('branch');
+      $this->ref = $ref;
     }
     elseif (isset($this->config['repo']['branch'])) {
       // Use config from sites.yml.
-      $this->branch = $this->config['repo']['branch'];
+      $this->ref = $this->config['repo']['branch'];
     }
     else {
-      $this->branch = '8.x';
+      $this->ref = '8.x';
     }
+  }
 
-    // Update input.
-    if ($input->hasOption('branch')) {
-      $input->setOption('branch', $this->branch);
+  /**
+   * Helper to get user input tag/branch.
+   *
+   * @param InputInterface $input
+   * @return mixed
+   */
+  protected function getRefOption(InputInterface $input) {
+    foreach (['tag', 'branch'] as $type) {
+      if ($input->hasOption($type) && !is_null($input->getOption($type))) {
+        return $input->getOption($type);
+      }
     }
   }
 
   /**
    * Helper to detect local modifications.
    *
-   * @param $directory The directory containing the git folder.
-   *
    * @return TRUE If everything is ok.
    *
    * @throws SiteCommandException
    */
-  protected function gitDiff($directory) {
+  protected function gitDiff() {
     $command = sprintf(
       'cd %s && git diff-files --name-status -r --ignore-submodules',
-      $this->shellPath($directory)
+      $this->shellPath($this->destination)
     );
 
     $shellProcess = $this->getShellProcess();
@@ -222,7 +227,7 @@ class SiteCheckoutCommand extends SiteBaseCommand {
         $message = sprintf('You have uncommitted changes on %s' . PHP_EOL .
           'Please commit or revert your changes before checking out the site.' . PHP_EOL .
           'If you want to check out the site without committing the changes use --ignore-changes.',
-          $directory
+          $this->destination
         );
         throw new SiteCommandException($message);
       }
@@ -237,26 +242,22 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   /**
    * Helper to do the actual clone command.
    *
-   * @param $branch Branch name.
-   * @param $repo Repo Url.
-   * @param $destination Destination folder.
-   *
    * @return bool TRUE If successful.
    *
    * @throws SiteCommandException
    */
-  protected function gitClone($branch, $repo, $destination) {
+  protected function gitClone() {
     $command = sprintf('git clone --branch %s %s %s',
-      $branch,
-      $repo,
-      $this->shellPath($destination)
+      $this->ref,
+      $this->repo['url'],
+      $this->shellPath($this->destination)
     );
     $this->io->commentBlock($command);
 
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success(sprintf('Repo cloned on %s', $destination));
+      $this->io->success(sprintf('Repo cloned on %s', $this->destination));
     }
     else {
       throw new SiteCommandException($shellProcess->getOutput());
@@ -268,28 +269,25 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   /**
    * Helper to check out a branch.
    *
-   * @param $branch Branch name.
-   * @param $destination Destination folder.
-   *
    * @return bool TRUE If successful.
    *
    * @throws SiteCommandException
    */
-  protected function gitCheckout($branch, $destination) {
+  protected function gitCheckout() {
     $command = sprintf(
         'cd %s && ' .
         'git fetch --all && ' .
         'chmod 777 web/sites/default && ' .
         'chmod 777 web/sites/default/settings.php && ' .
         'git checkout %s ',
-      $this->shellPath($destination),
-      $branch
+      $this->shellPath($this->destination),
+      $this->ref
     );
 
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success(sprintf('Checked out %s', $branch));
+      $this->io->success(sprintf('Checked out %s', $this->ref));
     }
     else {
       throw new SiteCommandException($shellProcess->getOutput());
@@ -338,24 +336,21 @@ class SiteCheckoutCommand extends SiteBaseCommand {
   }
 
   /**
-   * Helper to retrieve the current working branch on the site's directory.
+   * Helper to retrieve the current working tag/branch on the site's directory.
    *
    * @return mixed
    */
-  protected function getCurrentBranch() {
+  protected function getCurrentRef() {
     if ($this->fileExists($this->destination)) {
       // Get branch from site directory.
-      $command = sprintf('cd %s && git branch',
+      $command = sprintf('cd %s && git describe --all',
         $this->shellPath($this->destination)
       );
 
       $shellProcess = $this->getShellProcess();
 
       if ($shellProcess->exec($command, TRUE)) {
-        preg_match_all("|\*\s(.*)|", $shellProcess->getOutput(), $matches);
-        if (!empty($matches[1] && is_array($matches[1]))) {
-          return reset($matches[1]);
-        }
+        return $shellProcess->getOutput();
       }
     }
   }
