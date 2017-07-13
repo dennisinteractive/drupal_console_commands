@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteBaseCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\BaseCommand.
  *
  * Base class for site commands.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,14 +17,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 
 /**
- * Class SiteBaseCommand
+ * Class BaseCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteBaseCommand extends Command {
+class BaseCommand extends Command {
 
   use CommandTrait;
 
@@ -193,7 +193,7 @@ class SiteBaseCommand extends Command {
    *
    * @return $this
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
@@ -210,7 +210,7 @@ class SiteBaseCommand extends Command {
         'Site not found. To see a list of available sites, run %s',
         'drupal site:debug'
       );
-      throw new SiteCommandException($message);
+      throw new CommandException($message);
     }
 
     // Update input.
@@ -256,7 +256,7 @@ class SiteBaseCommand extends Command {
    *
    * @param InputInterface $input
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    *
    * @return string Destination
    */
@@ -297,7 +297,7 @@ class SiteBaseCommand extends Command {
    *
    * @param InputInterface $input
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    *
    * @return string Destination
    */

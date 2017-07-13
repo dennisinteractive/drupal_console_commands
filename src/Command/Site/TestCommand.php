@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteGruntCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\GruntCommand.
  *
  * Runs Grunt.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 
 /**
- * Class SiteTestCommand
+ * Class TestCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteTestCommand extends SiteBaseCommand {
+class TestCommand extends BaseCommand {
 
   /**
    * Stores the behat tags.
@@ -99,14 +99,14 @@ class SiteTestCommand extends SiteBaseCommand {
       $this->io->success('Tests Complete');
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
   }
 
   /**
    * Helper to validate repo.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    *
    * @return string Behat tag(s)
    */

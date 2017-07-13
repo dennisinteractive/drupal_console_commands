@@ -2,24 +2,25 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteCheckoutTagCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Checkout.
  *
  * Does repo checkouts.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site\Checkout;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
 
 /**
- * Class SiteCheckoutTagCommand
+ * Class TagCommand
  *
- * @package DennisDigital\Drupal\Console\Command
+ * @package DennisDigital\Drupal\Console\Command\Site\Checkout
  */
-class SiteCheckoutTagCommand extends SiteBaseCommand {
+class TagCommand extends BaseCommand {
 
   /**
    * Stores repo information.
@@ -132,14 +133,14 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
         $message = sprintf('%s is not supported.',
           $this->repo['type']
         );
-        throw new SiteCommandException($message);
+        throw new CommandException($message);
     }
   }
 
   /**
    * Helper to validate repo.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    *
    * @return string Repo url
    */
@@ -148,7 +149,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
       $this->repo = $this->config['repo'];
     }
     else {
-      throw new SiteCommandException('Repo not found in sites.yml');
+      throw new CommandException('Repo not found in sites.yml');
     }
 
     return $this->repo;
@@ -159,7 +160,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
    *
    * @param InputInterface $input
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function validateTag(InputInterface $input) {
     if ($input->hasOption('tag') &&
@@ -169,7 +170,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
       $this->tag = $input->getOption('tag');
     }
     else {
-      throw new SiteCommandException('Tag must be specified.');
+      throw new CommandException('Tag must be specified.');
     }
   }
 
@@ -178,7 +179,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
    *
    * @return TRUE If everything is ok.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function gitDiff() {
     $command = sprintf(
@@ -195,11 +196,11 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
           'If you want to check out the site without committing the changes use --ignore-changes.',
           $this->destination
         );
-        throw new SiteCommandException($message);
+        throw new CommandException($message);
       }
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
 
     return TRUE;
@@ -210,7 +211,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
    *
    * @return bool TRUE If successful.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function gitClone() {
     $command = sprintf('git clone %s %s',
@@ -225,7 +226,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
       $this->io->success(sprintf('Repo cloned on %s', $this->destination));
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
 
     // Checkout the tag.
@@ -239,7 +240,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
    *
    * @return bool TRUE If successful.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function gitCheckout() {
     $command = sprintf(
@@ -258,7 +259,7 @@ class SiteCheckoutTagCommand extends SiteBaseCommand {
       $this->io->success(sprintf('Checked out %s', $this->tag));
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
 
     }
 

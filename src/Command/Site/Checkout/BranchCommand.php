@@ -2,24 +2,25 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteCheckoutBranchCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Checkout\BranchCommand.
  *
  * Does repo checkouts.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site\Checkout;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
 
 /**
- * Class SiteCheckoutBranchCommand
+ * Class BranchCommand
  *
- * @package DennisDigital\Drupal\Console\Command
+ * @package DennisDigital\Drupal\Console\Command\Site\Checkout
  */
-class SiteCheckoutBranchCommand extends SiteBaseCommand {
+class BranchCommand extends BaseCommand {
 
   /**
    * Stores repo information.
@@ -147,14 +148,14 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
         $message = sprintf('%s is not supported.',
           $this->repo['type']
         );
-        throw new SiteCommandException($message);
+        throw new CommandException($message);
     }
   }
 
   /**
    * Helper to validate repo.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    *
    * @return string Repo url
    */
@@ -163,7 +164,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
       $this->repo = $this->config['repo'];
     }
     else {
-      throw new SiteCommandException('Repo not found in sites.yml');
+      throw new CommandException('Repo not found in sites.yml');
     }
 
     return $this->repo;
@@ -174,7 +175,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
    *
    * @param InputInterface $input
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function validateBranch(InputInterface $input) {
     if ($input->hasOption('branch') &&
@@ -202,7 +203,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
    *
    * @return TRUE If everything is ok.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function gitDiff() {
     $command = sprintf(
@@ -219,11 +220,11 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
           'If you want to check out the site without committing the changes use --ignore-changes.',
           $this->destination
         );
-        throw new SiteCommandException($message);
+        throw new CommandException($message);
       }
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
 
     return TRUE;
@@ -234,7 +235,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
    *
    * @return bool TRUE If successful.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function gitClone() {
     $command = sprintf('git clone --branch %s %s %s',
@@ -250,7 +251,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
       $this->io->success(sprintf('Repo cloned on %s', $this->destination));
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
 
     return TRUE;
@@ -261,7 +262,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
    *
    * @return bool TRUE If successful.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function gitCheckout() {
     $command = sprintf(
@@ -280,7 +281,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
       $this->io->success(sprintf('Checked out %s', $this->branch));
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
 
     }
 
@@ -291,7 +292,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
    * Pulls a list of branches from remote.
    *
    * @return mixed
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function getRemoteBranches() {
     $command = sprintf('git ls-remote --heads %s',
@@ -307,7 +308,7 @@ class SiteCheckoutBranchCommand extends SiteBaseCommand {
       }
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
 
     }
   }

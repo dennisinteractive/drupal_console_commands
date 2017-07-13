@@ -2,24 +2,25 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteSettingsDbCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand.
  *
  * Create Db configurations.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site\Settings;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
+use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
 
 /**
- * Class SiteSettingsDbCommand
+ * Class DbCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteSettingsDbCommand extends SiteBaseCommand {
+class DbCommand extends BaseCommand {
   use SiteInstallArgumentsTrait;
 
   /**
@@ -64,7 +65,7 @@ class SiteSettingsDbCommand extends SiteBaseCommand {
       $message = sprintf('Could not find %s',
         $this->destination . 'settings.php'
       );
-      throw new SiteCommandException($message);
+      throw new CommandException($message);
     }
 
     // Override default values for these options (if empty).
@@ -125,7 +126,7 @@ EOF;
       );
     }
     else {
-      throw new SiteCommandException(sprintf('Error generating %s',
+      throw new CommandException(sprintf('Error generating %s',
           $file
         )
       );

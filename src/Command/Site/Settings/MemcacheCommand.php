@@ -2,24 +2,25 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteSettingsMemcacheCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand.
  *
  * Creates Memcache configurations.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site\Settings;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
 
 /**
- * Class SiteSettingsMemcacheCommand
+ * Class MemcacheCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteSettingsMemcacheCommand extends SiteBaseCommand {
+class MemcacheCommand extends BaseCommand {
 
   /**
    * The file name to generate.
@@ -69,7 +70,7 @@ class SiteSettingsMemcacheCommand extends SiteBaseCommand {
       $message = sprintf('The file settings.php is missing on %s',
         $this->destination
       );
-      throw new SiteCommandException($message);
+      throw new CommandException($message);
     }
 
     if (is_null($input->getOption('memcache-prefix'))) {
@@ -102,7 +103,7 @@ EOF;
       );
     }
     else {
-      throw new SiteCommandException(sprintf('Error generating %s',
+      throw new CommandException(sprintf('Error generating %s',
           $file
         )
       );

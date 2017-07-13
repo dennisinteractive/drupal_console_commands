@@ -2,25 +2,24 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\CheckoutCommand.
  *
  * Does repo checkouts.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site\Checkout;
 
-use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
 
 /**
  * Class SiteCheckoutCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteCheckoutCommand extends SiteBaseCommand {
+class CheckoutCommand extends BaseCommand {
   protected $refTypes = ['tag', 'branch'];
 
   /**

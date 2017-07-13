@@ -3,33 +3,33 @@ application:
     commands:
       forced:
         'site:checkout':
-          class: \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
         'site:checkout:tag':
-          class: \DennisDigital\Drupal\Console\Command\SiteCheckoutTagCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\Checkout\TagCommand
         'site:checkout:branch':
-          class: \DennisDigital\Drupal\Console\Command\SiteCheckoutBranchCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\Checkout\BranchCommand
         'site:compose':
-          class: \DennisDigital\Drupal\Console\Command\SiteComposeCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\ComposeCommand
         'site:settings:db':
-          class: \DennisDigital\Drupal\Console\Command\SiteSettingsDbCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
         'site:settings:memcache':
-          class: \DennisDigital\Drupal\Console\Command\SiteSettingsMemcacheCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand
         'site:settings:local':
-          class: \DennisDigital\Drupal\Console\Command\SiteSettingsLocalCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand
         'site:drush:alias':
-          class: \DennisDigital\Drupal\Console\Command\SiteDrushAliasCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\DrushAliasCommand
         'site:db:import':
-          class: \DennisDigital\Drupal\Console\Command\SiteDbImportCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\DbImportCommand
         'site:behat:setup':
-          class: \DennisDigital\Drupal\Console\Command\SiteBehatSetupCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\BehatSetupCommand
         'site:phpunit:setup':
-          class: \DennisDigital\Drupal\Console\Command\SitePHPUnitSetupCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\PHPUnitSetupCommand
         'site:npm':
-          class: \DennisDigital\Drupal\Console\Command\SiteNPMCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\NPMCommand
         'site:grunt':
-          class: \DennisDigital\Drupal\Console\Command\SiteGruntCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\GruntCommand
         'site:test:exec':
-          class: \DennisDigital\Drupal\Console\Command\SiteTestCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\TestCommand
         'site:update':
-          class: \DennisDigital\Drupal\Console\Command\SiteUpdateCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\UpdateCommand
       name: { }
