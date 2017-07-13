@@ -4,6 +4,10 @@ application:
       forced:
         'site:checkout':
           class: \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand
+        'site:checkout:tag':
+          class: \DennisDigital\Drupal\Console\Command\SiteCheckoutTagCommand
+        'site:checkout:branch':
+          class: \DennisDigital\Drupal\Console\Command\SiteCheckoutBranchCommand
         'site:compose':
           class: \DennisDigital\Drupal\Console\Command\SiteComposeCommand
         'site:settings:db':
