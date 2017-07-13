@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\BaseCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\BaseCommand.
  *
  * Base class for site commands.
  */

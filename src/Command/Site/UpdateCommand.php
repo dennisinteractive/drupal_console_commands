@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\GruntCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\GruntCommand.
  *
  * Runs Grunt.
  */

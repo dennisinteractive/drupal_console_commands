@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\DbImportCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\DbImportCommand.
  *
  * Imports local dumps or installs a fresh site if no dump is found.
  */

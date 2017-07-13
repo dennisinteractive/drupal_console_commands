@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\LocalCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand.
  *
  * Creates Local configurations.
  */

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\NPMCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\NPMCommand.
  *
  * Runs NPM.
  */

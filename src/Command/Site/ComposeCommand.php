@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\ComposeCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\ComposeCommand.
  *
  * Runs composer installer.
  */

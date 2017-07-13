@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteBehatSetupCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\BehatSetupCommand.
  *
  * Create behat.yml from template.
  */

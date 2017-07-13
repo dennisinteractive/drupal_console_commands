@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\MemcacheCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand.
  *
  * Creates Memcache configurations.
  */

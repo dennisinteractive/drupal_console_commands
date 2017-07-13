@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\PHPUnitSetupCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\PHPUnitSetupCommand.
  *
  * Create phpunit.xml from template.
  */

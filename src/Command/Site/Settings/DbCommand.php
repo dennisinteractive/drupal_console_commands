@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\DbCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand.
  *
  * Create Db configurations.
  */

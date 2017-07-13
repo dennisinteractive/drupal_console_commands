@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\DrushAliasCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\DrushAliasCommand.
  *
  * Create Drush Alias for the site.
  */

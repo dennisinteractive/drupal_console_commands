@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteCheckoutCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\CheckoutCommand.
  *
  * Does repo checkouts.
  */
