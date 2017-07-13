@@ -20,6 +20,11 @@ use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
  * @package DennisDigital\Drupal\Console\Command
  */
 class CheckoutCommand extends BaseCommand {
+  /**
+   * Types of refs that can be checked out.
+   *
+   * @var array
+   */
   protected $refTypes = ['tag', 'branch'];
 
   /**
