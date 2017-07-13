@@ -21,6 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package DennisDigital\Drupal\Console\Command
  */
 class SiteCheckoutCommand extends SiteBaseCommand {
+  /**
+   * Types of refs that can be checked out.
+   *
+   * @var array
+   */
   protected $refTypes = ['tag', 'branch'];
 
   /**
