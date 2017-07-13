@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteGruntCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\GruntCommand.
  *
  * Runs Grunt.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 
 /**
- * Class SiteGruntCommand
+ * Class GruntCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteGruntCommand extends SiteBaseCommand {
+class GruntCommand extends BaseCommand {
 
   /**
    * {@inheritdoc}
@@ -62,7 +62,7 @@ class SiteGruntCommand extends SiteBaseCommand {
       $this->io->success('Grunt job completed');
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
   }
 

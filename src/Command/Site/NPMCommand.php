@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteNPMCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\NPMCommand.
  *
  * Runs NPM.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 
 /**
- * Class SiteNPMCommand
+ * Class NPMCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteNPMCommand extends SiteBaseCommand {
+class NPMCommand extends BaseCommand {
 
   /**
    * {@inheritdoc}
@@ -62,7 +62,7 @@ class SiteNPMCommand extends SiteBaseCommand {
       $this->io->success('NPM job completed');
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
   }
 

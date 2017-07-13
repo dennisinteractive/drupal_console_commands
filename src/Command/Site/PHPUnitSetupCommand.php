@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SitePHPUnitSetupCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\PHPUnitSetupCommand.
  *
  * Create phpunit.xml from template.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 /**
- * Class SitePHPUnitSetupCommand
+ * Class PHPUnitSetupCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SitePHPUnitSetupCommand extends SiteBaseConfigCommand {
+class PHPUnitSetupCommand extends BaseConfigCommand {
 
   /**
    * The file name to generate.

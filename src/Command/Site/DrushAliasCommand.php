@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteDrushAliasCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\DrushAliasCommand.
  *
  * Create Drush Alias for the site.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
 /**
- * Class SiteDrushAliasCommand
+ * Class DrushAliasCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteDrushAliasCommand extends SiteBaseCommand {
+class DrushAliasCommand extends BaseCommand {
 
   use SiteInstallArgumentsTrait;
 
@@ -94,7 +94,7 @@ EOF;
       );
     }
     else {
-      throw new SiteCommandException(sprintf('Error generating %s',
+      throw new CommandException(sprintf('Error generating %s',
           $file
         )
       );

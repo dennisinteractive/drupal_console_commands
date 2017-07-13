@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteGruntCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\GruntCommand.
  *
  * Runs Grunt.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 
 /**
- * Class SiteTestCommand
+ * Class TestCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteUpdateCommand extends SiteBaseCommand {
+class UpdateCommand extends BaseCommand {
 
 
   /**
@@ -63,7 +63,7 @@ class SiteUpdateCommand extends SiteBaseCommand {
       $this->io->success('Update Complete');
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
   }
 
