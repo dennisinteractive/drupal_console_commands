@@ -45,13 +45,13 @@ class NPMCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     $this->io->comment(sprintf('Running NPM on %s',
-      $this->drupal_directory
+      $this->web_root
     ));
 
     $command = sprintf(
       'cd %s && ' .
       'find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;',
-      $this->shellPath($this->drupal_directory)
+      $this->shellPath($this->web_root)
     );
 
     // Run.

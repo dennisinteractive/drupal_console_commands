@@ -35,7 +35,7 @@ class DrushAliasCommand extends AbstractCommand {
    *
    * @var
    */
-  protected $dir = 'web/sites/all/drush/site-aliases/';
+  protected $dir = 'sites/all/drush/site-aliases/';
 
   /**
    * {@inheritdoc}
@@ -65,7 +65,7 @@ class DrushAliasCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     // Remove existing file.
-    $file = $this->drupal_directory . $this->dir . $this->filename;
+    $file = $this->web_root . $this->dir . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }
@@ -79,7 +79,7 @@ class DrushAliasCommand extends AbstractCommand {
  * the generic Drush alias.
  */
 \$aliases["site"] = array (
-  'root' => '{$this->drupal_directory}web',		
+  'root' => '{$this->web_root}',
   'uri' => '{$this->url}',
   'user' => 1,
 );
