@@ -9,10 +9,8 @@
 
 namespace DennisDigital\Drupal\Console\Command\Site\Checkout;
 
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
@@ -20,7 +18,13 @@ use DennisDigital\Drupal\Console\Command\Exception\CommandException;
  *
  * @package DennisDigital\Drupal\Console\Command\Site\Checkout
  */
-class BranchCommand extends AbstractCheckoutCommand {
+class BranchCommand extends AbstractRefCommand {
+  /**
+   * Types of refs that can be checked out.
+   *
+   * @var array
+   */
+  protected $refTypes = ['branch'];
 
   /**
    * {@inheritdoc}
@@ -30,14 +34,6 @@ class BranchCommand extends AbstractCheckoutCommand {
 
     $this->setName('site:checkout:branch')
       ->setDescription('Checkout a repository by branch');
-
-    // Custom options.
-    $this->addOption(
-      'branch',
-      '-B',
-      InputOption::VALUE_OPTIONAL,
-      'Specify which branch to checkout if different than the global branch found in sites.yml'
-    );
   }
 
   /**

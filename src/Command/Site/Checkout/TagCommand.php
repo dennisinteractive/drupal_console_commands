@@ -9,7 +9,6 @@
 
 namespace DennisDigital\Drupal\Console\Command\Site\Checkout;
 
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
@@ -19,7 +18,13 @@ use DennisDigital\Drupal\Console\Command\Exception\CommandException;
  *
  * @package DennisDigital\Drupal\Console\Command\Site\Checkout
  */
-class TagCommand extends AbstractCheckoutCommand {
+class TagCommand extends AbstractRefCommand {
+  /**
+   * Types of refs that can be checked out.
+   *
+   * @var array
+   */
+  protected $refTypes = ['tag'];
 
   /**
    * {@inheritdoc}
@@ -29,14 +34,6 @@ class TagCommand extends AbstractCheckoutCommand {
 
     $this->setName('site:checkout:tag')
       ->setDescription('Checkout a repository by tag');
-
-    // Custom options.
-    $this->addOption(
-      'tag',
-      '-T',
-      InputOption::VALUE_OPTIONAL,
-      'Specify which tag to checkout if different than the global tag found in sites.yml'
-    );
   }
 
   /**
