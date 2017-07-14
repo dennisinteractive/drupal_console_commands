@@ -2,9 +2,9 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\GruntCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\TestCommand.
  *
- * Runs Grunt.
+ * Runs tests.
  */
 
 namespace DennisDigital\Drupal\Console\Command\Site;
