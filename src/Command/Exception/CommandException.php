@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\Exception\CommandException.
+ * Contains \DennisDigital\Drupal\Console\Command\Exception\CommandException.
  */
 
-namespace DennisDigital\Drupal\Console\Command\Site\Exception;
+namespace DennisDigital\Drupal\Console\Command\Exception;
 
 /**
  * Exception for failed command.

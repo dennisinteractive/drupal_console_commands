@@ -14,7 +14,7 @@ use Dflydev\PlaceholderResolver\RegexPlaceholderResolver;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
  * Class AbstractConfigCommand
