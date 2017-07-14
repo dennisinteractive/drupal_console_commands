@@ -87,7 +87,7 @@ class MemcacheCommand extends AbstractCommand {
     $memcache_prefix = $input->getOption('memcache-prefix');
 
     // Load from template.
-    $template = getcwd() . '/src/Command/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
+    $template = getcwd() . '/src/Command/Site/Settings/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
     $content = file_get_contents($template);
 
     // Replace tokens.

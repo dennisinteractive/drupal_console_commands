@@ -49,7 +49,7 @@ class UpdateCommand extends AbstractCommand {
     ));
 
     $command = sprintf(
-      'cd %sweb; drush site-set @site; drush sset system.maintenance_mode 1;
+      'cd %sweb; drush sset system.maintenance_mode 1;
       drush cr; drush updb -y; drush cim -y; drush cim -y; 
       drush sset system.maintenance_mode 0; drush cr;',
       $this->shellPath($this->destination)

@@ -90,7 +90,7 @@ class LocalCommand extends AbstractCommand {
     $host = isset($this->config['host']) ? $this->config['host'] : '';
 
     // Load from template.
-    $template = getcwd() . '/src/Command/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
+    $template = getcwd() . '/src/Command/Site/Settings/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
     $content .= PHP_EOL . file_get_contents($template) . PHP_EOL;
 
     // Replace tokens.

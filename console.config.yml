@@ -12,8 +12,6 @@ application:
           class: \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand
         'site:settings:local':
           class: \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand
-        'site:drush:alias':
-          class: \DennisDigital\Drupal\Console\Command\Site\DrushAliasCommand
         'site:db:import':
           class: \DennisDigital\Drupal\Console\Command\Site\DbImportCommand
         'site:behat:setup':

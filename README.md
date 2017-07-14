@@ -55,7 +55,6 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 	
 - drupal **site:update** *site-name*
   Used to run updates and import configuration
-      - drush site-set @site (Set default drush alias) 
       - drush sset system.maintenance_mode 1 (Enable maintenance mode)
       - drush cr (Clear caches) 
       - drush updb -y (Runs updates)
