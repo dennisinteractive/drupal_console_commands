@@ -18,6 +18,7 @@ use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Drupal\Detector;
 
 /**
  * Class AbstractCommand
@@ -160,7 +161,7 @@ abstract class AbstractCommand extends Command {
 
     $this->validateSiteParams($input, $output);
 
-    $detector = new Drupal\Detector();
+    $detector = new Detector();
     $this->drupalVersion = $detector->getDrupalVersion($this->config['root']);
 
   }
