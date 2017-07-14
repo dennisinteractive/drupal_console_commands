@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains DennisDigital\DennisDigital\Drupal\Console\Command\Shared\InstallArgumentsTrait.
+ * Contains DennisDigital\DennisDigital\Drupal\Console\Command\Site\Shared\InstallArgumentsTrait.
  */
 
-namespace DennisDigital\Drupal\Console\Command\Shared;
+namespace DennisDigital\Drupal\Console\Command\Site\Shared;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;

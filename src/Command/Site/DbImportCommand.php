@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Aws\S3\S3Client;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
-use DennisDigital\Drupal\Console\Command\Shared\InstallArgumentsTrait;
+use DennisDigital\Drupal\Console\Command\Site\Shared\InstallArgumentsTrait;
 
 /**
  * Class DbImportCommand
