@@ -18,7 +18,7 @@ use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class NPMCommand extends BaseCommand {
+class NPMCommand extends AbstractCommand {
 
   /**
    * {@inheritdoc}

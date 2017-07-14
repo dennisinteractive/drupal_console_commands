@@ -18,7 +18,7 @@ use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class UpdateCommand extends BaseCommand {
+class UpdateCommand extends AbstractCommand {
 
 
   /**

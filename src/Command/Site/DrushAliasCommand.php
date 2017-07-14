@@ -19,7 +19,7 @@ use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class DrushAliasCommand extends BaseCommand {
+class DrushAliasCommand extends AbstractCommand {
 
   use SiteInstallArgumentsTrait;
 

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\BaseCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\AbstractCommand.
  *
  * Base class for site commands.
  */
@@ -20,11 +20,11 @@ use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
 
 /**
- * Class BaseCommand
+ * Class AbstractCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class BaseCommand extends Command {
+abstract class AbstractCommand extends Command {
 
   use CommandTrait;
 
@@ -174,16 +174,16 @@ class BaseCommand extends Command {
     $this->io = new DrupalStyle($input, $output);
 
     // Get config.
-    $this->_siteConfig($input);
+    $this->siteConfig($input);
 
     // Validate profile.
-    $this->_validateProfile($input);
+    $this->validateProfile($input);
 
     // Validate destination.
-    $this->_validateDestination($input);
+    $this->validateDestination($input);
 
     // Validate url.
-    $this->_validateUrl($input);
+    $this->validateUrl($input);
   }
 
   /**
@@ -195,7 +195,7 @@ class BaseCommand extends Command {
    *
    * @throws CommandException
    */
-  protected function _siteConfig(InputInterface $input) {
+  protected function siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
     // $environment = $input->getOption('env')
@@ -228,7 +228,7 @@ class BaseCommand extends Command {
    *
    * @return string Profile
    */
-  protected function _validateProfile(InputInterface $input) {
+  protected function validateProfile(InputInterface $input) {
     if ($input->hasArgument('profile') &&
       !is_null($input->getArgument('profile'))
     ) {
@@ -260,7 +260,7 @@ class BaseCommand extends Command {
    *
    * @return string Destination
    */
-  protected function _validateDestination(InputInterface $input) {
+  protected function validateDestination(InputInterface $input) {
     if ($input->hasOption('destination-directory') &&
       !is_null($input->getOption('destination-directory'))
     ) {
@@ -301,7 +301,7 @@ class BaseCommand extends Command {
    *
    * @return string Destination
    */
-  protected function _validateUrl(InputInterface $input) {
+  protected function validateUrl(InputInterface $input) {
     $scheme = isset($this->config['scheme']) && !empty($this->config['scheme']) ? $this->config['scheme'] : 'http';
 
     if (isset($this->config['host']) && !empty($this->config['host'])) {

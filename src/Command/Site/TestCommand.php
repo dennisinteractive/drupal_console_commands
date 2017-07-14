@@ -19,7 +19,7 @@ use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class TestCommand extends BaseCommand {
+class TestCommand extends AbstractCommand {
 
   /**
    * Stores the behat tags.
@@ -76,7 +76,7 @@ class TestCommand extends BaseCommand {
     parent::execute($input, $output);
 
     // Validate url.
-    $this->_validateTags($input);
+    $this->validateTags($input);
 
     $this->io->comment(sprintf('Running Tests on %s',
       $this->destination
@@ -110,7 +110,7 @@ class TestCommand extends BaseCommand {
    *
    * @return string Behat tag(s)
    */
-  protected function _validateTags(InputInterface $input) {
+  protected function validateTags(InputInterface $input) {
 
     $behatTags = $input->getArgument('tags');
 

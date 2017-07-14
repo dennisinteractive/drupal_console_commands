@@ -19,7 +19,7 @@ use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class CheckoutCommand extends BaseCommand {
+class CheckoutCommand extends AbstractCommand {
 
   /**
    * Stores repo information.
@@ -72,7 +72,7 @@ class CheckoutCommand extends BaseCommand {
     parent::interact($input, $output);
 
     // Validate repo.
-    $this->_validateRepo();
+    $this->validateRepo();
 
     $remoteBranches = $this->getRemoteBranches();
     $defaultBranch = $this->getDefaultBranch();
@@ -106,10 +106,10 @@ class CheckoutCommand extends BaseCommand {
     parent::execute($input, $output);
 
     // Validate repo.
-    $this->_validateRepo();
+    $this->validateRepo();
 
     // Validate branch.
-    $this->_validateBranch($input);
+    $this->validateBranch($input);
 
     if ($this->branch == $this->currentBranch) {
       $this->io->commentBlock('Current branch selected, skipping checkout command.');
@@ -161,7 +161,7 @@ class CheckoutCommand extends BaseCommand {
    *
    * @return string Repo url
    */
-  protected function _validateRepo() {
+  protected function validateRepo() {
     if (isset($this->config['repo'])) {
       $this->repo = $this->config['repo'];
     }
@@ -179,7 +179,7 @@ class CheckoutCommand extends BaseCommand {
    *
    * @throws CommandException
    */
-  protected function _validateBranch(InputInterface $input) {
+  protected function validateBranch(InputInterface $input) {
     if ($input->hasOption('branch') &&
       !is_null($input->getOption('branch'))
     ) {

@@ -21,7 +21,7 @@ use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class DbImportCommand extends BaseCommand {
+class DbImportCommand extends AbstractCommand {
   use SiteInstallArgumentsTrait;
 
   /**

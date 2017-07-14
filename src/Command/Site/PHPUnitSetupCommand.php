@@ -14,7 +14,7 @@ namespace DennisDigital\Drupal\Console\Command\Site;
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class PHPUnitSetupCommand extends BaseConfigCommand {
+class PHPUnitSetupCommand extends AbstractConfigCommand {
 
   /**
    * The file name to generate.

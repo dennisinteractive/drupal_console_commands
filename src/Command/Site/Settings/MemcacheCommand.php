@@ -13,14 +13,14 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
-use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
+use DennisDigital\Drupal\Console\Command\Site\AbstractCommand;
 
 /**
  * Class MemcacheCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class MemcacheCommand extends BaseCommand {
+class MemcacheCommand extends AbstractCommand {
 
   /**
    * The file name to generate.
