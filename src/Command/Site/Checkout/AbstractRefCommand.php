@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Checkout\AbstractRefCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Checkout\AbstractRefCommand.
  *
  * Does repo checkouts.
  */
@@ -178,14 +178,14 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
       throw new CommandException($shellProcess->getOutput());
     }
 
-    // Checkout the tag.
+    // Checkout the tag/branch.
     $this->gitCheckout();
 
     return TRUE;
   }
 
   /**
-   * Helper to check out a tag.
+   * Helper to check out a tag/branch.
    *
    * @return bool TRUE If successful.
    *

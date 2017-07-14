@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\CheckoutCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand.
  *
  * Does repo checkouts.
  */
@@ -14,9 +14,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class SiteCheckoutCommand
+ * Class CheckoutCommand
  *
- * @package DennisDigital\Drupal\Console\Command
+ * @package DennisDigital\Drupal\Console\Command\Site\Checkout
  */
 class CheckoutCommand extends AbstractCheckoutCommand {
   /**
