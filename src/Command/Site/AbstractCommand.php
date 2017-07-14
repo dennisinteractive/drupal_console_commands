@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\BaseCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\AbstractCommand.
  *
  * Base class for site commands.
  */
@@ -17,14 +17,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
-use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
- * Class BaseCommand
+ * Class AbstractCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class BaseCommand extends Command {
+abstract class AbstractCommand extends Command {
 
   use CommandTrait;
 

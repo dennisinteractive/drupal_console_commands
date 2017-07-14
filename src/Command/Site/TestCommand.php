@@ -2,9 +2,9 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\GruntCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\TestCommand.
  *
- * Runs Grunt.
+ * Runs tests.
  */
 
 namespace DennisDigital\Drupal\Console\Command\Site;
@@ -12,14 +12,14 @@ namespace DennisDigital\Drupal\Console\Command\Site;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
  * Class TestCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class TestCommand extends BaseCommand {
+class TestCommand extends AbstractCommand {
 
   /**
    * Stores the behat tags.

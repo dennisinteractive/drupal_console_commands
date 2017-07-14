@@ -11,14 +11,14 @@ namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
  * Class GruntCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class GruntCommand extends BaseCommand {
+class GruntCommand extends AbstractCommand {
 
   /**
    * {@inheritdoc}

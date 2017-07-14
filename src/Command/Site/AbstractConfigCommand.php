@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\BaseConfigCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\AbstractConfigCommand.
  *
  * Create configuration file from template.
  */
@@ -14,14 +14,14 @@ use Dflydev\PlaceholderResolver\RegexPlaceholderResolver;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
- * Class BaseConfigCommand
+ * Class AbstractConfigCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class BaseConfigCommand extends BaseCommand {
+abstract class AbstractConfigCommand extends AbstractCommand {
 
   /**
    * Config that is generated at runtime.
