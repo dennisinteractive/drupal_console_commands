@@ -18,6 +18,7 @@ use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
+use DennisDigital\Drupal\Console\Utils\ShellProcess;
 use DennisDigital\Drupal\Console\Command\Drupal\Detector;
 
 /**
@@ -374,10 +375,11 @@ abstract class AbstractCommand extends Command {
   /**
    * Get the shell process.
    *
-   * @return Drupal\Console\Core\Command\Exec\ExecCommand
+   * @return ShellProcess
    */
   protected function getShellProcess() {
-    return $this->container->get('console.shell_process');
+    $app_root = $this->container->get('app.root');
+    return new ShellProcess($app_root);
   }
 
   /**

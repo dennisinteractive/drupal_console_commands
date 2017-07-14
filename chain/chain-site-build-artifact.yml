@@ -3,6 +3,13 @@ command:
   name: site:build:artifact
   description: 'Prepare artifacts.'
 commands:
+# Checkout site
+  - command: site:checkout
+    arguments:
+      name: '%{{name}}'
+    options:
+      tag: '%{{tag}}'
+      destination-directory: '%{{root}}'
 # Run composer.
   - command: site:compose
     arguments:

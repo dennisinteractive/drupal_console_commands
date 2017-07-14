@@ -3,7 +3,11 @@ application:
     commands:
       forced:
         'site:checkout':
-          class: \DennisDigital\Drupal\Console\Command\Site\CheckoutCommand
+          class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
+        'site:checkout:tag':
+          class: \DennisDigital\Drupal\Console\Command\Site\Checkout\TagCommand
+        'site:checkout:branch':
+          class: \DennisDigital\Drupal\Console\Command\Site\Checkout\BranchCommand
         'site:compose':
           class: \DennisDigital\Drupal\Console\Command\Site\ComposeCommand
         'site:settings:db':
