@@ -45,15 +45,20 @@ class UpdateCommand extends AbstractCommand {
 
 
     $this->io->comment(sprintf('Running Update on %s',
-      $this->destination
+      $this->drupal_directory
     ));
 
-    $command = sprintf(
-      'cd %sweb; drush site-set @site; drush sset system.maintenance_mode 1;
-      drush cr; drush updb -y; drush cim -y; drush cim -y; 
-      drush sset system.maintenance_mode 0; drush cr;',
-      $this->shellPath($this->destination)
-    );
+    $commands = [
+      sprintf('cd %s', $this->shellPath($this->drupal_directory)),
+      'drush sset system.maintenance_mode 1',
+      'drush cr',
+      'drush updb -y',
+      'drush cim -y',
+      'drush cim -y',
+      'drush sset system.maintenance_mode 0',
+      'drush cr',
+    ];
+    $command = implode(' && ', $commands);
 
     // Run.
     $shellProcess = $this->getShellProcess();

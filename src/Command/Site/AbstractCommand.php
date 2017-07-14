@@ -70,11 +70,11 @@ abstract class AbstractCommand extends Command {
   protected $profile = NULL;
 
   /**
-   * Stores the destination directory.
+   * The Drupal core directory.
    *
    * @var string
    */
-  protected $destination = NULL;
+  protected $drupal_directory = NULL;
 
   /**
    * Stores the site url.
@@ -266,31 +266,28 @@ abstract class AbstractCommand extends Command {
       !is_null($input->getOption('destination-directory'))
     ) {
       // Use config from parameter.
-      $this->destination = $input->getOption('destination-directory');
+      $this->drupal_directory = $input->getOption('destination-directory');
     }
-    elseif (isset($this->config['root'])) {
+    elseif (isset($this->config['repo']['directory'])) {
       // Use config from sites.yml.
-      $this->destination = $this->config['root'];
+      $this->drupal_directory = $this->config['repo']['directory'];
     }
     else {
-      $this->destination = '/tmp/' . $this->siteName;
+      $this->drupal_directory = '/tmp/' . $this->siteName;
     }
 
     // Allow destination to be overriden by environment variable. i.e.
     // export site_destination_directory="/directory/"
     if (!getenv('site_destination_directory')) {
-      putenv("site_destination_directory=$this->destination");
+      putenv("site_destination_directory=$this->drupal_directory");
     }
     else {
-      $this->destination = getenv('site_destination_directory');
+      $this->drupal_directory = getenv('site_destination_directory');
     }
 
-    // Make sure we have a slash at the end.
-    if (substr($this->destination, -1) != '/') {
-      $this->destination .= '/';
-    }
+    $this->drupal_directory = rtrim($this->drupal_directory, '/') . '/' . trim($this->config['core_directory'], '/') . '/';
 
-    return $this->destination;
+    return $this->drupal_directory;
   }
 
   /**
@@ -325,7 +322,7 @@ abstract class AbstractCommand extends Command {
    * @return string Path
    */
   public function settingsPhpDirectory() {
-    $webSitesPath = $this->destination . 'web/sites/';
+    $webSitesPath = $this->drupal_directory . '/sites/';
     $settingsPath = $webSitesPath . 'default';
 
     $command = sprintf(

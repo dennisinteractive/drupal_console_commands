@@ -44,31 +44,30 @@ class ComposeCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    if (!$this->fileExists($this->destination . 'composer.json')) {
+    if (!$this->fileExists(rtrim($this->config['repo']['directory'], '/') . '/composer.json')) {
       $message = sprintf('The file composer.json is missing on %s',
-        $this->destination
+        $this->config['repo']['directory']
       );
       throw new CommandException($message);
     }
 
     // Run composer install.
-    $this->runCommand('install', $this->destination);
+    $this->runCommand('install');
   }
 
   /**
    * Helper to run composer commands.
    *
    * @param $command The command to run.
-   * @param $destination The destination folder.
    *
    * @return bool TRUE If successful.
    *
    * @throws CommandException
    */
-  protected function runCommand($command, $destination) {
+  protected function runCommand($command) {
     $command = sprintf(
       'cd %s && composer %s',
-      $this->shellPath($destination),
+      $this->shellPath(rtrim($this->config['repo']['directory'], '/')),
       $command
     );
     $this->io->commentBlock($command);
@@ -77,7 +76,7 @@ class ComposeCommand extends AbstractCommand {
 
     //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success(sprintf('Composer installed on %s', $this->destination));
+      $this->io->success(sprintf('Composer installed on %s', rtrim($this->config['repo']['directory'], '/')));
     }
     else {
       throw new CommandException($shellProcess->getOutput());
