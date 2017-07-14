@@ -12,7 +12,7 @@ namespace DennisDigital\Drupal\Console\Command\Site\Settings;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
-use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
+use DennisDigital\Drupal\Console\Command\Shared\InstallArgumentsTrait;
 use DennisDigital\Drupal\Console\Command\Site\AbstractCommand;
 
 /**
@@ -21,7 +21,7 @@ use DennisDigital\Drupal\Console\Command\Site\AbstractCommand;
  * @package DennisDigital\Drupal\Console\Command
  */
 class DbCommand extends AbstractCommand {
-  use SiteInstallArgumentsTrait;
+  use InstallArgumentsTrait;
 
   /**
    * The file name to generate.
