@@ -366,7 +366,6 @@ abstract class AbstractCommand extends Command {
   /**
    * Get the shell process.
    *
-   * @param bool $print
    * @return ShellProcess
    */
   protected function getShellProcess() {
