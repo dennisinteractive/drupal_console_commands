@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteBehatSetupCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\BehatSetupCommand.
  *
  * Create behat.yml from template.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 /**
  * Class SiteBehatSetupCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteBehatSetupCommand extends SiteBaseConfigCommand {
+class BehatSetupCommand extends AbstractConfigCommand {
 
   /**
    * The file name to generate.

@@ -2,26 +2,26 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteBaseConfigCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\AbstractConfigCommand.
  *
  * Create configuration file from template.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Dflydev\PlaceholderResolver\DataSource\ArrayDataSource;
 use Dflydev\PlaceholderResolver\RegexPlaceholderResolver;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
- * Class SiteBaseConfigCommand
+ * Class AbstractConfigCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteBaseConfigCommand extends SiteBaseCommand {
+abstract class AbstractConfigCommand extends AbstractCommand {
 
   /**
    * Config that is generated at runtime.
@@ -58,15 +58,15 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
     parent::configure();
 
     if (empty($this->commandName)) {
-      throw new SiteCommandException('::commandName must be set');
+      throw new CommandException('::commandName must be set');
     }
 
     if (empty($this->template)) {
-      throw new SiteCommandException('::template must be specified');
+      throw new CommandException('::template must be specified');
     }
 
     if (empty($this->filename)) {
-      throw new SiteCommandException('::filename must be specified');
+      throw new CommandException('::filename must be specified');
     }
 
     $this->setName($this->commandName)
@@ -94,7 +94,7 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
   /**
    * Generates config file from template.
    *
-   * @throws \DennisDigital\Drupal\Console\Exception\SiteCommandException
+   * @throws \DennisDigital\Drupal\Console\Exception\CommandException
    */
   protected function generateConfigFile() {
     $this->template = $this->destination . $this->template;
@@ -105,7 +105,7 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
       $message = sprintf('Could not find %s',
         $this->template
       );
-      throw new SiteCommandException($message);
+      throw new CommandException($message);
     }
 
     // Make sure filename doesn't exist.
@@ -129,7 +129,7 @@ class SiteBaseConfigCommand extends SiteBaseCommand {
       );
     }
     else {
-      throw new SiteCommandException(sprintf('Error generating %s',
+      throw new CommandException(sprintf('Error generating %s',
           $this->filename
         )
       );

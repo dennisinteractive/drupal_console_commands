@@ -2,24 +2,24 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteSettingsLocalCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand.
  *
  * Creates Local configurations.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site\Settings;
 
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Site\AbstractCommand;
 
 /**
- * Class SiteSettingsLocalCommand
+ * Class LocalCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteSettingsLocalCommand extends SiteBaseCommand {
+class LocalCommand extends AbstractCommand {
 
   /**
    * The file name to generate.
@@ -60,7 +60,7 @@ class SiteSettingsLocalCommand extends SiteBaseCommand {
       $message = sprintf('The file example.settings.local.php is missing.',
         $this->destination
       );
-      throw new SiteCommandException($message);
+      throw new CommandException($message);
     }
 
     // Remove existing file.
@@ -77,7 +77,7 @@ class SiteSettingsLocalCommand extends SiteBaseCommand {
     );
     $shellProcess = $this->getShellProcess();
     if (!$shellProcess->exec($command, TRUE)) {
-      throw new SiteCommandException(sprintf('Error generating %s',
+      throw new CommandException(sprintf('Error generating %s',
           $this->filename
         )
       );
@@ -108,7 +108,7 @@ class SiteSettingsLocalCommand extends SiteBaseCommand {
       );
     }
     else {
-      throw new SiteCommandException(sprintf('Error generating %s',
+      throw new CommandException(sprintf('Error generating %s',
           $file
         )
       );

@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteBaseCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\AbstractCommand.
  *
  * Base class for site commands.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,14 +18,13 @@ use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Exception\SiteCommandException;
-use DennisDigital\Drupal\Console\Command\Drupal;
 
 /**
- * Class SiteBaseCommand
+ * Class AbstractCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteBaseCommand extends Command {
+abstract class AbstractCommand extends Command {
 
   use CommandTrait;
 
@@ -183,16 +182,16 @@ class SiteBaseCommand extends Command {
     $this->io = new DrupalStyle($input, $output);
 
     // Get config.
-    $this->_siteConfig($input);
+    $this->siteConfig($input);
 
     // Validate profile.
-    $this->_validateProfile($input);
+    $this->validateProfile($input);
 
     // Validate destination.
-    $this->_validateDestination($input);
+    $this->validateDestination($input);
 
     // Validate url.
-    $this->_validateUrl($input);
+    $this->validateUrl($input);
   }
 
   /**
@@ -202,9 +201,9 @@ class SiteBaseCommand extends Command {
    *
    * @return $this
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
-  protected function _siteConfig(InputInterface $input) {
+  protected function siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
     // $environment = $input->getOption('env')
@@ -219,7 +218,7 @@ class SiteBaseCommand extends Command {
         'Site not found. To see a list of available sites, run %s',
         'drupal site:debug'
       );
-      throw new SiteCommandException($message);
+      throw new CommandException($message);
     }
 
     // Update input.
@@ -237,7 +236,7 @@ class SiteBaseCommand extends Command {
    *
    * @return string Profile
    */
-  protected function _validateProfile(InputInterface $input) {
+  protected function validateProfile(InputInterface $input) {
     if ($input->hasArgument('profile') &&
       !is_null($input->getArgument('profile'))
     ) {
@@ -265,11 +264,11 @@ class SiteBaseCommand extends Command {
    *
    * @param InputInterface $input
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    *
    * @return string Destination
    */
-  protected function _validateDestination(InputInterface $input) {
+  protected function validateDestination(InputInterface $input) {
     if ($input->hasOption('destination-directory') &&
       !is_null($input->getOption('destination-directory'))
     ) {
@@ -306,11 +305,11 @@ class SiteBaseCommand extends Command {
    *
    * @param InputInterface $input
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    *
    * @return string Destination
    */
-  protected function _validateUrl(InputInterface $input) {
+  protected function validateUrl(InputInterface $input) {
     $scheme = isset($this->config['scheme']) && !empty($this->config['scheme']) ? $this->config['scheme'] : 'http';
 
     if (isset($this->config['host']) && !empty($this->config['host'])) {
