@@ -2,23 +2,23 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteComposeCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\ComposeCommand.
  *
  * Runs composer installer.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
- * Class SiteComposeCommand
+ * Class ComposeCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteComposeCommand extends SiteBaseCommand {
+class ComposeCommand extends AbstractCommand {
 
   /**
    * {@inheritdoc}
@@ -48,7 +48,7 @@ class SiteComposeCommand extends SiteBaseCommand {
       $message = sprintf('The file composer.json is missing on %s',
         $this->destination
       );
-      throw new SiteCommandException($message);
+      throw new CommandException($message);
     }
 
     // Run composer install.
@@ -63,7 +63,7 @@ class SiteComposeCommand extends SiteBaseCommand {
    *
    * @return bool TRUE If successful.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function runCommand($command, $destination) {
     $command = sprintf(
@@ -80,7 +80,7 @@ class SiteComposeCommand extends SiteBaseCommand {
       $this->io->success(sprintf('Composer installed on %s', $this->destination));
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
 
     return TRUE;

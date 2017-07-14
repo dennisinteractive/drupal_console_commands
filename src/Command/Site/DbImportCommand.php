@@ -2,26 +2,26 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\SiteDbImportCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\DbImportCommand.
  *
  * Imports local dumps or installs a fresh site if no dump is found.
  */
 
-namespace DennisDigital\Drupal\Console\Command;
+namespace DennisDigital\Drupal\Console\Command\Site;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Aws\S3\S3Client;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Command\Shared\SiteInstallArgumentsTrait;
 
 /**
- * Class SiteDbImportCommand
+ * Class DbImportCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class SiteDbImportCommand extends SiteBaseCommand {
+class DbImportCommand extends AbstractCommand {
   use SiteInstallArgumentsTrait;
 
   /**
@@ -104,7 +104,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
       $this->filename = $this->config['db']['dump'];
     }
     else {
-      throw new SiteCommandException('Please specify a file to import the dump from');
+      throw new CommandException('Please specify a file to import the dump from');
     }
 
     // If we're installing from a dump that's not already in
@@ -192,7 +192,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
       ));
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
 
   }
@@ -208,7 +208,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
    * @return string
    *   The absolute path for the dump.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   protected function copy($filename) {
     // Sanitise the input file path.
@@ -241,7 +241,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
         $this->io->writeln($shellProcess->getOutput());
       }
       else {
-        throw new SiteCommandException($shellProcess->getOutput());
+        throw new CommandException($shellProcess->getOutput());
       }
     }
     // For all other methods including remote and local files
@@ -288,7 +288,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
    * @return string
    *   The unzipped file.
    *
-   * @throws SiteCommandException
+   * @throws CommandException
    */
   public function unzip($filename) {
     if (!$this->fileExists($filename)) {
@@ -322,7 +322,7 @@ class SiteDbImportCommand extends SiteBaseCommand {
       $this->io->success(sprintf("The DB dump was unzipped to %s", $this->tmpFolder . $baseNameSql));
     }
     else {
-      throw new SiteCommandException($shellProcess->getOutput());
+      throw new CommandException($shellProcess->getOutput());
     }
 
     // Use the file extracted on tmp folder.
