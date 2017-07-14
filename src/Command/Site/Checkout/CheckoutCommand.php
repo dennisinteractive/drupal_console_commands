@@ -14,14 +14,14 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Exception\InvalidOptionException;
-use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
+use DennisDigital\Drupal\Console\Command\Site\AbstractCommand;
 
 /**
  * Class SiteCheckoutCommand
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class CheckoutCommand extends BaseCommand {
+class CheckoutCommand extends AbstractCommand {
   /**
    * Types of refs that can be checked out.
    *
@@ -40,10 +40,10 @@ class CheckoutCommand extends BaseCommand {
 
     // Custom options.
     $this->addOption(
-      'ignore-changes',
+      'force',
       '',
       InputOption::VALUE_NONE,
-      'Ignore local changes when checking out the site'
+      'Will force the checkout and replace all local changes'
     );
 
     // Allow different ref types to be checked out.
@@ -71,7 +71,7 @@ class CheckoutCommand extends BaseCommand {
     }
 
     if (!isset($command)) {
-      throw new InvalidOptionException('Please provide one of the following options: ' . implode(', ', $this->refTypes));
+      $command = $this->getApplication()->find('site:checkout:branch');
     }
 
     // Pass input parameters to specific checkout command.

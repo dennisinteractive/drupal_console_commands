@@ -12,15 +12,15 @@ namespace DennisDigital\Drupal\Console\Command\Site\Checkout;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use DennisDigital\Drupal\Console\Command\Site\Exception\CommandException;
-use DennisDigital\Drupal\Console\Command\Site\BaseCommand;
+use DennisDigital\Drupal\Console\Command\Exception\CommandException;
+use DennisDigital\Drupal\Console\Command\Site\AbstractCommand;
 
 /**
  * Class AbstractCheckoutCommand
  *
  * @package DennisDigital\Drupal\Console\Command\Site\Checkout
  */
-abstract class AbstractCheckoutCommand extends BaseCommand {
+abstract class AbstractCheckoutCommand extends AbstractCommand {
 
   /**
    * Stores repo information.
@@ -32,9 +32,16 @@ abstract class AbstractCheckoutCommand extends BaseCommand {
   /**
    * The branch/tag to checkout.
    *
-   * @var string ref
+   * @var string
    */
   protected $ref;
+
+  /**
+   * Current branch/tag
+   *
+   * @var string
+   */
+  protected $currentRef;
 
   /**
    * {@inheritdoc}
@@ -44,10 +51,10 @@ abstract class AbstractCheckoutCommand extends BaseCommand {
 
     // Custom options.
     $this->addOption(
-      'ignore-changes',
+      'force',
       '',
       InputOption::VALUE_NONE,
-      'Ignore local changes when checking out the site'
+      'Will force the checkout and replace all local changes'
     );
   }
 
@@ -59,6 +66,8 @@ abstract class AbstractCheckoutCommand extends BaseCommand {
 
     // Validate repo.
     $this->validateRepo();
+
+    $this->currentRef = $this->getCurrentRef();
   }
 
   /**
@@ -69,6 +78,48 @@ abstract class AbstractCheckoutCommand extends BaseCommand {
 
     // Validate repo.
     $this->validateRepo();
+
+    // Validate ref.
+    $this->ref = $this->getRef($input);
+
+    if ($this->ref == $this->currentRef) {
+      $this->io->commentBlock('Current branch/tag selected, skipping checkout command.');
+      return;
+    }
+
+    $this->io->comment(sprintf('Checking out %s (%s) on %s',
+      $this->siteName,
+      $this->ref,
+      $this->destination
+    ));
+
+    switch ($this->repo['type']) {
+      case 'git':
+        // Check if repo exists and has any changes.
+        if ($this->fileExists($this->destination) &&
+          $this->fileExists($this->destination . '.' . $this->repo['type'])
+        ) {
+          if ($input->hasOption('force') &&
+            !$input->getOption('force')
+          ) {
+            // Check for uncommitted changes.
+            $this->gitDiff();
+          }
+          // Check out ref on existing repo.
+          $this->gitCheckout();
+        }
+        else {
+          // Clone repo.
+          $this->gitClone();
+        }
+        break;
+
+      default:
+        $message = sprintf('%s is not supported.',
+          $this->repo['type']
+        );
+        throw new CommandException($message);
+    }
   }
 
   /**
@@ -108,7 +159,7 @@ abstract class AbstractCheckoutCommand extends BaseCommand {
       if (!empty($shellProcess->getOutput())) {
         $message = sprintf('You have uncommitted changes on %s' . PHP_EOL .
           'Please commit or revert your changes before checking out the site.' . PHP_EOL .
-          'If you want to check out the site without committing the changes use --ignore-changes.',
+          'If you want to wipe your local changes use --force.',
           $this->destination
         );
         throw new CommandException($message);
@@ -163,7 +214,7 @@ abstract class AbstractCheckoutCommand extends BaseCommand {
       'git fetch --all && ' .
       'chmod 777 web/sites/default && ' .
       'chmod 777 web/sites/default/settings.php && ' .
-      'git checkout %s ',
+      'git checkout %s --force',
       $this->shellPath($this->destination),
       $this->ref
     );
@@ -181,4 +232,35 @@ abstract class AbstractCheckoutCommand extends BaseCommand {
     return TRUE;
   }
 
+  /**
+   * Helper to retrieve the current working branch on the site's directory.
+   *
+   * @return mixed
+   */
+  protected function getCurrentRef() {
+    if ($this->fileExists($this->destination)) {
+      // Get branch from site directory.
+      $command = sprintf('cd %s && git branch',
+        $this->shellPath($this->destination)
+      );
+
+      $shellProcess = $this->getShellProcess()->printOutput(FALSE);
+
+      if ($shellProcess->exec($command, TRUE)) {
+        preg_match_all("|\*\s(.*)|", $shellProcess->getOutput(), $matches);
+        if (!empty($matches[1] && is_array($matches[1]))) {
+          $match = explode(' ', trim(reset($matches[1]), '()'));
+          return array_pop($match);
+        }
+      }
+    }
+  }
+
+  /**
+   * Get the requested ref (tag/branch).
+   *
+   * @param InputInterface $input
+   * @return string
+   */
+  abstract protected function getRef(InputInterface $input);
 }
