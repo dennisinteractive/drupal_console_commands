@@ -34,14 +34,9 @@ class Detector {
    * @see drush_drupal_version()
    */
   public function getDrupalVersion($drupalRoot) {
-    if (!isset($this->version)) {
-      if (file_exists($drupalRoot)) {
-        $this->drupalRoot = $drupalRoot . '/web';
-      }
-      else {
-        throw new \Exception('`root` parameter not found in the yml file.');
-      }
+    $this->drupalRoot = $drupalRoot;
 
+    if (!isset($this->version)) {
       // Support 6, 7 and 8.
       $version_constant_paths = array(
         // Drupal 7.

@@ -181,7 +181,7 @@ abstract class AbstractCommand extends Command {
     $this->validateSiteParams($input, $output);
 
     $detector = new Detector();
-    $this->drupalVersion = $detector->getDrupalVersion($this->config['root']);
+    $this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot());
 
   }
 
