@@ -155,8 +155,11 @@ class DbImportCommand extends AbstractCommand {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
       // Install site.
       $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
+      // Drupal 8 only;
       // Set site UUID from config.
-      $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
+      if ($this->drupalVersion === 8) {
+        $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
+      }
     }
     else {
       $this->io->comment('Importing dump');
