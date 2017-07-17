@@ -180,9 +180,6 @@ abstract class AbstractCommand extends Command {
 
     $this->validateSiteParams($input, $output);
 
-    $detector = new Detector();
-    $this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot());
-
   }
 
   /**
@@ -190,6 +187,9 @@ abstract class AbstractCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->validateSiteParams($input, $output);
+
+    $detector = new Detector();
+    $this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot());
   }
 
   /**
@@ -411,8 +411,8 @@ abstract class AbstractCommand extends Command {
       $this->shellPath($webSitesPath)
     );
 
-    $this->io->writeln('Searching for settings.php in the sites folder');
-    $shellProcess = $this->getShellProcess();
+    //$this->io->writeln('Searching for settings.php in the sites folder');
+    $shellProcess = $this->getShellProcess()->printOutput(FALSE);
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
         $output = $shellProcess->getOutput();
@@ -438,7 +438,26 @@ abstract class AbstractCommand extends Command {
       $settingsPath .= '/';
     }
 
+    // Fix folder permissions.
+    $this->fixSiteFolderPermissions();
+
     $this->siteRoot = $settingsPath;
+  }
+
+  /**
+   * Fixes the site folder permissions which is often changed by Drupal core.
+   */
+  protected function fixSiteFolderPermissions() {
+    if ($this->hasSiteRoot()) {
+      $commands[] = sprintf('chmod 777 %s', $this->getSiteRoot());
+      $commands[] = sprintf('chmod 777 %ssettings.php', $this->getSiteRoot());
+      $command = implode(' && ', $commands);
+      $this->io->commentBlock($command);
+      $shellProcess = $this->getShellProcess();
+      if (!$shellProcess->exec($command, TRUE)) {
+        throw new CommandException($shellProcess->getOutput());
+      }
+    }
   }
 
   /**

@@ -54,47 +54,33 @@ class LocalCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     // Validation.
-    if (!$this->fileExists($this->getSiteRoot() . '../example.' . $this->filename)) {
-      $message = sprintf('The file example.settings.local.php is missing.',
-        $this->getSiteRoot()
-      );
+    $exampleFile = $this->getSiteRoot() . '../example.' . $this->filename;
+    $file = $this->getSiteRoot() . $this->filename;
+
+    if (!$this->fileExists($exampleFile)) {
+      $message = sprintf('Cannot find %s.', $exampleFile);
       throw new CommandException($message);
     }
 
     // Remove existing file.
-    $file = $this->getSiteRoot() . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }
 
-    // Copy example.
-    $command = sprintf('cd %s && cp -n ../example.%s %s',
-      $this->shellPath($this->getSiteRoot()),
-      $this->filename,
-      $this->filename
-    );
-    $shellProcess = $this->getShellProcess();
-    if (!$shellProcess->exec($command, TRUE)) {
-      throw new CommandException(sprintf('Error generating %s',
-          $this->filename
-        )
-      );
-    }
-
-    // Load the file.
-    $content = $this->fileGetContents($file);
-
-    $cdn = isset($this->config['cdn']) ? $this->config['cdn'] : '';
     $host = isset($this->config['host']) ? $this->config['host'] : '';
+    $cdn = isset($this->config['cdn']) ? $this->config['cdn'] : '';
 
     // Load from template.
     $template = getcwd() . '/src/Command/Site/Settings/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
-    $content .= PHP_EOL . file_get_contents($template) . PHP_EOL;
+    $content = file_get_contents($template);
 
     // Replace tokens.
     $content = str_replace('<?php', '', $content);
     $content = str_replace('${cdn}', $cdn, $content);
     $content = str_replace('${host}', $host, $content);
+
+    // Prepend example file.
+    $content = $this->fileGetContents($exampleFile) . PHP_EOL . $content;
 
     // Write file.
     $this->filePutContents($file, $content);

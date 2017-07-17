@@ -195,12 +195,6 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
 
     $commands = [];
 
-    // Fix site folder permissions.
-    if ($this->hasSiteRoot()) {
-      $commands[] = sprintf('chmod 777 %s', $this->getSiteRoot());
-      $commands[] = sprintf('chmod 777 %ssettings.php', $this->getSiteRoot());
-    }
-
     // Checkout commands.
     $commands[] = sprintf('cd %s', $this->shellPath($this->getRoot()));
     $commands[] = 'git fetch --all';

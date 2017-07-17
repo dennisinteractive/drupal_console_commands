@@ -73,6 +73,7 @@ class Detector {
         throw new \Exception(sprintf('Unable to extract major Drupal core version from version string %s.', $version));
       }
     }
+
     return $this->version;
   }
 }

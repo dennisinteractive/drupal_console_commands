@@ -151,21 +151,14 @@ class DbImportCommand extends AbstractCommand {
     if (empty($this->filename) || !$this->fileExists($this->filename)) {
       //@todo Use drupal site:install instead of Drush.
       $this->io->comment('Installing site');
-
-      // Fix site folder permissions.
-      if ($this->hasSiteRoot()) {
-        $commands[] = sprintf('chmod 777 %s',  $this->shellPath($this->getSiteRoot()));
-        $commands[] = sprintf('chmod 777 %ssettings.php', $this->shellPath($this->getSiteRoot()));
-      }
-
       // Site install.
       $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      // Install site.
       $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
-
       // Drupal 8 only;
+      // Set site UUID from config.
       if ($this->drupalVersion === 8) {
-        // Set uuid from config.
-        $commands[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
+        $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
       }
     }
     else {
@@ -176,7 +169,6 @@ class DbImportCommand extends AbstractCommand {
       }
 
       $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
-
       // Create DB;
       $commands[] = sprintf('drush sql-create %s -y', $input->getOption('db-name'));
       // Import dump;
@@ -184,6 +176,7 @@ class DbImportCommand extends AbstractCommand {
     }
 
     $command = implode(' && ', $commands);
+
     $this->io->commentBlock($command);
 
     // Run.

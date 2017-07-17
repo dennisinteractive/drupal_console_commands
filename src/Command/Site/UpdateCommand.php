@@ -48,16 +48,29 @@ class UpdateCommand extends AbstractCommand {
       $this->getWebRoot()
     ));
 
-    $commands = [
-      sprintf('cd %s', $this->shellPath($this->webRoot)),
-      'drush sset system.maintenance_mode 1',
-      'drush cr',
-      'drush updb -y',
-      'drush cim -y',
-      'drush cim -y',
-      'drush sset system.maintenance_mode 0',
-      'drush cr',
-    ];
+    $commands = [];
+    $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+
+    // Drupal 7 only;
+    if ($this->drupalVersion === 7) {
+      $commands[] = 'drush vset maintenance_mode 1';
+      $commands[] = 'drush cc all';
+      $commands[] = 'drush updb -y';
+      $commands[] = 'drush vset maintenance_mode 0';
+      $commands[] = 'drush cc all';
+    }
+
+    // Drupal 8 only;
+    if ($this->drupalVersion === 8) {
+      $commands[] = 'drush sset system.maintenance_mode 1';
+      $commands[] = 'drush cr';
+      $commands[] = 'drush updb -y';
+      $commands[] = 'drush cim -y';
+      $commands[] = 'drush cim -y';
+      $commands[] = 'drush sset system.maintenance_mode 0';
+      $commands[] = 'drush cr';
+    }
+
     $command = implode(' && ', $commands);
 
     // Run.
