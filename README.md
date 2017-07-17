@@ -44,9 +44,6 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:settings:memcache** *site-name*
 	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
 
-- drupal **site:drush:alias** *site-name*
-	Sets up drush aliases
-
 - drupal **site:phpunit:setup** *site-name*
 	Creates *phpunit.xml* in the root. This file contains PHPUnit configuration and should not be committed.
 
@@ -80,7 +77,6 @@ Chains that can be reused on various environments
     - site:settings:db
     - site:settings:local
     - site:settings:memcache
-    - site:drush:alias
 
 - drupal **site:test:setup** Sets the test suites
     - site:phpunit:setup
