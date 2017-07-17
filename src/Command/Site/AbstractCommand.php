@@ -84,7 +84,16 @@ abstract class AbstractCommand extends Command {
    *
    * @var string
    */
-  protected $web_root = NULL;
+  protected $webRoot = NULL;
+
+  /**
+   * The site root directory.
+   *
+   * This is where we put settings.php
+   *
+   * @var string
+   */
+  protected $siteRoot = NULL;
 
   /**
    * Stores the site url.
@@ -204,6 +213,9 @@ abstract class AbstractCommand extends Command {
     // Validate web root.
     $this->validateWebRoot();
 
+    // Validate settings.php directory.
+    $this->validateSiteRoot();
+
     // Validate url.
     $this->validateUrl($input);
   }
@@ -277,7 +289,8 @@ abstract class AbstractCommand extends Command {
    * Validate and set the web root directory.
    */
   protected function validateWebRoot() {
-    $this->web_root = $this->root . trim($this->config['web_directory'], '/') . '/';
+    $web_directory = empty($this->config['web_directory']) ? 'web' : $this->config['web_directory'];
+    $this->webRoot = $this->root . trim($web_directory, '/') . '/';
   }
 
   /**
@@ -335,15 +348,24 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Helper to return the path to settings.php
+   * Helper to set the site root.
+   *
+   * This is where we place settings.php
+   *
    * It will try to match a folder with same name as site name
    * If not found, it will try to match a folder called "default".
    *
    * @return string Path
    */
-  public function settingsPhpDirectory() {
-    $webSitesPath = $this->web_root . 'sites/';
+  public function validateSiteRoot() {
+    $webSitesPath = $this->webRoot . 'sites/';
     $settingsPath = $webSitesPath . 'default';
+
+    // It's possible that a command is run before the site is available. e.g. checkout
+    // We will skip setting in this situation, but throw an Exception in the site root getter to prevent any unpredictable behaviour.
+    if (!file_exists($settingsPath)) {
+      return;
+    }
 
     $command = sprintf(
       'cd %s && find . -name settings.php',
@@ -377,7 +399,7 @@ abstract class AbstractCommand extends Command {
       $settingsPath .= '/';
     }
 
-    return $settingsPath;
+    $this->siteRoot = $settingsPath;
   }
 
   /**

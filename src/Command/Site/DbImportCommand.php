@@ -116,8 +116,6 @@ class DbImportCommand extends AbstractCommand {
       $this->filename = $this->unzip($this->filename);
     }
 
-    $this->web_root = $this->settingsPhpDirectory();
-
     // Override default values for these options (if empty).
     $override = array(
       'account-name' => $this->config['account-name'],
@@ -157,7 +155,7 @@ class DbImportCommand extends AbstractCommand {
         'chmod 777 settings.php && ' .
         'drush si -y %s %s && ' .
         'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y',
-        $this->shellPath($this->web_root),
+        $this->shellPath($this->siteRoot),
         $this->profile,
         $options
       );
@@ -171,7 +169,7 @@ class DbImportCommand extends AbstractCommand {
         'cd %s; ' .
         'drush sql-create %s -y; ' .
         'drush sql-cli < %s; ',
-        $this->web_root,
+        $this->siteRoot,
         $input->getOption('db-name'),
         $this->filename
       );
@@ -187,7 +185,7 @@ class DbImportCommand extends AbstractCommand {
       $this->io->writeln($shellProcess->getOutput());
       $this->io->success(sprintf(
         "Site installed on %s\nURL %s",
-        $this->web_root,
+        $this->siteRoot,
         $this->config['host']
       ));
     }

@@ -195,8 +195,8 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
     $commands = [
       sprintf('cd %s', $this->shellPath($this->root)),
       'git fetch --all',
-      sprintf('chmod 777 %ssites/default', $this->web_root),
-      sprintf('chmod 777 %ssites/default/settings.php', $this->web_root),
+      sprintf('chmod 777 %ssites/default', $this->webRoot),
+      sprintf('chmod 777 %ssites/default/settings.php', $this->webRoot),
       sprintf('git checkout %s --force', $this->ref),
     ];
     $command = implode(' && ', $commands);

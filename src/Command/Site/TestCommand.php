@@ -79,16 +79,16 @@ class TestCommand extends AbstractCommand {
     $this->validateTags($input);
 
     $this->io->comment(sprintf('Running Tests on %s',
-      $this->web_root
+      $this->webRoot
     ));
 
     $command = sprintf(
       'cd %stests && ' .
       './behat %s; ' .
       'cd %s; ./vendor/bin/phpunit;',
-      $this->shellPath($this->web_root),
+      $this->shellPath($this->webRoot),
       $this->behatTags,
-      $this->shellPath($this->web_root)
+      $this->shellPath($this->webRoot)
     );
 
     // Run.
