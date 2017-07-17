@@ -438,6 +438,7 @@ abstract class AbstractCommand extends Command {
       $settingsPath .= '/';
     }
 
+    // Fix folder permissions.
     $this->fixSiteFolderPermissions();
 
     $this->siteRoot = $settingsPath;
@@ -453,11 +454,7 @@ abstract class AbstractCommand extends Command {
       $command = implode(' && ', $commands);
       $this->io->commentBlock($command);
       $shellProcess = $this->getShellProcess();
-
-      if ($shellProcess->exec($command, TRUE)) {
-        // All good.
-      }
-      else {
+      if (!$shellProcess->exec($command, TRUE)) {
         throw new CommandException($shellProcess->getOutput());
       }
     }

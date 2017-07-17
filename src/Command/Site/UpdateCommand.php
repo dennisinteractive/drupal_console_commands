@@ -49,7 +49,7 @@ class UpdateCommand extends AbstractCommand {
     ));
 
     $commands = [];
-    $commands[] = sprintf('cd %s;', $this->shellPath($this->getWebRoot()));
+    $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
 
     // Drupal 7 only;
     if ($this->drupalVersion === 7) {
