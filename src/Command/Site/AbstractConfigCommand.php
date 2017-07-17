@@ -79,7 +79,6 @@ abstract class AbstractConfigCommand extends AbstractCommand {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
-
   }
 
   /**

@@ -65,7 +65,7 @@ class DrushAliasCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     // Remove existing file.
-    $file = $this->web_root . $this->dir . $this->filename;
+    $file = $this->webRoot . $this->dir . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }
@@ -79,7 +79,7 @@ class DrushAliasCommand extends AbstractCommand {
  * the generic Drush alias.
  */
 \$aliases["site"] = array (
-  'root' => '{$this->web_root}',
+  'root' => '{$this->webRoot}',
   'uri' => '{$this->url}',
   'user' => 1,
 );

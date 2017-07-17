@@ -45,11 +45,11 @@ class UpdateCommand extends AbstractCommand {
 
 
     $this->io->comment(sprintf('Running Update on %s',
-      $this->web_root
+      $this->webRoot
     ));
 
     $commands = [
-      sprintf('cd %s', $this->shellPath($this->web_root)),
+      sprintf('cd %s', $this->shellPath($this->webRoot)),
       'drush sset system.maintenance_mode 1',
       'drush cr',
       'drush updb -y',
