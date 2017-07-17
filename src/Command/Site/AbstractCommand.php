@@ -429,7 +429,26 @@ abstract class AbstractCommand extends Command {
       $settingsPath .= '/';
     }
 
+    // Fix folder permissions.
+    $this->fixSiteFolderPermissions();
+
     $this->siteRoot = $settingsPath;
+  }
+
+  /**
+   * Fixes the site folder permissions which is often changed by Drupal core.
+   */
+  protected function fixSiteFolderPermissions() {
+    if ($this->hasSiteRoot()) {
+      $commands[] = sprintf('chmod 777 %s', $this->getSiteRoot());
+      $commands[] = sprintf('chmod 777 %ssettings.php', $this->getSiteRoot());
+      $command = implode(' && ', $commands);
+      $this->io->commentBlock($command);
+      $shellProcess = $this->getShellProcess();
+      if (!$shellProcess->exec($command, TRUE)) {
+        throw new CommandException($shellProcess->getOutput());
+      }
+    }
   }
 
   /**

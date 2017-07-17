@@ -149,32 +149,29 @@ class DbImportCommand extends AbstractCommand {
     // If a dump file wasn't found or not specified, do a fresh site install
     if (empty($this->filename) || !$this->fileExists($this->filename)) {
       //@todo Use drupal site:install instead of Drush.
-      $command = sprintf(
-        'cd %s && ' .
-        'chmod 777 ../default && ' .
-        'chmod 777 settings.php && ' .
-        'drush si -y %s %s && ' .
-        'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y',
-        $this->shellPath($this->getSiteRoot()),
-        $this->profile,
-        $options
-      );
       $this->io->comment('Installing site');
+      // Site install.
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      // Install site.
+      $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
+      // Set site UUID from config.
+      $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
     }
     else {
+      $this->io->comment('Importing dump');
+
       if (is_null($input->getOption('db-name'))) {
         $input->setOption('db-name', $this->siteName);
       }
-      $command = sprintf(
-        'cd %s; ' .
-        'drush sql-create %s -y; ' .
-        'drush sql-cli < %s; ',
-        $this->getSiteRoot(),
-        $input->getOption('db-name'),
-        $this->filename
-      );
-      $this->io->comment('Importing dump');
+
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      // Create DB;
+      $commands[] = sprintf('drush sql-create %s -y', $input->getOption('db-name'));
+      // Import dump;
+      $commands[] = sprintf('drush sql-cli < %s', $this->filename);
     }
+
+    $command = implode(' && ', $commands);
 
     $this->io->commentBlock($command);
 

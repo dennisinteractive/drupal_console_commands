@@ -48,16 +48,16 @@ class UpdateCommand extends AbstractCommand {
       $this->getWebRoot()
     ));
 
-    $commands = [
-      sprintf('cd %s', $this->shellPath($this->getWebRoot())),
-      'drush sset system.maintenance_mode 1',
-      'drush cr',
-      'drush updb -y',
-      'drush cim -y',
-      'drush cim -y',
-      'drush sset system.maintenance_mode 0',
-      'drush cr',
-    ];
+    $commands = [];
+    $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+    $commands[] = 'drush sset system.maintenance_mode 1';
+    $commands[] = 'drush cr';
+    $commands[] = 'drush updb -y';
+    $commands[] = 'drush cim -y';
+    $commands[] = 'drush cim -y';
+    $commands[] = 'drush sset system.maintenance_mode 0';
+    $commands[] = 'drush cr';
+
     $command = implode(' && ', $commands);
 
     // Run.
