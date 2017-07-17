@@ -71,11 +71,20 @@ abstract class AbstractCommand extends Command {
   protected $profile = NULL;
 
   /**
-   * Stores the destination directory.
+   * The root directory.
    *
    * @var string
    */
-  protected $destination = NULL;
+  protected $root = NULL;
+
+  /**
+   * The web root directory.
+   *
+   * This is the web directory within the root.
+   *
+   * @var string
+   */
+  protected $web_root = NULL;
 
   /**
    * Stores the site url.
@@ -189,8 +198,11 @@ abstract class AbstractCommand extends Command {
     // Validate profile.
     $this->validateProfile($input);
 
-    // Validate destination.
-    $this->validateDestination($input);
+    // Validate root.
+    $this->validateRoot($input);
+
+    // Validate web root.
+    $this->validateWebRoot();
 
     // Validate url.
     $this->validateUrl($input);
@@ -262,54 +274,50 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Helper to validate destination parameter.
+   * Validate and set the web root directory.
+   */
+  protected function validateWebRoot() {
+    $this->web_root = $this->root . trim($this->config['web_directory'], '/') . '/';
+  }
+
+  /**
+   * Validate and set the root directory.
    *
    * @param InputInterface $input
-   *
-   * @throws CommandException
-   *
-   * @return string Destination
+   * @return string
    */
-  protected function validateDestination(InputInterface $input) {
+  protected function validateRoot(InputInterface $input) {
     if ($input->hasOption('destination-directory') &&
       !is_null($input->getOption('destination-directory'))
     ) {
       // Use config from parameter.
-      $this->destination = $input->getOption('destination-directory');
+      $this->root = $input->getOption('destination-directory');
     }
     elseif (isset($this->config['root'])) {
       // Use config from sites.yml.
-      $this->destination = $this->config['root'];
+      $this->root = $this->config['root'];
     }
     else {
-      $this->destination = '/tmp/' . $this->siteName;
+      $this->root = '/tmp/' . $this->siteName;
     }
 
     // Allow destination to be overriden by environment variable. i.e.
     // export site_destination_directory="/directory/"
     if (!getenv('site_destination_directory')) {
-      putenv("site_destination_directory=$this->destination");
+      putenv("site_destination_directory=$this->root");
     }
     else {
-      $this->destination = getenv('site_destination_directory');
+      $this->root = getenv('site_destination_directory');
     }
 
-    // Make sure we have a slash at the end.
-    if (substr($this->destination, -1) != '/') {
-      $this->destination .= '/';
-    }
-
-    return $this->destination;
+    $this->root = rtrim($this->root, '/') . '/';
   }
 
   /**
-   * Helper to validate destination parameter.
+   * Helper to validate URL.
    *
    * @param InputInterface $input
-   *
-   * @throws CommandException
-   *
-   * @return string Destination
+   * @return string
    */
   protected function validateUrl(InputInterface $input) {
     $scheme = isset($this->config['scheme']) && !empty($this->config['scheme']) ? $this->config['scheme'] : 'http';
@@ -334,7 +342,7 @@ abstract class AbstractCommand extends Command {
    * @return string Path
    */
   public function settingsPhpDirectory() {
-    $webSitesPath = $this->destination . 'web/sites/';
+    $webSitesPath = $this->web_root . 'sites/';
     $settingsPath = $webSitesPath . 'default';
 
     $command = sprintf(

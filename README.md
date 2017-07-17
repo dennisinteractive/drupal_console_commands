@@ -17,7 +17,13 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:new**
 	Builds a new site using Drupal project as template https://github.com/dennisinteractive/drupal-project
 
-- drupal **site:checkout** *site-name*
+- drupal **site:checkout** *site-name* [--branch|--tag]
+	Performs a git clone and checks out the specified branch or tag
+
+- drupal **site:checkout:tag** *site-name* --tag
+	Performs a git clone and checks out the specified tag/revision
+
+- drupal **site:checkout:branch** *site-name* --branch
 	Performs a git clone and checks out the specified branch
 
 - drupal **site:compose** *site-name*

@@ -63,12 +63,12 @@ class MemcacheCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $this->destination = $this->settingsPhpDirectory();
+    $this->web_root = $this->settingsPhpDirectory();
 
     // Validation.
-    if (!$this->fileExists($this->destination . 'settings.php')) {
+    if (!$this->fileExists($this->web_root . 'settings.php')) {
       $message = sprintf('The file settings.php is missing on %s',
-        $this->destination
+        $this->web_root
       );
       throw new CommandException($message);
     }
@@ -78,7 +78,7 @@ class MemcacheCommand extends AbstractCommand {
     }
 
     // Remove existing file.
-    $file = $this->destination . $this->filename;
+    $file = $this->web_root . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }

@@ -45,13 +45,13 @@ class NPMCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     $this->io->comment(sprintf('Running NPM on %s',
-      $this->destination
+      $this->web_root
     ));
 
     $command = sprintf(
-      'cd %sweb && ' .
+      'cd %s && ' .
       'find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;',
-      $this->shellPath($this->destination)
+      $this->shellPath($this->web_root)
     );
 
     // Run.
