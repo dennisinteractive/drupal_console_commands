@@ -112,8 +112,6 @@ class DbCommand extends AbstractCommand {
     $content = str_replace('${db_prefix}', $db_prefix, $content);
     $content = str_replace('${namespace}', $namespace, $content);
 
-    $this->fixSiteFolderPermissions();
-
     // Write file.
     $this->filePutContents($file, $content);
 

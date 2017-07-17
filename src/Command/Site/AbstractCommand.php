@@ -438,6 +438,8 @@ abstract class AbstractCommand extends Command {
       $settingsPath .= '/';
     }
 
+    $this->fixSiteFolderPermissions();
+
     $this->siteRoot = $settingsPath;
   }
 
