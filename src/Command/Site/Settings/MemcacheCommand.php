@@ -75,6 +75,8 @@ class MemcacheCommand extends AbstractCommand {
       $input->setOption('memcache-prefix', $this->siteName . '_' . microtime(true));
     }
 
+    $this->fixSiteFolderPermissions();
+
     // Remove existing file.
     $file = $this->getSiteRoot() . $this->filename;
     if ($this->fileExists($file)) {

@@ -61,6 +61,8 @@ class LocalCommand extends AbstractCommand {
       throw new CommandException($message);
     }
 
+    $this->fixSiteFolderPermissions();
+
     // Remove existing file.
     $file = $this->getSiteRoot() . $this->filename;
     if ($this->fileExists($file)) {

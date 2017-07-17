@@ -152,11 +152,7 @@ class DbImportCommand extends AbstractCommand {
       //@todo Use drupal site:install instead of Drush.
       $this->io->comment('Installing site');
 
-      // Fix site folder permissions.
-      if ($this->hasSiteRoot()) {
-        $commands[] = sprintf('chmod 777 %s',  $this->shellPath($this->getSiteRoot()));
-        $commands[] = sprintf('chmod 777 %ssettings.php', $this->shellPath($this->getSiteRoot()));
-      }
+      $this->fixSiteFolderPermissions();
 
       // Site install.
       $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
