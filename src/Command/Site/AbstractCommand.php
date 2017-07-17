@@ -242,6 +242,15 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
+   * Check if the current build has a site root directory.
+   *
+   * @return bool
+   */
+  protected function hasSiteRoot() {
+    return !is_null($this->siteRoot);
+  }
+
+  /**
    * Helper to check that the config file exits and load the configuration.
    *
    * @param InputInterface $input

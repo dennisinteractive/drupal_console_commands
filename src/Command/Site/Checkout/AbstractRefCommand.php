@@ -192,13 +192,20 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
    * @throws CommandException
    */
   protected function gitCheckout() {
-    $commands = [
-      sprintf('cd %s', $this->shellPath($this->getRoot())),
-      'git fetch --all',
-      sprintf('chmod 777 %ssites/default', $this->getWebRoot()),
-      sprintf('chmod 777 %ssites/default/settings.php', $this->getWebRoot()),
-      sprintf('git checkout %s --force', $this->ref),
-    ];
+
+    $commands = [];
+
+    // Fix site folder permissions.
+    if ($this->hasSiteRoot()) {
+      $commands[] = sprintf('chmod 777 %s', $this->getSiteRoot());
+      $commands[] = sprintf('chmod 777 %ssettings.php', $this->getSiteRoot());
+    }
+
+    // Checkout commands.
+    $commands[] = sprintf('cd %s', $this->shellPath($this->getRoot()));
+    $commands[] = 'git fetch --all';
+    $commands[] = sprintf('git checkout %s --force', $this->ref);
+
     $command = implode(' && ', $commands);
 
     $shellProcess = $this->getShellProcess();
