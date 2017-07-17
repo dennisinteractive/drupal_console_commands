@@ -45,13 +45,13 @@ class GruntCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     $this->io->comment(sprintf('Running Grunt on %s',
-      $this->webRoot
+      $this->getWebRoot()
     ));
 
     $command = sprintf(
       'cd %s && ' .
       'find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "grunt" \;',
-      $this->shellPath($this->webRoot)
+      $this->shellPath($this->getWebRoot())
     );
 
     // Run.

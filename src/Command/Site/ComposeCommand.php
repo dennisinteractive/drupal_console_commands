@@ -44,9 +44,9 @@ class ComposeCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    if (!$this->fileExists($this->root . 'composer.json')) {
+    if (!$this->fileExists($this->getRoot() . 'composer.json')) {
       $message = sprintf('The file composer.json is missing on %s',
-        $this->root
+        $this->getRoot()
       );
       throw new CommandException($message);
     }
@@ -67,7 +67,7 @@ class ComposeCommand extends AbstractCommand {
   protected function runCommand($command) {
     $command = sprintf(
       'cd %s && composer %s',
-      $this->shellPath($this->root),
+      $this->shellPath($this->getRoot()),
       $command
     );
     $this->io->commentBlock($command);
@@ -76,7 +76,7 @@ class ComposeCommand extends AbstractCommand {
 
     //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success(sprintf('Composer installed on %s', $this->root));
+      $this->io->success(sprintf('Composer installed on %s', $this->getRoot()));
     }
     else {
       throw new CommandException($shellProcess->getOutput());
