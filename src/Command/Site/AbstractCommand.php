@@ -180,9 +180,6 @@ abstract class AbstractCommand extends Command {
 
     $this->validateSiteParams($input, $output);
 
-    $detector = new Detector();
-    $this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot());
-
   }
 
   /**
@@ -190,6 +187,9 @@ abstract class AbstractCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->validateSiteParams($input, $output);
+
+    $detector = new Detector();
+    $this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot());
   }
 
   /**
