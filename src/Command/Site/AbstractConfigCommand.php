@@ -96,8 +96,8 @@ abstract class AbstractConfigCommand extends AbstractCommand {
    * @throws \DennisDigital\Drupal\Console\Exception\CommandException
    */
   protected function generateConfigFile() {
-    $this->template = $this->root . $this->template;
-    $this->filename = $this->root . $this->filename;
+    $this->template = $this->getRoot() . $this->template;
+    $this->filename = $this->getRoot() . $this->filename;
 
     // Validation.
     if (!$this->fileExists($this->template)) {

@@ -155,7 +155,7 @@ class DbImportCommand extends AbstractCommand {
         'chmod 777 settings.php && ' .
         'drush si -y %s %s && ' .
         'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y',
-        $this->shellPath($this->siteRoot),
+        $this->shellPath($this->getSiteRoot()),
         $this->profile,
         $options
       );
@@ -169,7 +169,7 @@ class DbImportCommand extends AbstractCommand {
         'cd %s; ' .
         'drush sql-create %s -y; ' .
         'drush sql-cli < %s; ',
-        $this->siteRoot,
+        $this->getSiteRoot(),
         $input->getOption('db-name'),
         $this->filename
       );
@@ -185,7 +185,7 @@ class DbImportCommand extends AbstractCommand {
       $this->io->writeln($shellProcess->getOutput());
       $this->io->success(sprintf(
         "Site installed on %s\nURL %s",
-        $this->siteRoot,
+        $this->getSiteRoot(),
         $this->config['host']
       ));
     }

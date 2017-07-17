@@ -34,6 +34,9 @@ class Detector {
    * @see drush_drupal_version()
    */
   public function getDrupalVersion($drupalRoot) {
+    if (!file_exists($drupalRoot)) {
+      return;
+    }
     $this->drupalRoot = $drupalRoot;
 
     if (!isset($this->version)) {

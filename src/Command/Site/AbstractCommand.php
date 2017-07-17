@@ -75,7 +75,7 @@ abstract class AbstractCommand extends Command {
    *
    * @var string
    */
-  protected $root = NULL;
+  private $root = NULL;
 
   /**
    * The web root directory.
@@ -84,7 +84,7 @@ abstract class AbstractCommand extends Command {
    *
    * @var string
    */
-  protected $webRoot = NULL;
+  private $webRoot = NULL;
 
   /**
    * The site root directory.
@@ -93,7 +93,7 @@ abstract class AbstractCommand extends Command {
    *
    * @var string
    */
-  protected $siteRoot = NULL;
+  private $siteRoot = NULL;
 
   /**
    * Stores the site url.
@@ -221,6 +221,45 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
+   * Getter for the root directory property.
+   */
+  protected function getRoot() {
+    if (is_null($this->root)) {
+      throw new CommandException('Root directory is not available.');
+    }
+    return $this->root;
+  }
+
+  /**
+   * Getter for the web root directory property.
+   */
+  protected function getWebRoot() {
+    if (is_null($this->webRoot)) {
+      throw new CommandException('Web root directory is not available.');
+    }
+    return $this->webRoot;
+  }
+
+  /**
+   * Getter for the site root directory property.
+   */
+  protected function getSiteRoot() {
+    if (is_null($this->siteRoot)) {
+      throw new CommandException('Site root directory is not available.');
+    }
+    return $this->siteRoot;
+  }
+
+  /**
+   * Check if the current build has a site root directory.
+   *
+   * @return bool
+   */
+  protected function hasSiteRoot() {
+    return !is_null($this->siteRoot);
+  }
+
+  /**
    * Helper to check that the config file exits and load the configuration.
    *
    * @param InputInterface $input
@@ -290,7 +329,7 @@ abstract class AbstractCommand extends Command {
    */
   protected function validateWebRoot() {
     $web_directory = empty($this->config['web_directory']) ? 'web' : $this->config['web_directory'];
-    $this->webRoot = $this->root . trim($web_directory, '/') . '/';
+    $this->webRoot = $this->getRoot() . trim($web_directory, '/') . '/';
   }
 
   /**
@@ -358,7 +397,7 @@ abstract class AbstractCommand extends Command {
    * @return string Path
    */
   public function validateSiteRoot() {
-    $webSitesPath = $this->webRoot . 'sites/';
+    $webSitesPath = $this->getWebRoot() . 'sites/';
     $settingsPath = $webSitesPath . 'default';
 
     // It's possible that a command is run before the site is available. e.g. checkout
