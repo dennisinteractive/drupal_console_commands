@@ -73,7 +73,7 @@ class UpdateCommand extends AbstractCommand {
       $commands[] = 'drush cr';
     }
 
-    $command = implode(' && ', $commands);
+    $command = implode(' ; ', $commands);
 
     // Run.
     $shellProcess = $this->getShellProcess();
