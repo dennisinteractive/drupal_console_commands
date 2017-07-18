@@ -571,4 +571,15 @@ abstract class AbstractCommand extends Command {
     return $tableRows;
   }
 
+  /**
+   * Loads template.
+   *
+   * @return String The contents of the template.
+   */
+  function loadTemplate($file, $templateName) {
+    $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->drupalVersion . '/' . $templateName;
+
+    return file_get_contents($template);
+  }
+
 }

@@ -71,8 +71,7 @@ class LocalCommand extends AbstractCommand {
     $cdn = isset($this->config['cdn']) ? $this->config['cdn'] : '';
 
     // Load from template.
-    $template = getcwd() . '/src/Command/Site/Settings/Includes/Drupal' . $this->drupalVersion . '/' . $this->filename;
-    $content = file_get_contents($template);
+    $content = $this->loadTemplate(__FILE__, $this->filename);
 
     // Replace tokens.
     $content = str_replace('<?php', '', $content);
