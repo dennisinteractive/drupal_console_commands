@@ -17,7 +17,13 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:new**
 	Builds a new site using Drupal project as template https://github.com/dennisinteractive/drupal-project
 
-- drupal **site:checkout** *site-name*
+- drupal **site:checkout** *site-name* [--branch|--tag]
+	Performs a git clone and checks out the specified branch or tag
+
+- drupal **site:checkout:tag** *site-name* --tag
+	Performs a git clone and checks out the specified tag/revision
+
+- drupal **site:checkout:branch** *site-name* --branch
 	Performs a git clone and checks out the specified branch
 
 - drupal **site:compose** *site-name*
@@ -37,9 +43,6 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 
 - drupal **site:settings:memcache** *site-name*
 	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
-
-- drupal **site:drush:alias** *site-name*
-	Sets up drush aliases
 
 - drupal **site:phpunit:setup** *site-name*
 	Creates *phpunit.xml* in the root. This file contains PHPUnit configuration and should not be committed.
@@ -75,7 +78,6 @@ Chains that can be reused on various environments
     - site:settings:db
     - site:settings:local
     - site:settings:memcache
-    - site:drush:alias
 
 - drupal **site:test:setup** Sets the test suites
     - site:phpunit:setup
@@ -99,11 +101,8 @@ Each environment will have its own chain that executes the relevant commands and
     - site:update
 
 ### Artifact
-- drupal **site:build** Builds a site for artifacts
-    - site:checkout
-    - site:rebuild (chain)
-
 - drupal **site:build:artifact** Prepare artifacts
+    - site:checkout
     - site:compose
     - site:npm
     - site:grunt

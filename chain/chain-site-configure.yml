@@ -15,7 +15,3 @@ commands:
   - command: site:settings:memcache
     arguments:
       name: '%{{name}}'
-# Create the drush alias
-  - command: site:drush:alias
-    arguments:
-      name: '%{{name}}'

@@ -18,6 +18,7 @@ use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
+use DennisDigital\Drupal\Console\Utils\ShellProcess;
 
 /**
  * Class AbstractCommand
@@ -69,11 +70,29 @@ abstract class AbstractCommand extends Command {
   protected $profile = NULL;
 
   /**
-   * Stores the destination directory.
+   * The root directory.
    *
    * @var string
    */
-  protected $destination = NULL;
+  private $root = NULL;
+
+  /**
+   * The web root directory.
+   *
+   * This is the web directory within the root.
+   *
+   * @var string
+   */
+  private $webRoot = NULL;
+
+  /**
+   * The site root directory.
+   *
+   * This is where we put settings.php
+   *
+   * @var string
+   */
+  private $siteRoot = NULL;
 
   /**
    * Stores the site url.
@@ -179,11 +198,56 @@ abstract class AbstractCommand extends Command {
     // Validate profile.
     $this->validateProfile($input);
 
-    // Validate destination.
-    $this->validateDestination($input);
+    // Validate root.
+    $this->validateRoot($input);
+
+    // Validate web root.
+    $this->validateWebRoot();
+
+    // Validate settings.php directory.
+    $this->validateSiteRoot();
 
     // Validate url.
     $this->validateUrl($input);
+  }
+
+  /**
+   * Getter for the root directory property.
+   */
+  protected function getRoot() {
+    if (is_null($this->root)) {
+      throw new CommandException('Root directory is not available.');
+    }
+    return $this->root;
+  }
+
+  /**
+   * Getter for the web root directory property.
+   */
+  protected function getWebRoot() {
+    if (is_null($this->webRoot)) {
+      throw new CommandException('Web root directory is not available.');
+    }
+    return $this->webRoot;
+  }
+
+  /**
+   * Getter for the site root directory property.
+   */
+  protected function getSiteRoot() {
+    if (is_null($this->siteRoot)) {
+      throw new CommandException('Site root directory is not available.');
+    }
+    return $this->siteRoot;
+  }
+
+  /**
+   * Check if the current build has a site root directory.
+   *
+   * @return bool
+   */
+  protected function hasSiteRoot() {
+    return !is_null($this->siteRoot);
   }
 
   /**
@@ -252,54 +316,51 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Helper to validate destination parameter.
+   * Validate and set the web root directory.
+   */
+  protected function validateWebRoot() {
+    $web_directory = empty($this->config['web_directory']) ? 'web' : $this->config['web_directory'];
+    $this->webRoot = $this->getRoot() . trim($web_directory, '/') . '/';
+  }
+
+  /**
+   * Validate and set the root directory.
    *
    * @param InputInterface $input
-   *
-   * @throws CommandException
-   *
-   * @return string Destination
+   * @return string
    */
-  protected function validateDestination(InputInterface $input) {
+  protected function validateRoot(InputInterface $input) {
     if ($input->hasOption('destination-directory') &&
       !is_null($input->getOption('destination-directory'))
     ) {
       // Use config from parameter.
-      $this->destination = $input->getOption('destination-directory');
+      $this->root = $input->getOption('destination-directory');
     }
     elseif (isset($this->config['root'])) {
       // Use config from sites.yml.
-      $this->destination = $this->config['root'];
+      $this->root = $this->config['root'];
     }
     else {
-      $this->destination = '/tmp/' . $this->siteName;
+      $this->root = '/tmp/' . $this->siteName;
     }
 
     // Allow destination to be overriden by environment variable. i.e.
     // export site_destination_directory="/directory/"
     if (!getenv('site_destination_directory')) {
-      putenv("site_destination_directory=$this->destination");
+      putenv("site_destination_directory=$this->root");
     }
     else {
-      $this->destination = getenv('site_destination_directory');
+      $this->root = getenv('site_destination_directory');
     }
 
-    // Make sure we have a slash at the end.
-    if (substr($this->destination, -1) != '/') {
-      $this->destination .= '/';
-    }
-
-    return $this->destination;
+    $this->root = rtrim($this->root, '/') . '/';
   }
 
   /**
-   * Helper to validate destination parameter.
+   * Helper to validate URL.
    *
    * @param InputInterface $input
-   *
-   * @throws CommandException
-   *
-   * @return string Destination
+   * @return string
    */
   protected function validateUrl(InputInterface $input) {
     $scheme = isset($this->config['scheme']) && !empty($this->config['scheme']) ? $this->config['scheme'] : 'http';
@@ -317,15 +378,24 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Helper to return the path to settings.php
+   * Helper to set the site root.
+   *
+   * This is where we place settings.php
+   *
    * It will try to match a folder with same name as site name
    * If not found, it will try to match a folder called "default".
    *
    * @return string Path
    */
-  public function settingsPhpDirectory() {
-    $webSitesPath = $this->destination . 'web/sites/';
+  public function validateSiteRoot() {
+    $webSitesPath = $this->getWebRoot() . 'sites/';
     $settingsPath = $webSitesPath . 'default';
+
+    // It's possible that a command is run before the site is available. e.g. checkout
+    // We will skip setting in this situation, but throw an Exception in the site root getter to prevent any unpredictable behaviour.
+    if (!file_exists($settingsPath)) {
+      return;
+    }
 
     $command = sprintf(
       'cd %s && find . -name settings.php',
@@ -359,16 +429,36 @@ abstract class AbstractCommand extends Command {
       $settingsPath .= '/';
     }
 
-    return $settingsPath;
+    // Fix folder permissions.
+    $this->fixSiteFolderPermissions();
+
+    $this->siteRoot = $settingsPath;
+  }
+
+  /**
+   * Fixes the site folder permissions which is often changed by Drupal core.
+   */
+  protected function fixSiteFolderPermissions() {
+    if ($this->hasSiteRoot()) {
+      $commands[] = sprintf('chmod 777 %s', $this->getSiteRoot());
+      $commands[] = sprintf('chmod 777 %ssettings.php', $this->getSiteRoot());
+      $command = implode(' && ', $commands);
+      $this->io->commentBlock($command);
+      $shellProcess = $this->getShellProcess();
+      if (!$shellProcess->exec($command, TRUE)) {
+        throw new CommandException($shellProcess->getOutput());
+      }
+    }
   }
 
   /**
    * Get the shell process.
    *
-   * @return Drupal\Console\Core\Command\Exec\ExecCommand
+   * @return ShellProcess
    */
   protected function getShellProcess() {
-    return $this->container->get('console.shell_process');
+    $app_root = $this->container->get('app.root');
+    return new ShellProcess($app_root);
   }
 
   /**
