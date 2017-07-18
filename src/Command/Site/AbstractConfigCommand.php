@@ -79,7 +79,6 @@ abstract class AbstractConfigCommand extends AbstractCommand {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
-
   }
 
   /**
@@ -97,8 +96,8 @@ abstract class AbstractConfigCommand extends AbstractCommand {
    * @throws \DennisDigital\Drupal\Console\Exception\CommandException
    */
   protected function generateConfigFile() {
-    $this->template = $this->destination . $this->template;
-    $this->filename = $this->destination . $this->filename;
+    $this->template = $this->getRoot() . $this->template;
+    $this->filename = $this->getRoot() . $this->filename;
 
     // Validation.
     if (!$this->fileExists($this->template)) {

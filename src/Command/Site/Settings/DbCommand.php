@@ -58,12 +58,10 @@ class DbCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $this->destination = $this->settingsPhpDirectory();
-
     // Validation.
-    if (!$this->fileExists($this->destination . 'settings.php')) {
+    if (!$this->fileExists($this->getSiteRoot() . 'settings.php')) {
       $message = sprintf('Could not find %s',
-        $this->destination . 'settings.php'
+        $this->getSiteRoot() . 'settings.php'
       );
       throw new CommandException($message);
     }
@@ -85,7 +83,7 @@ class DbCommand extends AbstractCommand {
     }
 
     // Remove existing file.
-    $file = $this->destination . $this->filename;
+    $file = $this->getSiteRoot() . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }

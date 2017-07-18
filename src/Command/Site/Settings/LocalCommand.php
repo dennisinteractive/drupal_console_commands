@@ -53,25 +53,23 @@ class LocalCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $this->destination = $this->settingsPhpDirectory();
-
     // Validation.
-    if (!$this->fileExists($this->destination . '../example.' . $this->filename)) {
+    if (!$this->fileExists($this->getSiteRoot() . '../example.' . $this->filename)) {
       $message = sprintf('The file example.settings.local.php is missing.',
-        $this->destination
+        $this->getSiteRoot()
       );
       throw new CommandException($message);
     }
 
     // Remove existing file.
-    $file = $this->destination . $this->filename;
+    $file = $this->getSiteRoot() . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }
 
     // Copy example.
     $command = sprintf('cd %s && cp -n ../example.%s %s',
-      $this->shellPath($this->destination),
+      $this->shellPath($this->getSiteRoot()),
       $this->filename,
       $this->filename
     );

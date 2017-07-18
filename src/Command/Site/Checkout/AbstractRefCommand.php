@@ -73,14 +73,14 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
     $this->io->comment(sprintf('Checking out %s (%s) on %s',
       $this->siteName,
       $this->ref,
-      $this->destination
+      $this->getRoot()
     ));
 
     switch ($this->repo['type']) {
       case 'git':
         // Check if repo exists and has any changes.
-        if ($this->fileExists($this->destination) &&
-          $this->fileExists($this->destination . '.' . $this->repo['type'])
+        if ($this->fileExists($this->getRoot()) &&
+          $this->fileExists($this->getRoot() . '.' . $this->repo['type'])
         ) {
           if ($input->hasOption('force') &&
             !$input->getOption('force')
@@ -133,7 +133,7 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
   protected function gitDiff() {
     $command = sprintf(
       'cd %s && git diff-files --name-status -r --ignore-submodules',
-      $this->shellPath($this->destination)
+      $this->shellPath($this->getRoot())
     );
 
     $shellProcess = $this->getShellProcess();
@@ -143,7 +143,7 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
         $message = sprintf('You have uncommitted changes on %s' . PHP_EOL .
           'Please commit or revert your changes before checking out the site.' . PHP_EOL .
           'If you want to wipe your local changes use --force.',
-          $this->destination
+          $this->getRoot()
         );
         throw new CommandException($message);
       }
@@ -165,14 +165,14 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
   protected function gitClone() {
     $command = sprintf('git clone %s %s',
       $this->repo['url'],
-      $this->shellPath($this->destination)
+      $this->shellPath($this->getRoot())
     );
     $this->io->commentBlock($command);
 
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success(sprintf('Repo cloned on %s', $this->destination));
+      $this->io->success(sprintf('Repo cloned on %s', $this->getRoot()));
     }
     else {
       throw new CommandException($shellProcess->getOutput());
@@ -192,15 +192,15 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
    * @throws CommandException
    */
   protected function gitCheckout() {
-    $command = sprintf(
-      'cd %s && ' .
-      'git fetch --all && ' .
-      'chmod 777 web/sites/default && ' .
-      'chmod 777 web/sites/default/settings.php && ' .
-      'git checkout %s --force',
-      $this->shellPath($this->destination),
-      $this->ref
-    );
+
+    $commands = [];
+
+    // Checkout commands.
+    $commands[] = sprintf('cd %s', $this->shellPath($this->getRoot()));
+    $commands[] = 'git fetch --all';
+    $commands[] = sprintf('git checkout %s --force', $this->ref);
+
+    $command = implode(' && ', $commands);
 
     $shellProcess = $this->getShellProcess();
 
@@ -221,10 +221,10 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
    * @return mixed
    */
   protected function getCurrentRef() {
-    if ($this->fileExists($this->destination)) {
+    if ($this->fileExists($this->getRoot())) {
       // Get branch from site directory.
       $command = sprintf('cd %s && git branch',
-        $this->shellPath($this->destination)
+        $this->shellPath($this->getRoot())
       );
 
       $shellProcess = $this->getShellProcess()->printOutput(FALSE);
