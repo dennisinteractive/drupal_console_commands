@@ -158,8 +158,7 @@ abstract class AbstractCommand extends Command {
   protected function interact(InputInterface $input, OutputInterface $output) {
     $this->io = new DrupalStyle($input, $output);
 
-    $sitesDirectory = $this->configurationManager->getSitesDirectory();
-    $options = $this->siteList($sitesDirectory);
+    $options = $this->siteList();
 
     $name = $input->getArgument('name');
     if (!$name) {
@@ -533,29 +532,15 @@ abstract class AbstractCommand extends Command {
    * This function lists all sites found in ~/.console/sites folder
    * It will only return sites that have 'repo' configured
    *
-   * @param string $sitesDirectory
-   *
    * @return array
    */
-  private function siteList($sitesDirectory) {
-    $finder = new Finder();
-    $finder->in($sitesDirectory);
-    $finder->name("*.yml");
+  private function siteList() {
+    $sites = $this->configurationManager->getSites();
 
     $tableRows = [];
-    foreach ($finder as $site) {
-      $siteName = $site->getBasename('.yml');
-      $environments = $this->configurationManager
-        ->readSite($site->getRealPath());
-
-      if (!$environments || !is_array($environments)) {
-        continue;
-      }
-
-      foreach ($environments as $environment => $config) {
-        if (isset($config['repo'])) {
-          $tableRows[] = $siteName;
-        }
+    foreach ($sites as $siteName => $config) {
+      if (isset($config['repo'])) {
+        $tableRows[] = current(explode('.', $siteName));
       }
     }
 
