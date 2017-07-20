@@ -48,6 +48,7 @@ class CheckoutCommand extends AbstractCheckoutCommand {
     foreach ($input->getOptions() as $name => $value) {
       $parameters['--' . $name] = $value;
     }
+
     $commandInput = new ArrayInput(array_filter($parameters));
 
     // Run checkout command.

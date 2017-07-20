@@ -265,10 +265,10 @@ abstract class AbstractCommand extends Command {
     $environment = $this->configurationManager->getConfiguration()
       ->get('application.environment');
 
-    $config = $this->configurationManager->readTarget($siteName . '.' . $environment);
+    $configName = $siteName . '.' . $environment;
+    $sites = $this->configurationManager->getSites();
 
-    if (empty($config))
-    {
+    if (empty($sites[$configName])) {
       $message = sprintf(
         'Site not found. To see a list of available sites, run %s',
         'drupal site:debug'
@@ -279,7 +279,7 @@ abstract class AbstractCommand extends Command {
     // Update input.
     $input->setArgument('name', $siteName);
     $this->siteName = $siteName;
-    $this->config = $config;
+    $this->config = $sites[$configName];
 
     return $this;
   }
