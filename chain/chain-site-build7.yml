@@ -1,0 +1,16 @@
+# Usage: drupal site:build7 --placeholder="name:subscriptions"
+command:
+  name: site:build7
+  description: 'Builds a Drupal 7 site using make file.'
+commands:
+# Checkout site
+  - command: site:checkout
+    arguments:
+      name: '%{{name}}'
+    options:
+      branch: '%{{branch|8.x}}'
+# Run site:rebuild
+  - command: site:rebuild7
+    options:
+      placeholder:
+        - 'name:%{{name}}'

@@ -1,0 +1,35 @@
+# Usage: drupal site:rebuild7 --placeholder="name:subscriptions"
+command:
+  name: site:rebuild7
+  description: 'Performs necessary steps to rebuild the site from a given source using make file.'
+commands:
+# Run drush make.
+  - command: site:make
+    arguments:
+      name: '%{{name}}'
+# Run NPM.
+  - command: site:npm
+    arguments:
+      name: '%{{name}}'
+# Run Grunt.
+  - command: site:grunt
+    arguments:
+      name: '%{{name}}'
+# Generate the settings.
+  - command: site:configure
+    options:
+      placeholder:
+        - 'name:%{{name}}'
+# Tests setup.
+#  - command: site:test:setup
+#    options:
+#      placeholder:
+#        - 'name:%{{name}}'
+# Imports db or installs a site
+  - command: site:db:import
+    arguments:
+      name: '%{{name}}'
+# Run updates.
+  - command: site:update
+    arguments:
+      name: '%{{name}}'
