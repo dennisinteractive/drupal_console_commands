@@ -10,6 +10,8 @@ application:
           class: \DennisDigital\Drupal\Console\Command\Site\Checkout\BranchCommand
         'site:compose':
           class: \DennisDigital\Drupal\Console\Command\Site\ComposeCommand
+        'site:make':
+          class: \DennisDigital\Drupal\Console\Command\Site\MakeCommand
         'site:settings:db':
           class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
         'site:settings:memcache':
