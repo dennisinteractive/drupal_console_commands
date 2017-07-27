@@ -29,6 +29,9 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:compose** *site-name*
 	Runs *composer*
 
+- drupal **site:make** *site-name*
+	Runs *drush make*
+
 - drupal **site:npm**
   Runs NPM
 

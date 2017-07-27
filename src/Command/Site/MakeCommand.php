@@ -50,8 +50,8 @@ class MakeCommand extends AbstractCommand {
       throw new CommandException($message);
     }
 
-    // Run composer install.
-    $this->runCommand('make');
+    // Run drush command.
+    $this->runCommand('make -y --working-copy --no-core --contrib-destination=. site.make');
   }
 
   /**
