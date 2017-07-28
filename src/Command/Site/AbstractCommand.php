@@ -189,7 +189,9 @@ abstract class AbstractCommand extends Command {
     $this->validateSiteParams($input, $output);
 
     $detector = new Detector();
-    $this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot());
+    if ($this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot())) {
+      $this->io->comment(sprintf('Drupal %s detected.', $this->drupalVersion));
+    }
   }
 
   /**
@@ -330,6 +332,7 @@ abstract class AbstractCommand extends Command {
   protected function validateWebRoot() {
     $web_directory = empty($this->config['web_directory']) ? 'web' : $this->config['web_directory'];
     $this->webRoot = $this->getRoot() . trim($web_directory, '/') . '/';
+    $this->webRoot = str_replace('//', '/', $this->webRoot);
   }
 
   /**
@@ -397,8 +400,16 @@ abstract class AbstractCommand extends Command {
    * @return string Path
    */
   public function validateSiteRoot() {
-    $webSitesPath = $this->getWebRoot() . 'sites/';
-    $settingsPath = $webSitesPath . 'default';
+    // Support for sites that live in docroot/sites/sitename.
+    if ($this->config['web_directory'] == '/') {
+      $webSitesPath = $this->getWebRoot();
+      $settingsPath = $webSitesPath;
+    }
+    else {
+      // Support for sites that live in docroot/web.
+      $webSitesPath = $this->getWebRoot() . 'sites/';
+      $settingsPath = $webSitesPath . 'default';
+    }
 
     // It's possible that a command is run before the site is available. e.g. checkout
     // We will skip setting in this situation, but throw an Exception in the site root getter to prevent any unpredictable behaviour.
