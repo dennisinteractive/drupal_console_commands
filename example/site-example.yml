@@ -2,7 +2,9 @@ dev:
   name: example
   profile: standard
   root: /var/www/example
-  host: example.local
+  web_directory: web
+  host: http://example.local
+  cdn: http://example.local
   account-name: admin
   account-pass: password
   account-mail: mail@example.local
