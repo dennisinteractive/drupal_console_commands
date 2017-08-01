@@ -44,7 +44,7 @@ class MakeCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     if (!$this->fileExists($this->getRoot() . 'site.make')) {
-      $message = sprintf('The file sote.make is missing on %s',
+      $message = sprintf('The file site.make is missing on %s',
         $this->getRoot()
       );
       throw new CommandException($message);
