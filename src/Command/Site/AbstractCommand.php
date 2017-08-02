@@ -113,6 +113,11 @@ abstract class AbstractCommand extends Command {
   protected $drupalVersion;
 
   /**
+   * Stores the environment i.e. dev
+   */
+  protected $env;
+
+  /**
    * Constructor.
    */
   public function __construct()
@@ -150,6 +155,7 @@ abstract class AbstractCommand extends Command {
       // @todo use: $this->trans('commands.site.checkout.name.options')
       'Specify the destination of the site if different than the global destination found in sites.yml'
     );
+
     $this->addOption(
       'site-url',
       '',
@@ -167,10 +173,28 @@ abstract class AbstractCommand extends Command {
     $sitesDirectory = $this->configurationManager->getSitesDirectory();
     $options = $this->siteList($sitesDirectory);
 
+    // Get Console global settings.
+    $configEnv = $this->configurationManager->getConfiguration()->get('application.environment');
+
+    // Detect env.
+    if ($input->hasOption('env') && !is_null($input->getOption('env'))) {
+      // Use value passed as parameter --env.
+      $this->env = $input->getOption('env');
+    }
+    elseif (!empty($configEnv)) {
+      // Use config from sites.yml.
+      $this->env = $configEnv;
+    }
+    else {
+      // Default to dev.
+      $this->env = 'dev';
+    }
+
+    // Detect name.
     $name = $input->getArgument('name');
     if (!$name) {
       $name = $this->io->choice(
-        $this->trans('Select a site'),
+        $this->trans(sprintf('Select %s a site', $this->env)),
         $options,
         reset($options),
         TRUE
@@ -273,11 +297,7 @@ abstract class AbstractCommand extends Command {
   protected function siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    // $environment = $input->getOption('env')
-    $environment = $this->configurationManager->getConfiguration()
-      ->get('application.environment');
-
-    $config = $this->configurationManager->readTarget($siteName . '.' . $environment);
+    $config = $this->configurationManager->readTarget($siteName . '.' . $this->env);
 
     if (empty($config))
     {
@@ -401,7 +421,7 @@ abstract class AbstractCommand extends Command {
    */
   public function validateSiteRoot() {
     // Support for sites that live in docroot/sites/sitename.
-    if ($this->config['web_directory'] == '/') {
+    if (isset($this->config['web_directory']) && $this->config['web_directory'] == '/') {
       $webSitesPath = $this->getWebRoot();
       $settingsPath = $webSitesPath;
     }
