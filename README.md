@@ -43,6 +43,7 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 
 - drupal **site:settings:local** *site-name*
 	Creates *settings.local.php* in the *web/sites/default* folder. This file contains local settings overrides and should not be committed.
+	If you have a file named `example.settings.local.php` on the site's folder, it will be used as a template for settings.local.php.
 
 - drupal **site:settings:memcache** *site-name*
 	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
