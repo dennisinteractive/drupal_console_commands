@@ -59,7 +59,9 @@ class LocalCommand extends AbstractCommand {
 
     if (!$this->fileExists($exampleFile)) {
       $this->io->writeln(sprintf('Cannot find %s. Moving on.', $exampleFile));
-      return;
+      // Create one.
+      $exampleFile = '/tmp/example.' . $this->filename;
+      $this->filePutContents($exampleFile, "<?php\n/**\n * This file was generated automatically.\n*/");
     }
 
     // Remove existing file.
