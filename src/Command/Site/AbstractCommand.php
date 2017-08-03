@@ -115,7 +115,7 @@ abstract class AbstractCommand extends Command {
   /**
    * Stores the environment i.e. dev
    */
-  protected $env;
+  protected $env = NULL;
 
   /**
    * Constructor.
@@ -133,6 +133,20 @@ abstract class AbstractCommand extends Command {
     $this->container = $container;
     $this->configurationManager = $this->container
       ->get('console.configuration_manager');
+  }
+
+  /**
+   * @param mixed $env
+   */
+  public function setEnv($env) {
+    $this->env = $env;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getEnv() {
+    return $this->env;
   }
 
   /**
@@ -170,31 +184,36 @@ abstract class AbstractCommand extends Command {
   protected function interact(InputInterface $input, OutputInterface $output) {
     $this->io = new DrupalStyle($input, $output);
 
-    $sitesDirectory = $this->configurationManager->getSitesDirectory();
-    $options = $this->siteList($sitesDirectory);
-
     // Get Console global settings.
     $configEnv = $this->configurationManager->getConfiguration()->get('application.environment');
 
     // Detect env.
     if ($input->hasOption('env') && !is_null($input->getOption('env'))) {
       // Use value passed as parameter --env.
-      $this->env = $input->getOption('env');
+      $this->setEnv($input->getOption('env'));
     }
     elseif (!empty($configEnv)) {
       // Use config from sites.yml.
-      $this->env = $configEnv;
+      $this->setEnv($configEnv);
     }
     else {
       // Default to dev.
-      $this->env = 'dev';
+      $this->setEnv('dev');
+    }
+
+    // Sites list.
+    $sitesDirectory = $this->configurationManager->getSitesDirectory();
+
+    $options = $this->siteList($sitesDirectory);
+    if (empty($options)) {
+      throw new CommandException(sprintf('No sites available for %s environment.', $this->getEnv()));
     }
 
     // Detect name.
     $name = $input->getArgument('name');
     if (!$name) {
       $name = $this->io->choice(
-        $this->trans(sprintf('Select %s a site', $this->env)),
+        $this->trans(sprintf('Select %s a site', $this->getEnv())),
         $options,
         reset($options),
         TRUE
@@ -297,7 +316,7 @@ abstract class AbstractCommand extends Command {
   protected function siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    $config = $this->configurationManager->readTarget($siteName . '.' . $this->env);
+    $config = $this->configurationManager->readTarget($siteName . '.' . $this->getEnv());
 
     if (empty($config))
     {
@@ -585,7 +604,8 @@ abstract class AbstractCommand extends Command {
     $tableRows = [];
     foreach ($finder as $site) {
       $siteName = $site->getBasename('.yml');
-      $environments = $this->configurationManager
+      $environments = $this
+        ->configurationManager
         ->readSite($site->getRealPath());
 
       if (!$environments || !is_array($environments)) {
@@ -593,13 +613,19 @@ abstract class AbstractCommand extends Command {
       }
 
       foreach ($environments as $environment => $config) {
+        // Filter by option --env.
+        if ($this->getEnv() && $environment != $this->getEnv()) {
+          continue;
+        }
+
+        // Ignore site configs that don't have the repo configuration.
         if (isset($config['repo'])) {
           $tableRows[] = $siteName;
         }
       }
     }
 
-    return $tableRows;
+    return array_unique($tableRows);
   }
 
   /**
