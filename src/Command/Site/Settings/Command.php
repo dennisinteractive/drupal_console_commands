@@ -9,6 +9,7 @@
 
 namespace DennisDigital\Drupal\Console\Command\Site\Settings;
 
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
@@ -53,6 +54,24 @@ class Command extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
+    // Run commands with default arguments.
+    $commands = array(
+      'site:settings:db',
+      'site:settings:memcache'
+    );
+
+    foreach ($commands as $commandName) {
+      $command = $this->getApplication()->find($commandName);
+
+      $parameters = $input->getArguments();
+      foreach ($input->getOptions() as $name => $value) {
+        $parameters['--' . $name] = $value;
+      }
+      $commandInput = new ArrayInput(array_filter($parameters));
+
+      $command->run($commandInput, $output);
+    }
+
     // Generate settings.local.php.
     $this->generateSettingsLocal();
 
@@ -63,15 +82,53 @@ class Command extends AbstractCommand {
 
   /**
    * Generates environment settings.
-   * It will look for files on web/sites folder that match settings.[env].php.
+   *
+   * It will look for files on web/sites/[site name] directory that matches
+   * default.settings.[env].php.
+   *
+   * Where:
+   * [site name] is the site name
+   * [env] is the environment passed as option -e
+   *
+   * Example:
+   * web/sites/example/default.settings.dev.php would get copied to
+   * web/sites/example/settings.dev.php.
+   *
+   * This file should be included via settings.php.
    */
   protected function generateSettingsEnv() {
-    // Try to copy environment specific settings. i.e. settings.dev.php.
-    $settingFile = str_replace('local', $this->getEnv(), $this->filename);
-    $template = $this->getSiteRoot() . $settingFile;
+    $template = sprintf(
+      '%sdefault.settings.%s.php',
+      $this->getSiteRoot(),
+      $this->getEnv()
+    );
+
+    $destination = sprintf(
+      '%ssettings.%s.php',
+      $this->getSiteRoot(),
+      $this->getEnv()
+    );
+
     if (file_exists($template)) {
-      // Copy the template into web/sites/site-name.
-      copy($template, $this->getSiteRoot() . $settingFile);
+      // Remove existing file.
+      if ($this->fileExists($destination)) {
+        $this->fileUnlink($destination);
+      }
+
+      // Copy the template into web/sites/[site name].
+      copy($template, $destination);
+
+      if ($this->fileExists($destination)) {
+        $this->io->success(sprintf('Generated %s',
+            $destination)
+        );
+      }
+      else {
+        throw new CommandException(sprintf('Error generating %s',
+            $destination
+          )
+        );
+      }
     }
   }
 
@@ -90,9 +147,8 @@ class Command extends AbstractCommand {
 
     if (!$this->fileExists($template)) {
       $this->io->writeln(sprintf(
-        'Cannot find %s. Creating %s.',
-          $template,
-          $file
+        "Cannot find %s.",
+          $template
         )
       );
       // Create one.
