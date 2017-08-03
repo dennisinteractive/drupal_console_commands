@@ -56,6 +56,16 @@ class Command extends AbstractCommand {
     // Generate settings.local.php.
     $this->generateSettingsLocal();
 
+    // Generate environment specific settings.
+    $this->generateSettingsEnv();
+
+  }
+
+  /**
+   * Generates environment settings.
+   * It will look for files on web/sites folder that match settings.[env].php.
+   */
+  protected function generateSettingsEnv() {
     // Try to copy environment specific settings. i.e. settings.dev.php.
     $settingFile = str_replace('local', $this->getEnv(), $this->filename);
     $template = $this->getSiteRoot() . $settingFile;
