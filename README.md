@@ -81,11 +81,6 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 ## Chains
 Chains that can be reused on various environments
 
-- drupal **site:configure** A chain that will call all the commands below:
-    - site:settings:db
-    - site:settings:local
-    - site:settings:memcache
-
 - drupal **site:test:setup** Sets the test suites
     - site:phpunit:setup
     - site:behat:setup
