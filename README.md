@@ -38,12 +38,16 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:grunt**
   Runs Grunt
 
+- drupal **site:settings** *site-name*
+    - Runs site:settings:db
+    - Runs site:settings:memcache
+	- Creates *settings.local.php* in the *web/sites/[site name]* folder. Thi file is auto-generated and should not be committed.
+	If you have a file named `web/sites/example.settings.local.php` on the site's folder, it will be used as a template for settings.local.php.
+	- Creates *sweb/sites/settings.[env].php* in the *web/sites/[site name]* folder. These files are auto-generated and should not be committed.
+	Depending on your environment (--env option), it will copy the respective file into *web/sites/[site name]*. i.e. settings.dev.php 
+
 - drupal **site:settings:db** *site-name*
 	Creates *settings.db.php* in the *web/sites/default* folder. This file contains DB credentials and should not be committed.
-
-- drupal **site:settings:local** *site-name*
-	Creates *settings.local.php* in the *web/sites/default* folder. This file contains local settings overrides and should not be committed.
-	If you have a file named `example.settings.local.php` on the site's folder, it will be used as a template for settings.local.php.
 
 - drupal **site:settings:memcache** *site-name*
 	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
