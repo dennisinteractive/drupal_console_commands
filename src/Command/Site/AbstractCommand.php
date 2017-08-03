@@ -110,7 +110,7 @@ abstract class AbstractCommand extends Command {
   /**
    * Stores the drupal core version.
    */
-  protected $drupalVersion;
+  protected $drupalVersion = NULL;
 
   /**
    * Stores the environment i.e. dev
@@ -147,6 +147,20 @@ abstract class AbstractCommand extends Command {
    */
   public function getEnv() {
     return $this->env;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getDrupalVersion() {
+    return $this->drupalVersion;
+  }
+
+  /**
+   * @param mixed $drupalVersion
+   */
+  public function setDrupalVersion($drupalVersion) {
+    $this->drupalVersion = $drupalVersion;
   }
 
   /**
@@ -231,9 +245,13 @@ abstract class AbstractCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->validateSiteParams($input, $output);
 
-    $detector = new Detector();
-    if ($this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot())) {
-      $this->io->comment(sprintf('Drupal %s detected.', $this->drupalVersion));
+    if (!is_numeric($this->getDrupalVersion())) {
+      $detector = new Detector();
+      $version = $detector->getDrupalVersion($this->getWebRoot());
+      if (is_numeric($version)) {
+        $this->io->comment(sprintf('Drupal %s detected.', $version));
+      }
+      $this->setDrupalVersion($version);
     }
   }
 
@@ -499,10 +517,28 @@ abstract class AbstractCommand extends Command {
    */
   protected function fixSiteFolderPermissions() {
     if ($this->hasSiteRoot()) {
-      $commands[] = sprintf('chmod 777 %s', $this->getSiteRoot());
-      $commands[] = sprintf('chmod 777 %ssettings.php', $this->getSiteRoot());
+      $commands = array();
+
+      $items = array(
+        $this->getSiteRoot(),
+        $this->getSiteRoot() . 'settings.php'
+      );
+
+      foreach ($items as $key => $item) {
+        // Only change permissions if needed.
+        if (!is_writeable($item)) {
+          $commands[] = sprintf('chmod 777 %s', $item);
+        }
+      }
+
+      if (empty($commands)) {
+        return;
+      }
+
       $command = implode(' && ', $commands);
+
       $this->io->commentBlock($command);
+
       $shellProcess = $this->getShellProcess();
       if (!$shellProcess->exec($command, TRUE)) {
         throw new CommandException($shellProcess->getOutput());
