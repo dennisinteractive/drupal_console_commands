@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\Settings\Command.
  *
  * Creates Local configurations.
  */
@@ -15,11 +15,11 @@ use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Command\Site\AbstractCommand;
 
 /**
- * Class LocalCommand
+ * Class Command
  *
  * @package DennisDigital\Drupal\Console\Command
  */
-class LocalCommand extends AbstractCommand {
+class Command extends AbstractCommand {
 
   /**
    * The file name to generate.
@@ -34,9 +34,9 @@ class LocalCommand extends AbstractCommand {
   protected function configure() {
     parent::configure();
 
-    $this->setName('site:settings:local')
+    $this->setName('site:settings')
       // @todo use: ->setDescription($this->trans('commands.site.settings.local.description'))
-      ->setDescription('Generates settings.local.php for a given site.');
+      ->setDescription('Generates settings for a given site.');
   }
 
   /**
