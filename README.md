@@ -64,7 +64,16 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 	The command will copy the dump from the original place to */tmp*. If you run the command again, it will only copy the file once the original has changed. This is very useful when working remotely on slow networks.
 	If no db-dump information is available or there is no dump at the location, it will run a site install.
 	Supported extensions: **.sql**, **.sql.gz**.
-	
+	You an enable/disable modules after import by adding them on the site.yml file. i.e.
+	```
+	  modules:
+        enable:
+          - stage_file_proxy
+          - devel
+        disable:
+          - cdn
+    ```
+
 - drupal **site:update** *site-name*
   Used to run updates and import configuration
       - drush sset system.maintenance_mode 1 (Enable maintenance mode)
