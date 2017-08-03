@@ -53,15 +53,41 @@ class Command extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
+    // Generate settings.local.php.
+    $this->generateSettingsLocal();
+
+    // Try to copy environment specific settings. i.e. settings.dev.php.
+    $settingFile = str_replace('local', $this->getEnv(), $this->filename);
+    $template = $this->getSiteRoot() . $settingFile;
+    if (file_exists($template)) {
+      // Copy the template into web/sites/site-name.
+      copy($template, $this->getSiteRoot() . $settingFile);
+    }
+  }
+
+  /**
+   * Generates settings.local.php.
+   *
+   * If the site contains a file on web/sites/example.settings.local.php it will
+   * make a copy to web/sites/site-name/settings.local.php and replace tokens.
+   * If the template doesn't exist it will create one.
+   */
+  protected function generateSettingsLocal() {
+
     // Validation.
-    $exampleFile = $this->getSiteRoot() . '../example.' . $this->filename;
+    $template = $this->getSiteRoot() . '../example.' . $this->filename;
     $file = $this->getSiteRoot() . $this->filename;
 
-    if (!$this->fileExists($exampleFile)) {
-      $this->io->writeln(sprintf('Cannot find %s. Moving on.', $exampleFile));
+    if (!$this->fileExists($template)) {
+      $this->io->writeln(sprintf(
+        'Cannot find %s. Creating %s.',
+          $template,
+          $file
+        )
+      );
       // Create one.
-      $exampleFile = '/tmp/example.' . $this->filename;
-      $this->filePutContents($exampleFile, "<?php\n/**\n * This file was generated automatically.\n*/");
+      $template = '/tmp/example.' . $this->filename;
+      $this->filePutContents($template, "<?php\n/**\n * This file was generated automatically.\n*/");
     }
 
     // Remove existing file.
@@ -81,7 +107,7 @@ class Command extends AbstractCommand {
     $content = str_replace('${host}', $host, $content);
 
     // Prepend example file.
-    $content = $this->fileGetContents($exampleFile) . PHP_EOL . $content;
+    $content = $this->fileGetContents($template) . PHP_EOL . $content;
 
     // Write file.
     $this->filePutContents($file, $content);
