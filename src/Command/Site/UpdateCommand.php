@@ -52,7 +52,7 @@ class UpdateCommand extends AbstractCommand {
     $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
 
     // Drupal 7 only;
-    if ($this->drupalVersion === 7) {
+    if ($this->getDrupalVersion() === 7) {
       $commands[] = 'drush vset maintenance_mode 1';
       $commands[] = 'drush rr';
       //$commands[] = 'drush cc all';
@@ -63,7 +63,7 @@ class UpdateCommand extends AbstractCommand {
     }
 
     // Drupal 8 only;
-    if ($this->drupalVersion === 8) {
+    if ($this->getDrupalVersion() === 8) {
       $commands[] = 'drush sset system.maintenance_mode 1';
       $commands[] = 'drush cr';
       $commands[] = 'drush updb -y';

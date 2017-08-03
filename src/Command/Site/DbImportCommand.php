@@ -158,7 +158,7 @@ class DbImportCommand extends AbstractCommand {
       $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
       // Drupal 8 only;
       // Set site UUID from config.
-      if ($this->drupalVersion === 8) {
+      if ($this->getDrupalVersion() === 8) {
         $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
       }
     }
