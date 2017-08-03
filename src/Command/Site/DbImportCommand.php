@@ -248,11 +248,11 @@ class DbImportCommand extends AbstractCommand {
     else {
       // Check the file isn't already downloaded.
       $this->io->write(sprintf('Checking if db dump needs updating:'));
-      if ($this->fileExists($this->tmpFolder . $basename) && filemtime($this->tmpFolder . $basename) === filemtime($filename)) {
+      if ($this->fileExists($this->tmpFolder . $basename) && filesize($this->tmpFolder . $basename) === filesize($filename)) {
         $this->io->comment('No');
       }
       else {
-        $this->io->comment('Yes man');
+        $this->io->comment('Yes');
         // By default copy() checks if the file has been modified before copying.
         // https://symfony.com/doc/current/components/filesystem.html#copy
         $fs = new Filesystem();
