@@ -176,14 +176,6 @@ class DbImportCommand extends AbstractCommand {
       $commands[] = sprintf('drush sql-cli < %s', $this->filename);
     }
 
-    // Enable/disable modules;
-    if (!empty($this->config['modules']['enable'])) {
-      $modulesEnable = $this->config['modules']['enable'];
-    }
-    if (!empty($this->config['modules']['disable'])) {
-      $modulesEnable = $this->config['modules']['disable'];
-    }
-
     $command = implode(' && ', $commands);
 
     $this->io->commentBlock($command);
