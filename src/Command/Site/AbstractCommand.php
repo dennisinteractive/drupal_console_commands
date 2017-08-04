@@ -153,6 +153,15 @@ abstract class AbstractCommand extends Command {
    * @return mixed
    */
   public function getDrupalVersion() {
+    if (!is_numeric($this->drupalVersion)) {
+      $detector = new Detector();
+      $version = $detector->getDrupalVersion($this->getWebRoot());
+      if (is_numeric($version)) {
+        $this->io->comment(sprintf('Drupal %s detected.', $version));
+      }
+      $this->setDrupalVersion($version);
+    }
+
     return $this->drupalVersion;
   }
 
@@ -244,15 +253,6 @@ abstract class AbstractCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->validateSiteParams($input, $output);
-
-    if (!is_numeric($this->getDrupalVersion())) {
-      $detector = new Detector();
-      $version = $detector->getDrupalVersion($this->getWebRoot());
-      if (is_numeric($version)) {
-        $this->io->comment(sprintf('Drupal %s detected.', $version));
-      }
-      $this->setDrupalVersion($version);
-    }
   }
 
   /**
