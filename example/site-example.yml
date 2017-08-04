@@ -23,3 +23,4 @@ dev:
     enable:
       - stage_file_proxy
     disable:
+      - dennis_sse
