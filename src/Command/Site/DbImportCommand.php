@@ -110,7 +110,7 @@ class DbImportCommand extends AbstractCommand {
 
     // If we're installing from a dump that's not already in
     // our local destination, copy it to our local destination.
-    if (!empty($this->filename) && $this->fileExists($this->filename)) {
+    if (!empty($this->filename)) {
       $this->filename = $this->copy($this->filename);
 
       // If the file is gzipped we need to unzip it.
