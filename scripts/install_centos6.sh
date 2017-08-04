@@ -4,26 +4,28 @@
 # - php5.6
 # - composer
 
-PHP_FOLDER="/opt/php5_6/bin"
-COMPOSER="/usr/local/bin/composer/composer"
-
 # Install php5_6
+PHP_FOLDER="/opt/php/bin"
+
 # @todo check the current php version and only do these if needed
 sudo curl -L https://github.com/dennisinteractive/php/raw/php5_6/php > /tmp/php
-if [ -e "/opt/php5_6" ]; then
-  sudo rm -rf /opt/php5_6
-  sudo mkdir /opt/php5_6
+if [ -e "/opt/php" ]; then
+  sudo rm -rf /opt/php
+  sudo mkdir /opt/php
 fi
 sudo mkdir ${PHP_FOLDER}
 sudo mv /tmp/php ${PHP_FOLDER}
 
 # Install composer
+COMPOSER="/usr/local/bin/composer/composer"
+
 # @todo check if there is already composer and only do these if needed
 cd ~
 PATH="${PHP_FOLDER}/:$PATH" php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 PATH="${PHP_FOLDER}/:$PATH" php composer-setup.php
 if [ -e "${COMPOSER}" ]; then
   sudo rm ${COMPOSER}
+  sudo mkdir /usr/local/bin/composer
 fi
 sudo mv composer.phar ${COMPOSER}
 
@@ -44,7 +46,7 @@ fi
 PATH="${PHP_FOLDER}/:$PATH" composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-launcher.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-launcher:${BRANCH}-dev ~/.console/launcher
 sudo ln -s ~/.console/launcher/bin/drupal ${DRUPAL_CONSOLE}
 # @todo escape PHP_FOLDER
-sed -i 's/\#\!\/usr\/bin\/env\sphp/\#\!\/opt\/php5_6\/bin\/php/g' ~/.console/launcher/bin/drupal
+sed -i 's/\#\!\/usr\/bin\/env\sphp/\#\!\/opt\/php\/bin\/php/g' ~/.console/launcher/bin/drupal
 chmod +x ${DRUPAL_CONSOLE}
 
 # Setup Drupal console
