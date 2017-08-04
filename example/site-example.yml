@@ -19,3 +19,8 @@ dev:
     user: root
     port: 3306
     type: mysql
+  modules:
+    enable:
+      - stage_file_proxy
+    disable:
+      - dennis_sse

@@ -55,10 +55,10 @@ class UpdateCommand extends AbstractCommand {
     if ($this->getDrupalVersion() === 7) {
       $commands[] = 'drush vset maintenance_mode 1';
       $commands[] = 'drush rr';
-      //$commands[] = 'drush cc all';
       $commands[] = 'drush updb -y';
+      $this->addModuleEnableCommands($commands);
+      $this->addModuleDisableCommands($commands);
       $commands[] = 'drush rr';
-      //$commands[] = 'drush cc all';
       $commands[] = 'drush vset maintenance_mode 0';
     }
 
@@ -67,6 +67,8 @@ class UpdateCommand extends AbstractCommand {
       $commands[] = 'drush sset system.maintenance_mode 1';
       $commands[] = 'drush cr';
       $commands[] = 'drush updb -y';
+      $this->addModuleEnableCommands($commands);
+      $this->addModuleDisableCommands($commands);
       $commands[] = 'drush cim -y';
       $commands[] = 'drush cim -y';
       $commands[] = 'drush sset system.maintenance_mode 0';
@@ -84,6 +86,24 @@ class UpdateCommand extends AbstractCommand {
     }
     else {
       throw new CommandException($shellProcess->getOutput());
+    }
+  }
+
+  /**
+   * Enable modules listed on site.yml.
+   */
+  private function addModuleEnableCommands(&$commands) {
+    if (!empty($this->config['modules']['enable'])) {
+      $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
+    }
+  }
+
+  /**
+   * Disable modules listed on site.yml.
+   */
+  private function addModuleDisableCommands(&$commands) {
+    if (!empty($this->config['modules']['disable'])) {
+      $commands[] = sprintf('drush dis -y %s', implode(', ', $this->config['modules']['disable']));
     }
   }
 

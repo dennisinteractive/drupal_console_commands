@@ -43,6 +43,11 @@ abstract class AbstractCommand extends Command {
   protected $io = NULL;
 
   /**
+   * Stores the options passed to the command via command line.
+   */
+  protected $options;
+
+  /**
    * Global location for sites.yml.
    *
    * @var array
@@ -146,7 +151,34 @@ abstract class AbstractCommand extends Command {
    * @return mixed
    */
   public function getEnv() {
+    if (is_null($this->env)) {
+      $this->detectEnv();
+    }
     return $this->env;
+  }
+
+  /**
+   * Figures out the env.
+   *
+   * @param null $input
+   */
+  protected function detectEnv($input = NULL) {
+    // Get Console global settings.
+    $configEnv = $this->configurationManager->getConfiguration()->get('application.environment');
+
+    // Detect env.
+    if (isset($this->options['env'])) {
+      // Use value passed as parameter --env.
+      $this->setEnv($this->options['env']);
+    }
+    elseif (!empty($configEnv)) {
+      // Use config from sites.yml.
+      $this->setEnv($configEnv);
+    }
+    else {
+      // Default to dev.
+      $this->setEnv('dev');
+    }
   }
 
   /**
@@ -207,21 +239,8 @@ abstract class AbstractCommand extends Command {
   protected function interact(InputInterface $input, OutputInterface $output) {
     $this->io = new DrupalStyle($input, $output);
 
-    // Get Console global settings.
-    $configEnv = $this->configurationManager->getConfiguration()->get('application.environment');
-
-    // Detect env.
     if ($input->hasOption('env') && !is_null($input->getOption('env'))) {
-      // Use value passed as parameter --env.
-      $this->setEnv($input->getOption('env'));
-    }
-    elseif (!empty($configEnv)) {
-      // Use config from sites.yml.
-      $this->setEnv($configEnv);
-    }
-    else {
-      // Default to dev.
-      $this->setEnv('dev');
+      $this->options['env'] = $input->getOption('env');
     }
 
     // Sites list.
@@ -339,8 +358,8 @@ abstract class AbstractCommand extends Command {
     if (empty($config))
     {
       $message = sprintf(
-        'Site not found. To see a list of available sites, run %s',
-        'drupal site:debug'
+        'Site not found on %s env. To see a list of available sites, run drupal site:debug',
+         $this->getEnv()
       );
       throw new CommandException($message);
     }
@@ -670,7 +689,7 @@ abstract class AbstractCommand extends Command {
    * @return String The contents of the template.
    */
   function loadTemplate($file, $templateName) {
-    $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->drupalVersion . '/' . $templateName;
+    $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->getDrupalVersion() . '/' . $templateName;
 
     return file_get_contents($template);
   }
