@@ -110,7 +110,7 @@ class DbImportCommand extends AbstractCommand {
 
     // If we're installing from a dump that's not already in
     // our local destination, copy it to our local destination.
-    if (!empty($this->filename)) {
+    if (!empty($this->filename) && $this->fileExists($this->filename)) {
       $this->filename = $this->copy($this->filename);
 
       // If the file is gzipped we need to unzip it.
@@ -256,7 +256,10 @@ class DbImportCommand extends AbstractCommand {
     else {
       // Check the file isn't already downloaded.
       $this->io->write(sprintf('Checking if db dump needs updating:'));
-      if ($this->fileExists($this->tmpFolder . $basename) && filesize($this->tmpFolder . $basename) === filesize($filename)) {
+      if ($this->fileExists($this->tmpFolder . $basename) &&
+        file_exists($filename) &&
+        filesize($this->tmpFolder . $basename) === filesize($filename))
+      {
         $this->io->comment('No');
       }
       else {
