@@ -689,7 +689,7 @@ abstract class AbstractCommand extends Command {
    * @return String The contents of the template.
    */
   function loadTemplate($file, $templateName) {
-    $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->drupalVersion . '/' . $templateName;
+    $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->getDrupalVersion() . '/' . $templateName;
 
     return file_get_contents($template);
   }
