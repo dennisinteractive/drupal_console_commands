@@ -50,15 +50,30 @@ class UpdateCommand extends AbstractCommand {
 
     $commands = [];
     $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-    $commands[] = 'drush sset system.maintenance_mode 1';
-    $commands[] = 'drush cr';
-    $commands[] = 'drush updb -y';
-    $commands[] = 'drush cim -y';
-    $commands[] = 'drush cim -y';
-    $commands[] = 'drush sset system.maintenance_mode 0';
-    $commands[] = 'drush cr';
 
-    $command = implode(' && ', $commands);
+    // Drupal 7 only;
+    if ($this->drupalVersion === 7) {
+      $commands[] = 'drush vset maintenance_mode 1';
+      $commands[] = 'drush rr';
+      $commands[] = 'drush cc all';
+      $commands[] = 'drush updb -y';
+      $commands[] = 'drush rr';
+      $commands[] = 'drush cc all';
+      $commands[] = 'drush vset maintenance_mode 0';
+    }
+
+    // Drupal 8 only;
+    if ($this->drupalVersion === 8) {
+      $commands[] = 'drush sset system.maintenance_mode 1';
+      $commands[] = 'drush cr';
+      $commands[] = 'drush updb -y';
+      $commands[] = 'drush cim -y';
+      $commands[] = 'drush cim -y';
+      $commands[] = 'drush sset system.maintenance_mode 0';
+      $commands[] = 'drush cr';
+    }
+
+    $command = implode(' ; ', $commands);
 
     // Run.
     $shellProcess = $this->getShellProcess();

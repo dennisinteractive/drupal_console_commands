@@ -19,6 +19,7 @@ use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Utils\ShellProcess;
+use DennisDigital\Drupal\Console\Command\Drupal\Detector;
 
 /**
  * Class AbstractCommand
@@ -107,6 +108,11 @@ abstract class AbstractCommand extends Command {
   protected $container;
 
   /**
+   * Stores the drupal core version.
+   */
+  protected $drupalVersion;
+
+  /**
    * Constructor.
    */
   public function __construct()
@@ -181,6 +187,9 @@ abstract class AbstractCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     $this->validateSiteParams($input, $output);
+
+    $detector = new Detector();
+    $this->drupalVersion = $detector->getDrupalVersion($this->getWebRoot());
   }
 
   /**
@@ -402,8 +411,8 @@ abstract class AbstractCommand extends Command {
       $this->shellPath($webSitesPath)
     );
 
-    $this->io->writeln('Searching for settings.php in the sites folder');
-    $shellProcess = $this->getShellProcess();
+    //$this->io->writeln('Searching for settings.php in the sites folder');
+    $shellProcess = $this->getShellProcess()->printOutput(FALSE);
     if ($shellProcess->exec($command, TRUE)) {
       if (!empty($shellProcess->getOutput())) {
         $output = $shellProcess->getOutput();
@@ -560,6 +569,17 @@ abstract class AbstractCommand extends Command {
     }
 
     return $tableRows;
+  }
+
+  /**
+   * Loads template.
+   *
+   * @return String The contents of the template.
+   */
+  function loadTemplate($file, $templateName) {
+    $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->drupalVersion . '/' . $templateName;
+
+    return file_get_contents($template);
   }
 
 }

@@ -54,50 +54,34 @@ class LocalCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     // Validation.
-    if (!$this->fileExists($this->getSiteRoot() . '../example.' . $this->filename)) {
-      $message = sprintf('The file example.settings.local.php is missing.',
-        $this->getSiteRoot()
-      );
+    $exampleFile = $this->getSiteRoot() . '../example.' . $this->filename;
+    $file = $this->getSiteRoot() . $this->filename;
+
+    if (!$this->fileExists($exampleFile)) {
+      $message = sprintf('Cannot find %s.', $exampleFile);
       throw new CommandException($message);
     }
 
     // Remove existing file.
-    $file = $this->getSiteRoot() . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }
 
-    // Copy example.
-    $command = sprintf('cd %s && cp -n ../example.%s %s',
-      $this->shellPath($this->getSiteRoot()),
-      $this->filename,
-      $this->filename
-    );
-    $shellProcess = $this->getShellProcess();
-    if (!$shellProcess->exec($command, TRUE)) {
-      throw new CommandException(sprintf('Error generating %s',
-          $this->filename
-        )
-      );
-    }
+    $host = isset($this->config['host']) ? $this->config['host'] : '';
+    $cdn = isset($this->config['cdn']) ? $this->config['cdn'] : '';
 
-    // Load the file.
-    $content = $this->fileGetContents($file);
+    // Load from template.
+    $content = $this->loadTemplate(__FILE__, $this->filename);
 
-    $host= $this->config['host'];
-    $cdn = $this->config['cdn'];
+    // Replace tokens.
+    $content = str_replace('<?php', '', $content);
+    $content = str_replace('${cdn}', $cdn, $content);
+    $content = str_replace('${host}', $host, $content);
 
-    // Append configuration.
-    $content .= <<<EOF
+    // Prepend example file.
+    $content = $this->fileGetContents($exampleFile) . PHP_EOL . $content;
 
-// Set Stage file proxy origin.
-\$config['stage_file_proxy.settings']['origin'] = '$cdn';
-
-// Change CDN domain to local.
-\$config['cdn.settings']['mapping']['domain'] = '$host';
-
-EOF;
-
+    // Write file.
     $this->filePutContents($file, $content);
 
     // Check file.

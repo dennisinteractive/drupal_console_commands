@@ -98,23 +98,20 @@ class DbCommand extends AbstractCommand {
     $db_prefix = $input->getOption('db-prefix');
     $namespace = 'Drupal\\Core\\Database\\Driver\\' . $db_type;
 
-    $content = <<<EOF
-<?php
-/**
- * DB Settings.
- */
-\$databases['default']['default'] = array(
-  'database' => '$db_name',
-  'username' => '$db_user',
-  'password' => '$db_pass',
-  'host' => '$db_host',
-  'port' => $db_port,
-  'driver' => '$db_type',
-  'prefix' => '$db_prefix',
-  'namespace' => '$namespace',
-);
-EOF;
+    // Load from template.
+    $content = $this->loadTemplate(__FILE__, $this->filename);
 
+    // Replace tokens.
+    $content = str_replace('${db_name}', $db_name, $content);
+    $content = str_replace('${db_user}', $db_user, $content);
+    $content = str_replace('${db_pass}', $db_pass, $content);
+    $content = str_replace('${db_host}', $db_host, $content);
+    $content = str_replace('${db_port}', $db_port, $content);
+    $content = str_replace('${db_type}', $db_type, $content);
+    $content = str_replace('${db_prefix}', $db_prefix, $content);
+    $content = str_replace('${namespace}', $namespace, $content);
+
+    // Write file.
     $this->filePutContents($file, $content);
 
     // Check file.
