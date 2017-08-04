@@ -10,8 +10,9 @@ COMPOSER="/usr/local/bin/composer/composer"
 # Install php5_6
 # @todo check the current php version and only do these if needed
 sudo curl -L https://github.com/dennisinteractive/php/raw/php5_6/php > /tmp/php
-if [ -e "${PHP_FOLDER}" ]; then
-  sudo rm -rf ${PHP_FOLDER}
+if [ -e "/opt/php5_6" ]; then
+  sudo rm -rf /opt/php5_6
+  sudo mkdir /opt/php5_6
 fi
 sudo mkdir ${PHP_FOLDER}
 sudo mv /tmp/php ${PHP_FOLDER}
