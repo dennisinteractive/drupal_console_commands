@@ -1,8 +1,9 @@
 #!/bin/sh
 # Performs an installation of Drupal console commands on Centos6
-# Requirements
+# Install Requirements
 # - php5.6
 # - composer
+# - Drupal console commands
 
 # Install php5_6
 PHP_FOLDER="/opt/php/bin"
@@ -28,6 +29,8 @@ if [ -e "${COMPOSER}" ]; then
   sudo mkdir /usr/local/bin/composer
 fi
 sudo mv composer.phar ${COMPOSER}
+
+# These are more or less the same as install.sh
 
 # Install drupal console
 DRUPAL_CONSOLE="/usr/local/bin/drupal"
