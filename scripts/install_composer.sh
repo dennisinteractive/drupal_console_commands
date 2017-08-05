@@ -1,6 +1,6 @@
 #!/bin/sh
 # Installs composer
-set -x
+
 DIRECTORY=/usr/local/bin/composer
 COMPOSER=${DIRECTORY}/composer
 
