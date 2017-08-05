@@ -1,11 +1,8 @@
 #!/bin/sh
 # Installs composer
 
-# Check if there is already composer and only do these if needed
-COMPOSER=$(which composer)
-
-DIRECTORY="/usr/local/bin/composer"
-COMPOSER="${DIRECTORY}/composer"
+DIRECTORY=/usr/local/bin/composer
+COMPOSER=${DIRECTORY}/composer
 
 cd ~
 PATH="${PHP_FOLDER}/:$PATH" php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"

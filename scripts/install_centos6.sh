@@ -3,8 +3,9 @@
 set -x
 
 # Checkout scripts
-REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
-BRANCH="centos6"
+REPO=https://github.com/dennisinteractive/drupal_console_commands.git
+BRANCH=centos6
+
 git clone --branch ${BRANCH} ${REPO} /tmp/drupal_console_commands
 cd /tmp/drupal_console_commands/scripts
 

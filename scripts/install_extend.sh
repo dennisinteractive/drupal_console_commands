@@ -2,9 +2,9 @@
 # Installs Drupal Console extend
 # Extend is what provides the ability to run console commands globally
 
-DIRECTORY="~/.console/extend"
-PACKAGE="drupal/console-extend"
-BRANCH="fix_env_detection"
+DIRECTORY=~/.console/extend
+PACKAGE=drupal/console-extend
+BRANCH=fix_env_detection
 
 # Delete existing directory
 if [ -e ${DIRECTORY} ]; then
