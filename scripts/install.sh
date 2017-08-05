@@ -11,7 +11,7 @@ cd /tmp/drupal_console_commands/scripts
 PHP_FOLDER=$(which php)
 
 # Install composer
-sh install_composer.sh
+# sh install_composer.sh
 
 # Install drupal console launcher
 sh install_launcher.sh
