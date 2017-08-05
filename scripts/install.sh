@@ -5,7 +5,7 @@
 REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
 BRANCH="centos6"
 git clone --branch ${BRANCH} ${REPO} /tmp
-cd /tmp
+cd /tmp/drupal_console_commands
 
 PHP_FOLDER=$(which php)
 
