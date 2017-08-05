@@ -10,6 +10,7 @@ PATH="${PHP_FOLDER}/:$PATH" php composer-setup.php
 
 if [ -e "${COMPOSER}" ]; then
   sudo rm ${COMPOSER}
+  sudo mkdir ${COMPOSER}
 fi
 
 if [ ! -e "${DIRECTORY}" ]; then
