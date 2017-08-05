@@ -4,7 +4,6 @@
 
 DIRECTORY="~/.console/extend"
 PACKAGE="drupal/console-extend"
-REPO="git@github.com:dennisinteractive/drupal-console-extend.git"
 BRANCH="fix_env_detection"
 
 # Delete existing directory
@@ -15,5 +14,9 @@ fi
 # Build package
 PATH="${PHP_FOLDER}/:$PATH" \
 composer create-project \
---repository='{"type": "vcs", "url": ${REPO}, "vendor-alias": "drupal", "no-api": true}' \
+--repository='{
+"type": "vcs",
+"url": "git@github.com:dennisinteractive/drupal-console-extend.git",
+"vendor-alias": "drupal",
+"no-api": true}' \
 ${PACKAGE}:${BRANCH}-dev ${DIRECTORY}

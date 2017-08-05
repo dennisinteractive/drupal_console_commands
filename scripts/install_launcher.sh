@@ -5,7 +5,6 @@
 DRUPAL_CONSOLE="/usr/local/bin/drupal"
 DIRECTORY="~/.console/launcher"
 PACKAGE="drupal/console-launcher"
-REPO="git@github.com:dennisinteractive/drupal-console-launcher.git"
 BRANCH="fix_env_detection"
 
 # Delete existing file
@@ -21,7 +20,11 @@ fi
 # Build package
 PATH="${PHP_FOLDER}/:$PATH" \
 composer create-project \
---repository='{"type": "vcs", "url": ${REPO}, "vendor-alias": "drupal", "no-api": true}' \
+--repository='{
+"type": "vcs",
+"url": "git@github.com:dennisinteractive/drupal-console-launcher.git",
+"vendor-alias": "drupal",
+"no-api": true}' \
 ${PACKAGE}:${BRANCH}-dev ${DIRECTORY}
 
 # Create synlink
