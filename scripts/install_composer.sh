@@ -14,7 +14,7 @@ if [ -e "${COMPOSER}" ]; then
 fi
 
 if [ ! -e "${DIRECTORY}" ]; then
-  sudo mkdir DIRECTORY
+  sudo mkdir ${DIRECTORY}
 fi
 
 sudo mv composer.phar ${COMPOSER}
