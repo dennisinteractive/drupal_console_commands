@@ -1,6 +1,5 @@
 #!/bin/sh
 # Performs an installation of Drupal console commands on Centos6
-set -x
 export PHP_FOLDER=/opt/php/bin
 
 # Checkout scripts
