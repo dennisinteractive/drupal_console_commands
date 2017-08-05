@@ -23,5 +23,6 @@ if [ -z {$COMPOSER} ]; then
 
     sudo mv composer.phar ${COMPOSER}
     sudo chmod +x ${COMPOSER}
-
+else
+    echo "Composer is already installed on ${COMPOSER}"
 fi
