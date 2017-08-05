@@ -4,7 +4,7 @@
 # Checkout scripts
 REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
 BRANCH="centos6"
-git clone --branch ${BRANCH} ${REPO} /tmp
+git clone --branch ${BRANCH} ${REPO} /tmp/drupal_console_commands
 cd /tmp/drupal_console_commands
 
 PHP_FOLDER=$(which php)
@@ -24,3 +24,5 @@ sh install_extend.sh
 
 # Install custom commands
 sh install_custom_commands.sh
+
+rm -rf /tmp/drupal_console_commands
