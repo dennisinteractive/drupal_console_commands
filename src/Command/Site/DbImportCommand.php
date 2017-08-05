@@ -293,7 +293,10 @@ class DbImportCommand extends AbstractCommand {
     $baseNameSql = rtrim($baseNameGz, '.gz');
 
     // Unzip sql file and keep zipped in the folder.
-    if (mime_content_type($this->filename) === 'application/x-gzip') {
+    if ((function_exists('mime_content_type') &&
+      mime_content_type($this->filename) === 'application/x-gzip') ||
+      strpos($this->filename, '.sql.gz') !== FALSE
+    ) {
       $command = sprintf(
         'cd %s; ' .
         'gunzip -c %s > %s; ',
