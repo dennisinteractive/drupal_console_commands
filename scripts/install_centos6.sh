@@ -1,11 +1,12 @@
 #!/bin/sh
 # Performs an installation of Drupal console commands on Centos6
+set -x
 
 # Checkout scripts
 REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
 BRANCH="centos6"
 git clone --branch ${BRANCH} ${REPO} /tmp/drupal_console_commands
-cd /tmp/drupal_console_commands
+cd /tmp/drupal_console_commands/scripts
 
 # Install our custom php
 sh install_php.sh
