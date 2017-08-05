@@ -1,8 +1,8 @@
 #!/bin/sh
 # Installs php 5.6
 
+export PHP_FOLDER=/opt/php/bin
 DIRECTORY=/opt/php
-PHP_FOLDER=/opt/php/bin
 REPO=https://github.com/dennisinteractive/php.git
 BRANCH=php5_6
 
