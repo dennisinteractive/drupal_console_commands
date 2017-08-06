@@ -15,7 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Aws\S3\S3Client;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Command\Site\Shared\InstallArgumentsTrait;
-
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 /**
  * Class DbImportCommand
  *
@@ -151,8 +152,9 @@ class DbImportCommand extends AbstractCommand {
     if (empty($this->filename) || !$this->fileExists($this->filename)) {
       //@todo Use drupal site:install instead of Drush.
       $this->io->comment('Installing site');
-      // Site install.
-      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      // Create DB;
+      $commands[] = sprintf('drush sql-create -y');
       // Install site.
       $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
       // Drupal 8 only;
@@ -168,9 +170,9 @@ class DbImportCommand extends AbstractCommand {
         $input->setOption('db-name', $this->siteName);
       }
 
-      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       // Create DB;
-      $commands[] = sprintf('drush sql-create %s -y', $input->getOption('db-name'));
+      $commands[] = sprintf('drush sql-create -y');
       // Import dump;
       $commands[] = sprintf('drush sql-cli < %s', $this->filename);
     }
@@ -243,30 +245,19 @@ class DbImportCommand extends AbstractCommand {
         throw new CommandException($shellProcess->getOutput());
       }
     }
-    // For all other methods including remote and local files
-    // we copy chunk by chunk to the local destination.
+    // Copy from file system or mount.
     else {
       // Check the file isn't already downloaded.
       $this->io->write(sprintf('Checking if db dump needs updating:'));
-      if ($this->fileExists($this->tmpFolder . $basename) && md5_file($this->tmpFolder . $basename) === md5_file($filename)) {
+      if ($this->fileExists($this->tmpFolder . $basename) && filesize($this->tmpFolder . $basename) === filesize($filename)) {
         $this->io->comment('No');
       }
       else {
         $this->io->comment('Yes');
-        // Open a stream in read-only mode
-        if ($this->fileExists($filename) && $stream = fopen($filename, 'r')) {
-          // Open the destination file to save the output to.
-          $output_file = fopen($this->tmpFolder . $basename, "a");
-          if ($output_file) {
-            while (!feof($stream)) {
-              fwrite($output_file, fread($stream, 1024), 1024);
-            }
-          }
-          fclose($stream);
-          if ($output_file) {
-            fclose($output_file);
-          }
-        }
+        // By default copy() checks if the file has been modified before copying.
+        // https://symfony.com/doc/current/components/filesystem.html#copy
+        $fs = new Filesystem();
+        $fs->copy($filename, $this->tmpFolder . $basename);
       }
     }
 
@@ -300,7 +291,10 @@ class DbImportCommand extends AbstractCommand {
     $baseNameSql = rtrim($baseNameGz, '.gz');
 
     // Unzip sql file and keep zipped in the folder.
-    if (mime_content_type($this->filename) === 'application/x-gzip') {
+    if ((function_exists('mime_content_type') &&
+      mime_content_type($this->filename) === 'application/x-gzip') ||
+      strpos($this->filename, '.sql.gz') !== FALSE
+    ) {
       $command = sprintf(
         'cd %s; ' .
         'gunzip -c %s > %s; ',

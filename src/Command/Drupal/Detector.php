@@ -37,6 +37,7 @@ class Detector {
     if (!file_exists($drupalRoot)) {
       return;
     }
+    $version = '';
     $this->drupalRoot = $drupalRoot;
 
     if (!isset($this->version)) {
@@ -54,6 +55,7 @@ class Detector {
           require_once $this->drupalRoot . $path;
         }
       }
+
       if (defined('VERSION')) {
         $version = VERSION;
       }
@@ -61,7 +63,12 @@ class Detector {
         $version = \Drupal::VERSION;
       }
       else {
-        throw new \Exception('Unable to determine Drupal core version. Supported versions are 7, and 8.');
+        // Could not find core. One last try.
+        // A bit magic but that is it for now.
+        $result = explode('/sites/', $drupalRoot);
+        if (is_array($result)) {
+          $version = $this->getDrupalVersion($result[0]);
+        }
       }
 
       // Extract the major version from VERSION.

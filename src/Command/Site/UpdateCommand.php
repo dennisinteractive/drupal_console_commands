@@ -55,10 +55,10 @@ class UpdateCommand extends AbstractCommand {
     if ($this->drupalVersion === 7) {
       $commands[] = 'drush vset maintenance_mode 1';
       $commands[] = 'drush rr';
-      $commands[] = 'drush cc all';
+      //$commands[] = 'drush cc all';
       $commands[] = 'drush updb -y';
       $commands[] = 'drush rr';
-      $commands[] = 'drush cc all';
+      //$commands[] = 'drush cc all';
       $commands[] = 'drush vset maintenance_mode 0';
     }
 
