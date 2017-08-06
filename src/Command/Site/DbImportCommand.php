@@ -153,7 +153,7 @@ class DbImportCommand extends AbstractCommand {
       //@todo Use drupal site:install instead of Drush.
       $this->io->comment('Installing site');
       // Site install.
-      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       // Install site.
       $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
       // Drupal 8 only;
@@ -169,7 +169,7 @@ class DbImportCommand extends AbstractCommand {
         $input->setOption('db-name', $this->siteName);
       }
 
-      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       // Create DB;
       $commands[] = sprintf('drush sql-create %s -y', $input->getOption('db-name'));
       // Import dump;
