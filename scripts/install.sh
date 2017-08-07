@@ -1,44 +1,29 @@
 #!/bin/sh
 # Performs an installation of Drupal console commands
+set -x
 
-# Install drupal console
-DRUPAL_CONSOLE="/usr/local/bin/drupal"
+# Checkout scripts
+REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
+BRANCH="centos6"
+git clone --branch ${BRANCH} ${REPO} /tmp/drupal_console_commands
+cd /tmp/drupal_console_commands/scripts
 
-# Delete existing bin file
-if [ -e "${DRUPAL_CONSOLE}" ]; then
-  sudo rm ${DRUPAL_CONSOLE}
-fi
+PHP_FOLDER=$(which php)
 
-# Install launcher
-BRANCH=fix_env_detection
+# Install composer
+# sh install_composer.sh
 
-if [ -e ~/.console/launcher ]; then
-  rm -fr ~/.console/launcher
-fi
-PATH="${PHP_FOLDER}/:$PATH" composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-launcher.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-launcher:${BRANCH}-dev ~/.console/launcher
-sudo ln -s ~/.console/launcher/bin/drupal ${DRUPAL_CONSOLE}
-chmod +x ${DRUPAL_CONSOLE}
+# Install drupal console launcher
+sh install_launcher.sh
 
 # Setup Drupal console
 drupal -n --override init
 drupal settings:set environment dev
 
 # Install console extend
-BRANCH=fix_env_detection
-
-if [ -e ~/.console/extend ]; then
-  rm -fr ~/.console/extend
-fi
-PATH="${PHP_FOLDER}/:$PATH" composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-extend.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-extend:${BRANCH}-dev ~/.console/extend
+sh install_extend.sh
 
 # Install custom commands
-BRANCH=module_enable_disable
+sh install_custom_commands.sh
 
-cd ~/.console/extend
-PATH="${PHP_FOLDER}/:$PATH" composer require dennisdigital/drupal_console_commands:${BRANCH}-dev
-
-# Copy chain commands
-cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ../chain
-
-echo All done
-echo Now put some yml files onto ~/.console/sites and you are ready to go
+rm -rf /tmp/drupal_console_commands

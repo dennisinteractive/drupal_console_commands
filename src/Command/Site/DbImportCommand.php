@@ -152,8 +152,9 @@ class DbImportCommand extends AbstractCommand {
     if (empty($this->filename) || !$this->fileExists($this->filename)) {
       //@todo Use drupal site:install instead of Drush.
       $this->io->comment('Installing site');
-      // Site install.
-      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      // Create DB;
+      $commands[] = sprintf('drush sql-create -y');
       // Install site.
       $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
       // Drupal 8 only;
@@ -169,9 +170,9 @@ class DbImportCommand extends AbstractCommand {
         $input->setOption('db-name', $this->siteName);
       }
 
-      $commands[] = sprintf('cd %s', $this->shellPath($this->getSiteRoot()));
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       // Create DB;
-      $commands[] = sprintf('drush sql-create %s -y', $input->getOption('db-name'));
+      $commands[] = sprintf('drush sql-create -y');
       // Import dump;
       $commands[] = sprintf('drush sql-cli < %s', $this->filename);
     }
@@ -218,6 +219,9 @@ class DbImportCommand extends AbstractCommand {
     // Return canonicalized absolute pathname for local files.
     if (stream_is_local($filename)) {
       $filename = realpath($filename);
+      if ($filename === FALSE) {
+        return;
+      }
     }
 
     // Check we're not explicitly using a file in the local destination.
@@ -284,7 +288,7 @@ class DbImportCommand extends AbstractCommand {
    */
   public function unzip($filename) {
     if (!$this->fileExists($filename)) {
-      return FALSE;
+      return;
     }
 
     // The basename without any path.
@@ -293,7 +297,10 @@ class DbImportCommand extends AbstractCommand {
     $baseNameSql = rtrim($baseNameGz, '.gz');
 
     // Unzip sql file and keep zipped in the folder.
-    if (mime_content_type($this->filename) === 'application/x-gzip') {
+    if ((function_exists('mime_content_type') &&
+      mime_content_type($this->filename) === 'application/x-gzip') ||
+      strpos($this->filename, '.sql.gz') !== FALSE
+    ) {
       $command = sprintf(
         'cd %s; ' .
         'gunzip -c %s > %s; ',
@@ -308,6 +315,7 @@ class DbImportCommand extends AbstractCommand {
     }
 
     // Run unzip command.
+    $this->io->write(sprintf('Unzipping dump'));
     $shellProcess = $this->getShellProcess();
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->writeln($shellProcess->getOutput());
