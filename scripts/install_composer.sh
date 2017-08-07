@@ -8,14 +8,10 @@ cd ~
 PATH="${PHP_FOLDER}/:$PATH" php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 PATH="${PHP_FOLDER}/:$PATH" php composer-setup.php
 
-if [ -e "${COMPOSER}" ]; then
-  sudo rm ${COMPOSER}
-  sudo mkdir ${COMPOSER}
-fi
-
 if [ ! -e "${DIRECTORY}" ]; then
-  sudo mkdir ${DIRECTORY}
+  sudo rm -rf ${COMPOSER}
 fi
+sudo mkdir ${DIRECTORY}
 
+sudo chmod +x composer.phar
 sudo mv composer.phar ${COMPOSER}
-sudo chmod +x ${COMPOSER}
