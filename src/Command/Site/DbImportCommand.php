@@ -219,6 +219,9 @@ class DbImportCommand extends AbstractCommand {
     // Return canonicalized absolute pathname for local files.
     if (stream_is_local($filename)) {
       $filename = realpath($filename);
+      if ($filename === FALSE) {
+        return;
+      }
     }
 
     // Check we're not explicitly using a file in the local destination.
@@ -285,7 +288,7 @@ class DbImportCommand extends AbstractCommand {
    */
   public function unzip($filename) {
     if (!$this->fileExists($filename)) {
-      return FALSE;
+      return;
     }
 
     // The basename without any path.
