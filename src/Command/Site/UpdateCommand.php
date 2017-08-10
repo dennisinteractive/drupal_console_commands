@@ -76,6 +76,7 @@ class UpdateCommand extends AbstractCommand {
     }
 
     $command = implode(' ; ', $commands);
+    $this->io->commentBlock($command);
 
     // Run.
     $shellProcess = $this->getShellProcess();

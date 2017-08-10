@@ -226,11 +226,11 @@ class DbImportCommand extends AbstractCommand {
     $filename = $this->cleanFileName($filename);
 
     // Get the absolute path for local files.
-    if (stream_is_local($filename)) {
-      if (file_exists(realpath($filename))) {
-        $filename = realpath($filename);
-      }
-    }
+//    if (stream_is_local($filename)) {
+//      if (file_exists(realpath($filename))) {
+//        $filename = realpath($filename);
+//      }
+//    }
 
     // Support for s3.
     if ('s3' === parse_url($filename, PHP_URL_SCHEME)) {
@@ -329,7 +329,7 @@ class DbImportCommand extends AbstractCommand {
       $destination = $this->unzip($destination);
     }
 
-    return $this->getSqlFilename($filename);
+    return $this->getSqlFilename($destination);
   }
 
   /**
