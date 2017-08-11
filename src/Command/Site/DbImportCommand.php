@@ -179,12 +179,16 @@ class DbImportCommand extends AbstractCommand {
   /**
    * Helper to return list of commands to import sql dump.
    */
-  protected function getSqlImportCommands($options){
+  protected function getSqlImportCommands(){
     $this->io->comment('Importing dump');
 
     $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
     $commands[] = sprintf('drush sql-create -y');
     $commands[] = sprintf('drush sql-cli < %s', $this->filename);
+    $commands[] = sprintf('drush user-password %s --password="%s"',
+      $this->config['account-name'],
+      $this->config['account-pass']
+    );
 
     return $commands;
   }
