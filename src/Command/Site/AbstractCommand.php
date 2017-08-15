@@ -545,7 +545,7 @@ abstract class AbstractCommand extends Command {
 
       foreach ($items as $key => $item) {
         // Only change permissions if needed.
-        if (!is_writeable($item)) {
+        if (file_exists($item) && !is_writeable($item)) {
           $commands[] = sprintf('chmod 777 %s', $item);
         }
       }

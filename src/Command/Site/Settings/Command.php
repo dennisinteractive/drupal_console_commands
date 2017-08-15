@@ -54,6 +54,15 @@ class Command extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
+    // Generate settings.php from default.settings.php.
+    $this->generateSettingsPhp();
+
+    // Generate settings.local.php.
+    $this->generateSettingsLocal();
+
+    // Generate environment specific settings.
+    $this->generateSettingsEnv();
+
     // Run commands with default arguments.
     $commands = array(
       'site:settings:db',
@@ -71,13 +80,6 @@ class Command extends AbstractCommand {
 
       $command->run($commandInput, $output);
     }
-
-    // Generate settings.local.php.
-    $this->generateSettingsLocal();
-
-    // Generate environment specific settings.
-    $this->generateSettingsEnv();
-
   }
 
   /**
@@ -105,6 +107,54 @@ class Command extends AbstractCommand {
 
     $destination = sprintf(
       '%ssettings.%s.php',
+      $this->getSiteRoot(),
+      $this->getEnv()
+    );
+
+    if (file_exists($template)) {
+      // Remove existing file.
+      if ($this->fileExists($destination)) {
+        $this->fileUnlink($destination);
+      }
+
+      // Copy the template into web/sites/[site name].
+      copy($template, $destination);
+
+      if ($this->fileExists($destination)) {
+        $this->io->success(sprintf('Generated %s',
+            $destination)
+        );
+      }
+      else {
+        throw new CommandException(sprintf('Error generating %s',
+            $destination
+          )
+        );
+      }
+    }
+  }
+
+  /**
+   * Generates settings.php from default.settings.php.
+   *
+   * It will look for files on web/sites/[site name] directory that matches
+   * default.settings.php.
+   *
+   * Example:
+   * web/sites/example/default.settings.php would get copied to
+   * web/sites/example/settings.php.
+   *
+   * This file should be included via settings.php.
+   */
+  protected function generateSettingsPhp() {
+    $template = sprintf(
+      '%sdefault.settings.php',
+      $this->getSiteRoot(),
+      $this->getEnv()
+    );
+
+    $destination = sprintf(
+      '%ssettings.php',
       $this->getSiteRoot(),
       $this->getEnv()
     );
