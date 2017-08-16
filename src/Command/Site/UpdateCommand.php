@@ -58,7 +58,7 @@ class UpdateCommand extends AbstractCommand {
       $commands[] = 'drush updb -y';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
-      $commands[] = 'drush rr';
+      //$commands[] = 'drush rr';
       $commands[] = 'drush vset maintenance_mode 0';
     }
 
