@@ -53,7 +53,7 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 7 only;
     if ($this->getDrupalVersion() === 7) {
-      $commands[] = 'drush rr';
+      $commands[] = 'drush -q rr';
       $commands[] = 'drush vset maintenance_mode 1';
       $commands[] = 'drush updb -y';
       $this->addModuleEnableCommands($commands);
