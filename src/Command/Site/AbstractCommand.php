@@ -124,8 +124,6 @@ abstract class AbstractCommand extends Command {
 
   /**
    * Constructor.
-   *
-   * @param ConfigurationManager $configurationManager
    */
   public function __construct() {
     parent::__construct();
