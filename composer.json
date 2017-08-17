@@ -1,26 +1,36 @@
 {
-    "name": "dennisdigital/drupal_console_commands",
-    "description": "Custom commands for Drupal console.",
-    "type": "drupal-console-library",
-    "license": "GPL-2.0+",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "keywords": [
+  "name": "dennisdigital/drupal_console_commands",
+  "description": "Custom commands for Drupal console.",
+  "type": "drupal-console-library",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "keywords": [
       "Drupal",
       "Console",
       "Development",
       "Symfony"
-    ],
-    "autoload": {
-        "psr-4": {"DennisDigital\\Drupal\\Console\\": "src"}
-    },
-    "require": {
-        "drupal/console-extend-plugin": "~0",
-        "symfony/filesystem": ">=2.7 <3.2",
-        "dflydev/placeholder-resolver": "^1.0",
-        "aws/aws-sdk-php": "^3.26"
-    },
-    "require-dev": {
-        "drupal/console-core": "~1.0"
-    }
+  ],
+  "autoload": {
+      "psr-4": {
+          "DennisDigital\\Drupal\\Console\\": "src"
+      }
+  },
+  "require": {
+      "drupal/console-extend-plugin": "~0",
+      "symfony/filesystem": ">=2.7 <3.2",
+      "dflydev/placeholder-resolver": "^1.0",
+      "aws/aws-sdk-php": "^3.26"
+  },
+  "require-dev": {
+      "drupal/console-core": "~1.0"
+  },
+  "scripts": {
+      "post-install-cmd": [
+          "cp chain/*.yml ~/.console/chain"
+      ],
+      "post-update-cmd": [
+          "cp chain/*.yml ~/.console/chain"
+      ]
+  }
 }
