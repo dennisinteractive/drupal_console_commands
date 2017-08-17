@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Finder\Finder;
+//use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
@@ -135,8 +135,7 @@ abstract class AbstractCommand extends Command {
   public function setContainer($container)
   {
     $this->container = $container;
-//    $this->configurationManager = $this->container
-//      ->get('console.configuration_manager');
+    $this->configurationManager = $this->container->get('console.configuration_manager');
   }
 
   /**
@@ -348,9 +347,14 @@ abstract class AbstractCommand extends Command {
    * @throws CommandException
    */
   protected function siteConfig(InputInterface $input) {
-    $siteName = $input->getArgument('target');
-print_r($siteName);
+    $siteName = $input->getArgument('name');
+
+    // Support for site name without env or with env.
     $config = $this->configurationManager->readTarget($siteName);
+    if (empty($config))
+    {
+      $config = $this->configurationManager->readTarget($siteName . '.' . $this->getEnv());
+    }
     if (empty($config))
     {
       $message = sprintf(
@@ -645,6 +649,7 @@ print_r($siteName);
    * @return array List
    */
   private function siteList() {
+    //print_r(get_class_methods($this->configurationManager));
     $sites = array_keys($this->configurationManager->getSites());
     $siteList = array();
 
@@ -654,7 +659,7 @@ print_r($siteName);
 
       // Filter by option --env.
       if ($this->getEnv() && $environment === $this->getEnv()) {
-        $siteList[] = $site;
+        $siteList[] = str_replace('.' . $environment, '', $site);
       }
     }
 

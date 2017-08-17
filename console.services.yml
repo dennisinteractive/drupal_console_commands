@@ -10,19 +10,19 @@ services:
   console.site_checkout_branch:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\BranchCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_compose:
     class: \DennisDigital\Drupal\Console\Command\Site\ComposeCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_make:
     class: \DennisDigital\Drupal\Console\Command\Site\MakeCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_settings:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\Command
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_settings_db:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
     tags:
@@ -30,32 +30,32 @@ services:
   console.site_settings_memcache:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_db_import:
     class: \DennisDigital\Drupal\Console\Command\Site\DbImportCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_update:
     class: \DennisDigital\Drupal\Console\Command\Site\UpdateCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_behat_setup:
     class: \DennisDigital\Drupal\Console\Command\Site\BehatSetupCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_test_exec:
     class: \DennisDigital\Drupal\Console\Command\Site\TestCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_phpunit_setup:
     class: \DennisDigital\Drupal\Console\Command\Site\PHPUnitSetupCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_npm:
     class: \DennisDigital\Drupal\Console\Command\Site\NPMCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_grunt:
     class: \DennisDigital\Drupal\Console\Command\Site\GruntCommand
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
