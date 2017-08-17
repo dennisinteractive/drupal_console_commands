@@ -8,7 +8,7 @@ commands:
     arguments:
       name: '%{{name}}'
     options:
-      branch: '%{{branch|8.x}}'
+      branch: '%{{branch}}'
 # Run site:rebuild
   - command: site:rebuild7
     options:
