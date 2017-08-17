@@ -1,9 +1,9 @@
 services:
- console.site_checkout:
-   class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
-   arguments: ['@console.configuration_manager']
-   tags:
-     - { name: drupal.command }
+  console.site_checkout:
+    class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
+    arguments: ['@console.configuration_manager']
+    tags:
+      - { name: drupal.command }
  console.site_checkout_tag:
    class: \DennisDigital\Drupal\Console\Command\Site\Checkout\TagCommand
    arguments: ['@console.configuration_manager']
