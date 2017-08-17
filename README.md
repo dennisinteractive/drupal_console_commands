@@ -10,6 +10,47 @@ Provides custom Drupal console commands and chains.
 
 curl -L https://goo.gl/UnjUuW | sh
 
+or install it manually
+
+### Requirements:
+ - Composer: https://getcomposer.org/download/
+ - Launcher: https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html
+
+### Run the following:
+- Init Drupal
+```
+drupal -n --override init
+```
+
+- Set the environment i.e.
+```
+drupal settings:set environment dev
+```
+
+- Install the Drupal Extend plugin (https://github.com/hechoendrupal/drupal-console-extend)
+```cd ~/.console/
+composer create-project \
+drupal/console-extend extend \
+--no-interaction
+```
+
+- Remove example (optional)
+```
+cd extend;
+composer.phar remove drupal/console-extend-example
+```
+
+- Install Dennis Digital Commands
+```
+cd extend;
+composer require dennisdigital/drupal_console_commands:extend_properly-dev
+```
+
+- Copy chain commands
+```
+cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
+```
+
 ## Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
 e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/example/site-example.yml
