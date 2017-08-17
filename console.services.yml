@@ -1,0 +1,5 @@
+services:
+ console.site_checkout:
+   class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
+   tags:
+     - { name: drupal.command }
