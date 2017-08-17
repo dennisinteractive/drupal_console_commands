@@ -27,10 +27,10 @@
   },
   "scripts": {
       "post-install-cmd": [
-          "cp chain/*.yml ~/.console/chain"
+          "cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain"
       ],
       "post-update-cmd": [
-          "cp chain/*.yml ~/.console/chain"
+          "cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain"
       ]
   }
 }
