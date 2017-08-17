@@ -15,9 +15,12 @@
         "psr-4": {"DennisDigital\\Drupal\\Console\\": "src"}
     },
     "require": {
+        "drupal/console-extend-plugin": "~0",
         "symfony/filesystem": ">=2.7 <3.2",
         "dflydev/placeholder-resolver": "^1.0",
-        "aws/aws-sdk-php": "^3.26",
-        "drupal/console-extend-plugin": "~0"
+        "aws/aws-sdk-php": "^3.26"
+    },
+    "require-dev": {
+        "drupal/console-core": "~1.0"
     }
 }
