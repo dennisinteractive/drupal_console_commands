@@ -325,8 +325,7 @@ abstract class AbstractCommand extends Command {
    */
   protected function getSiteRoot() {
     if (is_null($this->siteRoot)) {
-      $yml = $this->siteName;
-      throw new CommandException(sprintf('Site root directory is not available in %s', $yml));
+      throw new CommandException(sprintf('Site root directory is not available in %s', $this->siteName));
     }
     return $this->siteRoot;
   }
