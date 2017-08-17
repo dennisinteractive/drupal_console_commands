@@ -24,13 +24,5 @@
   },
   "require-dev": {
       "drupal/console-core": "~1.0"
-  },
-  "scripts": {
-      "post-install-cmd": [
-          "pwd; echo cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain"
-      ],
-      "post-update-cmd": [
-          "pwd; echo cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain"
-      ]
   }
 }
