@@ -6,7 +6,7 @@ commands:
 # Run drush make.
   - command: site:make
     arguments:
-      '%{{name}}'
+      name: '%{{name}}'
 # Run NPM.
   - command: site:npm
     arguments:
