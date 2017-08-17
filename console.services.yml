@@ -1,61 +1,76 @@
 services:
  console.site_checkout:
    class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_checkout_tag:
    class: \DennisDigital\Drupal\Console\Command\Site\Checkout\TagCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_checkout_branch:
    class: \DennisDigital\Drupal\Console\Command\Site\Checkout\BranchCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_compose:
    class: \DennisDigital\Drupal\Console\Command\Site\ComposeCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_make:
    class: \DennisDigital\Drupal\Console\Command\Site\MakeCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_settings:
    class: \DennisDigital\Drupal\Console\Command\Site\Settings\Command
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_settings_db:
    class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_settings_memcache:
    class: \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_db_import:
    class: \DennisDigital\Drupal\Console\Command\Site\DbImportCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_update:
    class: \DennisDigital\Drupal\Console\Command\Site\UpdateCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_behat_setup:
    class: \DennisDigital\Drupal\Console\Command\Site\BehatSetupCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_test_exec:
    class: \DennisDigital\Drupal\Console\Command\Site\TestCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_phpunit_setup:
    class: \DennisDigital\Drupal\Console\Command\Site\PHPUnitSetupCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_npm:
    class: \DennisDigital\Drupal\Console\Command\Site\NPMCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
  console.site_grung:
    class: \DennisDigital\Drupal\Console\Command\Site\GruntCommand
+   arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }

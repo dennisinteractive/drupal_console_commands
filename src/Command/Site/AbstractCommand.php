@@ -124,9 +124,13 @@ abstract class AbstractCommand extends Command {
 
   /**
    * Constructor.
+   *
+   * @param ConfigurationManager $configurationManager
    */
-  public function __construct()
-  {
+  public function __construct(
+    ConfigurationManager $configurationManager
+  ) {
+    $this->configurationManager = $configurationManager;
     parent::__construct();
   }
 
@@ -136,8 +140,8 @@ abstract class AbstractCommand extends Command {
   public function setContainer($container)
   {
     $this->container = $container;
-    $this->configurationManager = $this->container
-      ->get('console.configuration_manager');
+//    $this->configurationManager = $this->container
+//      ->get('console.configuration_manager');
   }
 
   /**
@@ -349,15 +353,15 @@ abstract class AbstractCommand extends Command {
    * @throws CommandException
    */
   protected function siteConfig(InputInterface $input) {
-    $siteName = $input->getArgument('name');
-
+    $siteName = $input->getArgument('target');
+print_r($siteName);
     $config = $this->configurationManager->readTarget($siteName);
-
     if (empty($config))
     {
       $message = sprintf(
-        'Site not found on %s env. To see a list of available sites, run drupal site:debug',
-         $this->getEnv()
+        'Site %s not found on %s env. To see a list of available sites, run drupal site:debug',
+        $siteName,
+        $this->getEnv()
       );
       throw new CommandException($message);
     }
