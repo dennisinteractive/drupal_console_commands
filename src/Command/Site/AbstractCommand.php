@@ -243,10 +243,8 @@ abstract class AbstractCommand extends Command {
       $this->options['env'] = $input->getOption('env');
     }
 
-    // Sites list.
-    $sitesDirectory = $this->configurationManager->getSitesDirectory();
-
-    $options = $this->siteList($sitesDirectory);
+    // Sites list filtered by environment.
+    $options = $this->siteList();
     if (empty($options)) {
       throw new CommandException(sprintf('No sites available for %s environment.', $this->getEnv()));
     }
@@ -327,7 +325,8 @@ abstract class AbstractCommand extends Command {
    */
   protected function getSiteRoot() {
     if (is_null($this->siteRoot)) {
-      throw new CommandException('Site root directory is not available.');
+      $yml = $this->siteName;
+      throw new CommandException(sprintf('Site root directory is not available in %s', $yml));
     }
     return $this->siteRoot;
   }
@@ -353,7 +352,7 @@ abstract class AbstractCommand extends Command {
   protected function siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    $config = $this->configurationManager->readTarget($siteName . '.' . $this->getEnv());
+    $config = $this->configurationManager->readTarget($siteName);
 
     if (empty($config))
     {
@@ -643,44 +642,25 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Extracted from DebugCommand.
-   * This function lists all sites found in ~/.console/sites folder
-   * It will only return sites that have 'repo' configured
+   * This function lists all sites, filtering by the environment (-e)
    *
-   * @param string $sitesDirectory
-   *
-   * @return array
+   * @return array List
    */
-  private function siteList($sitesDirectory) {
-    $finder = new Finder();
-    $finder->in($sitesDirectory);
-    $finder->name("*.yml");
+  private function siteList() {
+    $sites = array_keys($this->configurationManager->getSites());
+    $siteList = array();
 
-    $tableRows = [];
-    foreach ($finder as $site) {
-      $siteName = $site->getBasename('.yml');
-      $environments = $this
-        ->configurationManager
-        ->readSite($site->getRealPath());
+    foreach ($sites as $site) {
+      $parts = explode('.', $site);
+      $environment = array_pop($parts);
 
-      if (!$environments || !is_array($environments)) {
-        continue;
-      }
-
-      foreach ($environments as $environment => $config) {
-        // Filter by option --env.
-        if ($this->getEnv() && $environment != $this->getEnv()) {
-          continue;
-        }
-
-        // Ignore site configs that don't have the repo configuration.
-        if (isset($config['repo'])) {
-          $tableRows[] = $siteName;
-        }
+      // Filter by option --env.
+      if ($this->getEnv() && $environment === $this->getEnv()) {
+        $siteList[] = $site;
       }
     }
 
-    return array_unique($tableRows);
+    return array_unique($siteList);
   }
 
   /**
