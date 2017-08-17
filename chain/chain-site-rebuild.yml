@@ -22,7 +22,7 @@ commands:
 # Tests setup.
   - command: site:test:setup
     options:
-      - 'name:%{{name}}'
+      name: '%{{name}}'
 # Imports db or installs a site
   - command: site:db:import
     arguments:

@@ -11,6 +11,6 @@ vars:
 commands:
   # In interactive mode, it will ask you to provide the project, default value is 'main-project'
   - command: test:child
-    arguments:
-      - project: %{{main-project}}
-      - directory: '/tmp2'
+    options:
+      project: %{{main-project}}
+      directory: '/tmp2'
