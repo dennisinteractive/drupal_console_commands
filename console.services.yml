@@ -3,12 +3,12 @@ services:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
     arguments: ['@console.configuration_manager']
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_checkout_tag:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\TagCommand
     arguments: ['@console.configuration_manager']
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_checkout_branch:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\BranchCommand
     arguments: ['@console.configuration_manager']
@@ -33,7 +33,7 @@ services:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
     arguments: ['@console.configuration_manager']
     tags:
-      - { name: drupal.command }
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_settings_memcache:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand
     arguments: ['@console.configuration_manager']
