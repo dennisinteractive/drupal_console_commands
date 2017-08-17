@@ -16,10 +16,9 @@ commands:
     arguments:
       name: '%{{name}}'
 # Generate the settings.
-  - command: site:configure
-    options:
-      placeholder:
-        - 'name:%{{name}}'
+  - command: site:settings
+    arguments:
+      name: '%{{name}}'
 # Tests setup.
   - command: site:test:setup
     options:

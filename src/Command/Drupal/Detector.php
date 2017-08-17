@@ -81,6 +81,6 @@ class Detector {
       }
     }
 
-    return $this->version;
+    return (int) $this->version;
   }
 }

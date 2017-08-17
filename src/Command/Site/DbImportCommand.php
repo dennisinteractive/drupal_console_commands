@@ -159,7 +159,7 @@ class DbImportCommand extends AbstractCommand {
       $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
       // Drupal 8 only;
       // Set site UUID from config.
-      if ($this->drupalVersion === 8) {
+      if ($this->getDrupalVersion() === 8) {
         $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
       }
     }
@@ -249,7 +249,10 @@ class DbImportCommand extends AbstractCommand {
     else {
       // Check the file isn't already downloaded.
       $this->io->write(sprintf('Checking if db dump needs updating:'));
-      if ($this->fileExists($this->tmpFolder . $basename) && filesize($this->tmpFolder . $basename) === filesize($filename)) {
+      if ($this->fileExists($this->tmpFolder . $basename) &&
+        file_exists($filename) &&
+        filesize($this->tmpFolder . $basename) === filesize($filename))
+      {
         $this->io->comment('No');
       }
       else {

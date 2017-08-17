@@ -38,12 +38,17 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:grunt**
   Runs Grunt
 
+- drupal **site:settings** *site-name*
+    - Runs `site:settings:db`
+    - Runs `site:settings:memcache`
+	- Creates *settings.local.php* in the *web/sites/[site name]* directory. This file is auto-generated and should not be committed.
+	If you have a file named `web/sites/example.settings.local.php` on the site's folder, it will be used as a template for settings.local.php.
+	- Creates *web/sites/[site name]/settings.[env].php*. These files are auto-generated and should not be committed.
+	Depending on your environment (--env option), it will copy the respective file into *web/sites/[site name]*. i.e. default.settings.dev.php -> settings.dev.php
+	It is recommended to add settings.*.php to .gitignore.
+
 - drupal **site:settings:db** *site-name*
 	Creates *settings.db.php* in the *web/sites/default* folder. This file contains DB credentials and should not be committed.
-
-- drupal **site:settings:local** *site-name*
-	Creates *settings.local.php* in the *web/sites/default* folder. This file contains local settings overrides and should not be committed.
-	If you have a file named `example.settings.local.php` on the site's folder, it will be used as a template for settings.local.php.
 
 - drupal **site:settings:memcache** *site-name*
 	Creates *settings.memcache.php* in the *web/sites/default* folder. This file contains Memcache configuration and should not be committed.
@@ -76,11 +81,6 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 
 ## Chains
 Chains that can be reused on various environments
-
-- drupal **site:configure** A chain that will call all the commands below:
-    - site:settings:db
-    - site:settings:local
-    - site:settings:memcache
 
 - drupal **site:test:setup** Sets the test suites
     - site:phpunit:setup

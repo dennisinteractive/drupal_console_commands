@@ -16,8 +16,8 @@ application:
           class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
         'site:settings:memcache':
           class: \DennisDigital\Drupal\Console\Command\Site\Settings\MemcacheCommand
-        'site:settings:local':
-          class: \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand
+        'site:settings':
+          class: \DennisDigital\Drupal\Console\Command\Site\Settings\Command
         'site:db:import':
           class: \DennisDigital\Drupal\Console\Command\Site\DbImportCommand
         'site:behat:setup':
