@@ -1,4 +1,4 @@
-# Usage: drupal site:rebuild --placeholder="name:subscriptions"
+# Usage: drupal site:rebuild --name="subscriptions"
 command:
   name: site:rebuild
   description: 'Performs necessary steps to rebuild the site from a given source.'

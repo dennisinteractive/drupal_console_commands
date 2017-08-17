@@ -1,4 +1,4 @@
-# Usage: drupal site:build:staging --placeholder="name:subscriptions"
+# Usage: drupal site:build:staging --name="subscriptions"
 command:
   name: site:build:staging
   description: 'Builds site for Staging.'

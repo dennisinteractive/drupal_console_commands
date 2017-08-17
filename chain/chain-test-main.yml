@@ -13,4 +13,4 @@ commands:
   - command: test:child
     arguments:
       - project: %{{main-project}}
-      - directory: "/tmp2"
+      - directory: '/tmp2'

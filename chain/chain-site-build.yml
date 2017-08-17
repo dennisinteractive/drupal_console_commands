@@ -1,4 +1,4 @@
-# Usage: drupal site:build --placeholder="name:subscriptions"
+# Usage: drupal site:build -name=subscriptions
 command:
   name: site:build
   description: 'Builds a site.'
@@ -12,5 +12,4 @@ commands:
 # Run site:rebuild
   - command: site:rebuild
     options:
-      placeholder:
-        - 'name:%{{name}}'
+      name: '%{{name}}'

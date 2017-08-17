@@ -1,4 +1,4 @@
-# Usage: drupal site:test:setup --placeholder="name:subscriptions"
+# Usage: drupal site:test:setup --name="subscriptions"
 command:
   name: site:test:setup
   description: 'Sets the test suites.'

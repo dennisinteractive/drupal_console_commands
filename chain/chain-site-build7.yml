@@ -1,4 +1,4 @@
-# Usage: drupal site:build7 --placeholder="name:subscriptions"
+# Usage: drupal site:build7 --name="subscriptions"
 command:
   name: site:build7
   description: 'Builds a Drupal 7 site using make file.'
@@ -12,5 +12,4 @@ commands:
 # Run site:rebuild
   - command: site:rebuild7
     options:
-      placeholder:
-        - 'name:%{{name}}'
+      name: '%{{name}}'
