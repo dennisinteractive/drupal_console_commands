@@ -30,19 +30,19 @@ drupal settings:set environment dev
 - Install the Drupal Extend plugin (https://github.com/hechoendrupal/drupal-console-extend)
 ```cd ~/.console/
 composer create-project \
-drupal/console-extend extend \
+drupal/console-extend ~/.console/extend \
 --no-interaction
 ```
 
 - Remove example (optional)
 ```
-cd extend;
+cd ~/.console/extend;
 composer remove drupal/console-extend-example
 ```
 
 - Install Dennis Digital Commands
 ```
-cd extend;
+cd ~/.console/extend;
 composer require dennisdigital/drupal_console_commands:extend_properly-dev
 ```
 
