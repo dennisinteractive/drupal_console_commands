@@ -69,7 +69,7 @@ services:
    arguments: ['@console.configuration_manager']
    tags:
      - { name: drupal.command }
- console.site_grung:
+ console.site_grunt:
    class: \DennisDigital\Drupal\Console\Command\Site\GruntCommand
    arguments: ['@console.configuration_manager']
    tags:
