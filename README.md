@@ -37,7 +37,7 @@ drupal/console-extend extend \
 - Remove example (optional)
 ```
 cd extend;
-composer.phar remove drupal/console-extend-example
+composer remove drupal/console-extend-example
 ```
 
 - Install Dennis Digital Commands
