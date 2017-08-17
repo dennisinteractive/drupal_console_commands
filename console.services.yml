@@ -1,12 +1,10 @@
 services:
   console.site_checkout:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
-    arguments: ['@console.configuration_manager']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
   console.site_checkout_tag:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\TagCommand
-    arguments: ['@console.configuration_manager']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
   console.site_checkout_branch:
@@ -31,7 +29,6 @@ services:
       - { name: drupal.command }
   console.site_settings_db:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
-    arguments: ['@console.configuration_manager']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
   console.site_settings_memcache:
