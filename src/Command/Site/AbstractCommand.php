@@ -9,14 +9,14 @@
 
 namespace DennisDigital\Drupal\Console\Command\Site;
 
+
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-//use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
-use Drupal\Console\Core\Command\Shared\CommandTrait;
+use Drupal\Console\Core\Utils\ConfigurationManager;
+use Drupal\Console\Core\Command\Command;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Utils\ShellProcess;
 use DennisDigital\Drupal\Console\Command\Drupal\Detector;
@@ -28,10 +28,8 @@ use DennisDigital\Drupal\Console\Command\Drupal\Detector;
  */
 abstract class AbstractCommand extends Command {
 
-  use CommandTrait;
-
   /**
-   * @var ConfigurationManager
+   * @var configurationManager
    */
   protected $configurationManager;
 
@@ -108,9 +106,9 @@ abstract class AbstractCommand extends Command {
   protected $url = NULL;
 
   /**
-   * Stores the container.
+   * Stores the app root.
    */
-  protected $container;
+  protected $appRoot;
 
   /**
    * Stores the drupal core version.
@@ -125,17 +123,13 @@ abstract class AbstractCommand extends Command {
   /**
    * Constructor.
    */
-  public function __construct() {
+  public function __construct(
+    ConfigurationManager $configurationManager,
+    $appRoot
+  ) {
+    $this->configurationManager = $configurationManager;
+    $this->appRoot = $appRoot;
     parent::__construct();
-  }
-
-  /**
-   * @param mixed $container
-   */
-  public function setContainer($container)
-  {
-    $this->container = $container;
-    $this->configurationManager = $this->container->get('console.configuration_manager');
   }
 
   /**
@@ -572,8 +566,7 @@ abstract class AbstractCommand extends Command {
    * @return ShellProcess
    */
   protected function getShellProcess() {
-    $app_root = $this->container->get('app.root');
-    return new ShellProcess($app_root);
+    return new ShellProcess($this->appRoot);
   }
 
   /**
@@ -649,7 +642,6 @@ abstract class AbstractCommand extends Command {
    * @return array List
    */
   private function siteList() {
-    //print_r(get_class_methods($this->configurationManager));
     $sites = array_keys($this->configurationManager->getSites());
     $siteList = array();
 
