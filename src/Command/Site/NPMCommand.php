@@ -50,7 +50,7 @@ class NPMCommand extends AbstractCommand {
 
     $commands = [];
     $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-    $commands[] = sprintf('find . -type d \( -name node_modules -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;',
+    $commands[] = sprintf('find . -type d \( -name node_modules -o -name vendor -o -name contrib -o -path ./core \) -prune -o -name package.json -execdir sh -c "npm install" \;',
       $this->shellPath($this->getWebRoot())
     );
     $command = implode(' && ', $commands);
