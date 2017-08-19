@@ -12,6 +12,6 @@ cd ${DIRECTORY}
 PATH="${PHP_FOLDER}/:$PATH" composer require ${PACKAGE}:${BRANCH}-dev
 
 # Copy chain commands
-cp vendor/${PACKAGE}/chain/*.yml ~/.console/chain
+cp vendor/${PACKAGE}/chain/*.yml ../chain
 
 drupal site:debug

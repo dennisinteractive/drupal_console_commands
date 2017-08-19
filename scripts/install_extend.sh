@@ -1,7 +1,7 @@
 #!/bin/sh
 # Installs Drupal Console extend
 # Extend is what provides the ability to run console commands globally
-set -x
+set +x
 
 composer create-project \
 drupal/console-extend ~/.console/extend \

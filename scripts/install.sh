@@ -1,6 +1,6 @@
 #!/bin/sh
 # Performs an installation of Drupal console commands
-set -x
+set +x
 
 # Checkout scripts
 REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
