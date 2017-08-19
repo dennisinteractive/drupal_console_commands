@@ -24,7 +24,7 @@ sh install_launcher.sh
 sudo rm ~/drupal /usr/local/bin/drupal
 sudo mv /usr/local/bin/drupal /usr/local/drupal.phar
 echo '#!/bin/sh' > ~/drupal
-echo 'PATH="${PHP_FOLDER}/:$PATH" /usr/local/drupal.phar' > ~/drupal "$@"
+echo 'PATH="${PHP_FOLDER}/:$PATH" /usr/local/drupal.phar' >> ~/drupal "$@"
 sudo mv ~/drupal /usr/local/bin/drupal
 sudo chmod +x /usr/local/bin/drupal
 
