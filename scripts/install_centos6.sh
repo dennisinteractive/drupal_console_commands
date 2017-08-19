@@ -21,11 +21,10 @@ sh install_composer.sh
 sh install_launcher.sh
 
 # In order to use the custom php on centos6 we need to add a wrapper for drupal
-sudo rm ~/drupal /usr/local/bin/drupal
 sudo mv /usr/local/bin/drupal /usr/local/drupal.phar
-echo '#!/bin/sh' > ~/drupal
-echo 'PATH="${PHP_FOLDER}/:$PATH" /usr/local/drupal.phar' >> ~/drupal "$@"
-sudo mv ~/drupal /usr/local/bin/drupal
+echo '#!/bin/sh' > /tmp/drupal
+echo 'PATH="${PHP_FOLDER}/:$PATH" /usr/local/drupal.phar' >> /tmp/drupal "$@"
+sudo mv /tmp/drupal /usr/local/bin/drupal
 sudo chmod +x /usr/local/bin/drupal
 
 # Setup Drupal console
