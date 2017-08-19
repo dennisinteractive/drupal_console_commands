@@ -2,6 +2,12 @@
 # Performs an installation of Drupal console commands
 set -x
 
+# Checkout scripts
+REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
+BRANCH="extend_properly"
+git clone --branch ${BRANCH} ${REPO} /tmp/drupal_console_commands
+cd /tmp/drupal_console_commands/scripts
+
 PHP_FOLDER=$(which php)
 
 # Install composer
