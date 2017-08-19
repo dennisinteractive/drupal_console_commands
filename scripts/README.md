@@ -1,7 +1,7 @@
 # Installation
 
 # Centos6
-curl -L http://goo.gl/yNW7ei | sh
+curl -L https://goo.gl/EKbbgi | sh
 
 # Mac, Centos7, Linux, etc
-curl -L https://goo.gl/UnjUuW | sh
+curl -L https://goo.gl/9UVBYq | sh
