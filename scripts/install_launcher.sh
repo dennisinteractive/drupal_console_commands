@@ -1,6 +1,6 @@
 #!/bin/sh
 # Installs Drupal Console launcher
-set -x
+set +x
 
 DRUPAL_CONSOLE=/usr/local/bin/drupal
 
