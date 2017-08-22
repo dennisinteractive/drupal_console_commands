@@ -1,4 +1,9 @@
 services:
+  console.site_build:
+    class: \DennisDigital\Drupal\Console\Command\Site\BuildCommand
+    arguments: [ '@console.configuration_manager', '@app.root']
+    tags:
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_checkout:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
     arguments: [ '@console.configuration_manager', '@app.root']
