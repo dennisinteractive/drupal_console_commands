@@ -273,6 +273,9 @@ abstract class AbstractCommand extends Command {
   protected function validateSiteParams(InputInterface $input, OutputInterface $output) {
     $this->io = new DrupalStyle($input, $output);
 
+    // Fix folder permissions.
+    $this->fixSiteFolderPermissions();
+
     // Get config.
     $this->siteConfig($input);
 

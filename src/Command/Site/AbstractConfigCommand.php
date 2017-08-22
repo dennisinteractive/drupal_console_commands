@@ -101,7 +101,7 @@ abstract class AbstractConfigCommand extends AbstractCommand {
 
     // Validation.
     if (!$this->fileExists($this->template)) {
-      $this->io->error(sprintf('Could not find template %s', $this->template));
+      $this->io->comment(sprintf('Could not find template %s', $this->template));
       return;
     }
 
