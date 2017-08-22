@@ -68,8 +68,8 @@ class BuildCommand extends AbstractCommand {
     parent::execute($input, $output);
 
     $commands = array(
-      'drupal site:checkout %s',
-      $this->getComposerMakeCommand,
+      sprintf('drupal site:checkout %s', $this->siteName),
+      $this->getComposerMakeCommand(),
       'drupal site:npm %s',
       'drupal site:grunt %s',
       'drupal site:settings %s',
@@ -86,6 +86,7 @@ class BuildCommand extends AbstractCommand {
       foreach ($input->getOptions() as $name => $value) {
         $parameters['--' . $name] = $value;
       }
+      print_r($parameters);
       $commandInput = new ArrayInput(array_filter($parameters));
 
       $command->run($commandInput, $output);
@@ -96,13 +97,13 @@ class BuildCommand extends AbstractCommand {
    * Detect if the site uses composer or make files.
    */
   private function getComposerMakeCommand() {
-   if (file_exists($this->getSiteRoot() . '/compsoser.json')) {
+   if (file_exists($this->getWebRoot() . '/compsoser.json')) {
       $composerMakeCommand = 'drupal site:compose %s';
     }
-    else if (file_exists($this->getSiteRoot() . '/site.make')) {
+    else if (file_exists($this->getWebRoot() . '/site.make')) {
       $composerMakeCommand = 'drupal site:compose %s';
     }
-    else if (file_exists($this->getSiteRoot() . sprintf('/%s.make', $this->sitename))) {
+    else if (file_exists($this->getWebRoot() . sprintf('/%s.make', $this->siteName))) {
       $composerMakeCommand = 'drupal site:compose %s';
     }
     else {
