@@ -93,6 +93,7 @@ class BuildCommand extends AbstractCommand {
     $this->input = $input;
     $this->inputOptions = array_filter($input->getOptions());
 
+    $this->skip = array();
     if (isset($this->inputOptions['skip'])) {
       $this->skip = explode(',', $this->inputOptions['skip']);
     }
