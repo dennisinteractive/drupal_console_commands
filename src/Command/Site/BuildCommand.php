@@ -13,9 +13,6 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use DennisDigital\Drupal\Console\Exception\SiteCommandException;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 
 /**
@@ -33,9 +30,24 @@ class BuildCommand extends AbstractCommand {
   protected $branch;
 
   /**
-   * @var ShellProcess
+   * @var commands.
    */
-  private $process;
+  private $commands;
+
+  /**
+   * Stores the Input.
+   */
+  private $input;
+
+  /**
+   * Stores global options passed.
+   */
+  private $inputOptions;
+
+  /**
+   * Stores the commands to be skipped.
+   */
+  private $skip;
 
   /**
    * {@inheritdoc}
@@ -43,17 +55,33 @@ class BuildCommand extends AbstractCommand {
   protected function configure() {
     parent::configure();
 
+    $commands = array(
+      'site:checkout',
+      'site:compose|make',
+      'site:npm',
+      'site:grunt',
+      'site:settings',
+      'site:phpunit:setup',
+      'site:behat:setup',
+      'site:db:import',
+      'site:update',
+    );
     $this->setName('site:build')
-      ->setDescription('Build a site');
+      ->setDescription(sprintf('Runs the following commands to build a site: %s.', implode(', ', $commands)));
 
     // Custom options.
     $this->addOption(
-        'branch',
-        '-B',
-        InputOption::VALUE_OPTIONAL,
-        'Specify which branch to build if different than the global branch found in sites.yml'
-      );
-    //@todo populate other commands artuments here.
+      'branch',
+      '-B',
+      InputOption::VALUE_OPTIONAL,
+      'Specify which branch to build if different than the global branch found in sites.yml'
+    );
+    $this->addOption(
+      'skip',
+      '',
+      InputOption::VALUE_OPTIONAL,
+      'Used to skip one or more commands. i.e. --skip="checkout, phpunit:setup"'
+    );
   }
 
   /**
@@ -62,6 +90,12 @@ class BuildCommand extends AbstractCommand {
   protected function interact(InputInterface $input, OutputInterface $output) {
     parent::interact($input, $output);
 
+    $this->input = $input;
+    $this->inputOptions = array_filter($input->getOptions());
+
+    if (isset($this->inputOptions['skip'])) {
+      $this->skip = explode(',', $this->inputOptions['skip']);
+    }
   }
 
   /**
@@ -70,42 +104,196 @@ class BuildCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $commands = array(
-      'site:checkout' => sprintf('%s', $this->siteName),
-      $this->getComposerMakeCommand() => sprintf('%s', $this->siteName),
-      'site:npm' => sprintf('%s', $this->siteName),
-      'site:grunt' => sprintf('%s', $this->siteName),
-      'site:settings' => sprintf('%s', $this->siteName),
-      'site:phpunit:setup' => sprintf('%s', $this->siteName),
-      'site:test:setup' => sprintf('%s', $this->siteName),
-      'site:db:import' => sprintf('%s', $this->siteName),
-      'site:update' => sprintf('%s', $this->siteName),
-    );
+    $this->commands = array();
 
-    foreach ($commands as $commandName => $args) {
-      $command = $this->getApplication()->find($commandName);
+    $this->addCheckoutCommand();
+    $this->addComposeMakeCommand();
+    $this->addNPMCommand();
+    $this->addGruntCommand();
+    $this->addSettingsCommand();
+    $this->addTestSetupCommand();
+    $this->addDbImportCommand();
+    $this->addUpdateCommand();
 
-      $parameters = $input->getArguments();
-      foreach ($input->getOptions() as $name => $value) {
-        $parameters['--' . $name] = $value;
+    foreach ($this->commands as $item) {
+      $parameters = array();
+      $command = $this->getApplication()->find($item['command']);
+
+      // Command arguments.
+      if (!empty($item['arguments'])) {
+        foreach ($item['arguments'] as $name => $value) {
+          $parameters[$name] = $value;
+        }
       }
-      $commandInput = new ArrayInput(array_filter($parameters));
 
+      // Command options.
+      if (isset($item['options'])) {
+        $options = array_filter($item['options']);
+        foreach ($options as $name => $value) {
+          $parameters['--' . $name] = $value;
+        }
+      }
+
+      // Append env if needed.
+      if (isset($this->inputOptions['env'])) {
+        $parameters['--env'] = $this->inputOptions['env'];
+      }
+
+      $this->io->writeln(sprintf('// %s', $item['command']));
+      //echo var_export($parameters, true) . PHP_EOL;
+
+      $commandInput = new ArrayInput(array_filter($parameters));
       $command->run($commandInput, $output);
     }
   }
 
   /**
-   * Detect if the site uses composer or make files.
+   * Checkout command.
    */
-  private function getComposerMakeCommand() {
-   if (file_exists($this->getRoot() . '/composer.json')) {
-      return 'site:compose';
+  private function addCheckoutCommand() {
+    if (in_array('checkout', $this->skip)) {
+      return;
     }
-    else if (file_exists($this->getRoot() . '/site.make')) {
-      return 'site:make';
+
+    $this->commands[] = array(
+      'command' => 'site:checkout',
+      'arguments' => array(
+        'name' => $this->siteName,
+      ),
+      'options' => array(
+        'branch' => ($this->input->hasOption('branch')) ? $this->input->getOption('branch') : NULL,
+      ),
+    );
+  }
+
+  /**
+   * Composer or make command.
+   */
+  private function addComposeMakeCommand() {
+    if (file_exists($this->getRoot() . '/composer.json')) {
+      if (in_array('compose', $this->skip)) {
+        return;
+      }
+      $command = 'site:compose';
     }
-    throw new CommandException(sprintf('Could not find composer.json or site.make in %s', $this->getRoot()));
+    elseif (file_exists($this->getRoot() . '/site.make')) {
+      if (in_array('make', $this->skip)) {
+        return;
+      }
+      $command = 'site:make';
+    }
+    else {
+      throw new CommandException(sprintf('Could not find composer.json or site.make in %s', $this->getRoot()));
+    }
+
+    $this->commands[] = array(
+      'command' => $command,
+      'arguments' => array(
+        'name' => $this->siteName,
+      )
+    );
+  }
+
+  /**
+   * NPM command.
+   */
+  private function addNPMCommand() {
+    if (in_array('npm', $this->skip)) {
+      return;
+    }
+
+    $this->commands[] = array(
+      'command' => 'site:npm',
+      'arguments' => array(
+        'name' => $this->siteName,
+      )
+    );
+  }
+
+  /**
+   * Grunt command.
+   */
+  private function addGruntCommand() {
+    if (in_array('grunt', $this->skip)) {
+      return;
+    }
+
+    $this->commands[] = array(
+      'command' => 'site:grunt',
+      'arguments' => array(
+        'name' => $this->siteName,
+      )
+    );
+  }
+
+  /**
+   * Settings command.
+   */
+  private function addSettingsCommand() {
+    if (in_array('settings', $this->skip)) {
+      return;
+    }
+
+    $this->commands[] = array(
+      'command' => 'site:settings',
+      'arguments' => array(
+        'name' => $this->siteName,
+      )
+    );
+  }
+
+  /**
+   * Tests setup command.
+   */
+  private function addTestSetupCommand() {
+    if (!in_array('phpunit:setup', $this->skip)) {
+      $this->commands[] = array(
+        'command' => 'site:phpunit:setup',
+        'arguments' => array(
+          'name' => $this->siteName,
+        )
+      );
+    }
+    if (!in_array('behat:setup', $this->skip)) {
+      $this->commands[] = array(
+        'command' => 'site:behat:setup',
+        'arguments' => array(
+          'name' => $this->siteName,
+        )
+      );
+    }
+  }
+
+  /**
+   * DB Import command.
+   */
+  private function addDbImportCommand() {
+    if (in_array('db:import', $this->skip)) {
+      return;
+    }
+
+    $this->commands[] = array(
+      'command' => 'site:db:import',
+      'arguments' => array(
+        'name' => $this->siteName,
+      )
+    );
+  }
+
+  /**
+   * Update command.
+   */
+  private function addUpdateCommand() {
+    if (in_array('update', $this->skip)) {
+      return;
+    }
+
+    $this->commands[] = array(
+      'command' => 'site:update',
+      'arguments' => array(
+        'name' => $this->siteName,
+      )
+    );
   }
 
 }
