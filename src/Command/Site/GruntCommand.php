@@ -50,7 +50,7 @@ class GruntCommand extends AbstractCommand {
 
     $commands = [];
     $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-    $commands[] = sprintf('find . -type d \( -name node_modules -o -name vendor -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "grunt" \;',
+    $commands[] = sprintf('find . -type d \( -name node_modules -o -name vendor -o -name contrib -o -path ./core \) -prune -o -name Gruntfile.js -execdir sh -c "npm; grunt" \;',
       $this->shellPath($this->getWebRoot())
     );
     $command = implode(' && ', $commands);
