@@ -40,6 +40,11 @@ class BuildCommand extends AbstractCommand {
   private $input;
 
   /**
+   * Stores the Output.
+   */
+  private $output;
+
+  /**
    * Stores global options passed.
    */
   private $inputOptions;
@@ -91,6 +96,7 @@ class BuildCommand extends AbstractCommand {
     parent::interact($input, $output);
 
     $this->input = $input;
+    $this->output = $output;
     $this->inputOptions = array_filter($input->getOptions());
 
     $this->skip = array();
@@ -108,6 +114,9 @@ class BuildCommand extends AbstractCommand {
     $this->commands = array();
 
     $this->addCheckoutCommand();
+    // Run checkout first because Compose/Make depends on it.
+    $this->runList();
+
     $this->addComposeMakeCommand();
     $this->addNPMCommand();
     $this->addGruntCommand();
@@ -115,7 +124,13 @@ class BuildCommand extends AbstractCommand {
     $this->addTestSetupCommand();
     $this->addDbImportCommand();
     $this->addUpdateCommand();
+    $this->runList();
+  }
 
+  /**
+   * Runs the commands.
+   */
+  private function runList() {
     foreach ($this->commands as $item) {
       $parameters = array();
       $command = $this->getApplication()->find($item['command']);
@@ -144,8 +159,10 @@ class BuildCommand extends AbstractCommand {
       //echo var_export($parameters, true) . PHP_EOL;
 
       $commandInput = new ArrayInput(array_filter($parameters));
-      $command->run($commandInput, $output);
+      $command->run($commandInput, $this->output);
     }
+
+    $this->commands = array();
   }
 
   /**
