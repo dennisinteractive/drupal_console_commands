@@ -55,6 +55,11 @@ cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
 e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/example/site-example.yml
 
+- drupal **distro:build** Builds a distro.
+@todo:
+- Have some sort of yml file for distros to provide the repo, etc
+- Do extend Command instead of Site\AbstractCommand
+
 - drupal **site:build** Runs the following commands to build a site:
     - site:checkout
     - site:compose|make
