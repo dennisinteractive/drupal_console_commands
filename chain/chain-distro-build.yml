@@ -4,7 +4,7 @@ command:
   description: 'Builds distro.'
 vars:
   repository: ssh://didev@didev.kilnhg.com/Drupal-Install-Profiles/dennis_distro/1-0
-  destination: /vagrant/repos/
+  destination: /vagrant/repos
 vars:
   branch:
     - 7.x
@@ -28,4 +28,4 @@ commands:
 # Move to folder
   - command: exec
     arguments:
-      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_build %{{destination}}
+      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_build %{{destination}}/%{{branch}}
