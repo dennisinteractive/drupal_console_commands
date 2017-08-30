@@ -355,7 +355,7 @@ abstract class AbstractCommand extends Command {
     if (empty($config))
     {
       $message = sprintf(
-        'Site %s not found on %s env. To see a list of available sites, run drupal site:debug',
+        'Site %s not found on %s env. To see a list of available sites, run drupal debug:site',
         $siteName,
         $this->getEnv()
       );
