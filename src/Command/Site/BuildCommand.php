@@ -156,7 +156,6 @@ class BuildCommand extends AbstractCommand {
       }
 
       $this->io->writeln(sprintf('// %s', $item['command']));
-      //echo var_export($parameters, true) . PHP_EOL;
 
       $commandInput = new ArrayInput(array_filter($parameters));
       $command->run($commandInput, $this->output);
