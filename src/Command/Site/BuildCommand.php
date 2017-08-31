@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\BuildCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\BuildCommand.
  *
  * Builds the site by calling various commands.
  */
