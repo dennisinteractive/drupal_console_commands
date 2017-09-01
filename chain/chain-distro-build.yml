@@ -28,4 +28,4 @@ commands:
 # Move to folder
   - command: exec
     arguments:
-      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_build %{{destination}}/%{{branch}}
+      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_build %{{destination}}/dennis_distro-%{{branch}}
