@@ -51,6 +51,10 @@ composer require dennisdigital/drupal_console_commands:extend_properly-dev
 cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
 ```
 
+- Copy the *sites.yml* into *~/.console/sites*
+
+You can copy the site-example.yml found in the sites folder.
+
 ## Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
 e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/example/site-example.yml
