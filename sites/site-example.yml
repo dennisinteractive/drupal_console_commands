@@ -4,23 +4,23 @@ dev:
   root: /var/www/example
   web_directory: web
   host: http://example.local
-  cdn: http://example.local
+  cdn: http://example.com
   account-name: admin
-  account-pass: password
+  account-pass: demo
   account-mail: mail@example.local
   repo:
     type: git
-    url: git@github.com:user/example.git
+    url: git@github.com:dennisinteractive/drupal-example-site.git
     branch: 8.x
   db:
-    dump: /mnt/nfs/Drupal/sql/d8_example.sql.gz
+    dump: /directory/site_example.sql.gz
     host: 127.0.0.1
-    name: example
+    name: site_example
     user: root
     port: 3306
     type: mysql
   modules:
     enable:
-      - stage_file_proxy
+      - devel
     disable:
-      - dennis_sse
+      - varnish
