@@ -2,7 +2,7 @@ dev:
   name: site-example
   profile: standard
   root: /var/www/drupal_core/sites/example
-  web_directory: web
+  web_directory: /
   host: http://example.local
   cdn: http://example.com
   account-name: admin
