@@ -151,6 +151,10 @@ class Command extends AbstractCommand {
     $source = $this->getSiteRoot() . $this->source;
     $file = $this->getSiteRoot() . $this->filename;
 
+    if ($this->getDrupalVersion() == '7') {
+      $source = $this->getSiteRoot() . '../default/' . $this->source;
+    }
+
     if ($this->fileExists($file)) {
       $this->io->success(sprintf('Settings file %s not generated; already exists',
           $file)
