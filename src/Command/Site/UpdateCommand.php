@@ -104,7 +104,10 @@ class UpdateCommand extends AbstractCommand {
    */
   private function addModuleDisableCommands(&$commands) {
     if (!empty($this->config['modules']['disable'])) {
-      $commands[] = sprintf('drush dis -y %s', implode(', ', $this->config['modules']['disable']));
+      if ($this->getDrupalVersion() === 7) {
+        $commands[] = sprintf('drush pm-disable -y %s', implode(', ', $this->config['modules']['disable']));
+      }
+      $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
     }
   }
 
