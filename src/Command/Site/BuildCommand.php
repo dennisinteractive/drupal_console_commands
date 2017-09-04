@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \DennisDigital\Drupal\Console\Command\BuildCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Site\BuildCommand.
  *
  * Builds the site by calling various commands.
  */
@@ -103,6 +103,8 @@ class BuildCommand extends AbstractCommand {
     if (isset($this->inputOptions['skip'])) {
       $this->skip = explode(',', $this->inputOptions['skip']);
     }
+    // Trim input.
+    $this->skip = array_map('trim', $this->skip);
   }
 
   /**

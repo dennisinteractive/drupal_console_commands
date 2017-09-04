@@ -34,6 +34,11 @@ services:
     arguments: [ '@console.configuration_manager', '@app.root']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
+  console.site_settings_local:
+    class: \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand
+    arguments: [ '@console.configuration_manager', '@app.root']
+    tags:
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_settings_db:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\DbCommand
     arguments: [ '@console.configuration_manager', '@app.root']
