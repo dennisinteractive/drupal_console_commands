@@ -27,7 +27,8 @@ class Command extends AbstractCommand {
    *
    * @var
    */
-  protected $filename = 'settings.local.php';
+  protected $source = 'default.settings.php';
+  protected $filename = 'settings.php';
 
   /**
    * {@inheritdoc}
@@ -57,14 +58,12 @@ class Command extends AbstractCommand {
     // Generate settings.php from default.settings.php.
     $this->generateSettingsPhp();
 
-    // Generate settings.local.php.
-    $this->generateSettingsLocal();
-
     // Generate environment specific settings.
     $this->generateSettingsEnv();
 
     // Run commands with default arguments.
     $commands = array(
+      'site:settings:local',
       'site:settings:db',
       'site:settings:memcache'
     );
@@ -147,83 +146,30 @@ class Command extends AbstractCommand {
    * This file should be included via settings.php.
    */
   protected function generateSettingsPhp() {
-    $template = sprintf(
-      '%sdefault.settings.php',
-      $this->getSiteRoot(),
-      $this->getEnv()
-    );
-
-    $destination = sprintf(
-      '%ssettings.php',
-      $this->getSiteRoot(),
-      $this->getEnv()
-    );
-
-    if (file_exists($template)) {
-      // Remove existing file.
-      if ($this->fileExists($destination)) {
-        $this->fileUnlink($destination);
-      }
-
-      // Copy the template into web/sites/[site name].
-      copy($template, $destination);
-
-      if ($this->fileExists($destination)) {
-        $this->io->success(sprintf('Generated %s',
-            $destination)
-        );
-      }
-      else {
-        throw new CommandException(sprintf('Error generating %s',
-            $destination
-          )
-        );
-      }
-    }
-  }
-
-  /**
-   * Generates settings.local.php.
-   *
-   * If the site contains a file on web/sites/example.settings.local.php it will
-   * make a copy to web/sites/site-name/settings.local.php and replace tokens.
-   * If the template doesn't exist it will create one.
-   */
-  protected function generateSettingsLocal() {
 
     // Validation.
-    $template = $this->getSiteRoot() . '../example.' . $this->filename;
+    $source = $this->getSiteRoot() . $this->source;
     $file = $this->getSiteRoot() . $this->filename;
 
-    if (!$this->fileExists($template)) {
-      $this->io->writeln(sprintf(
-        "Cannot find %s.",
-          $template
-        )
-      );
-      // Create one.
-      $template = '/tmp/example.' . $this->filename;
-      $this->filePutContents($template, "<?php\n/**\n * This file was generated automatically.\n*/");
+    if ($this->getDrupalVersion() == '7') {
+      $source = $this->getSiteRoot() . '../default/' . $this->source;
     }
 
-    // Remove existing file.
     if ($this->fileExists($file)) {
-      $this->fileUnlink($file);
+      $this->io->success(sprintf('Settings file %s not generated; already exists',
+          $file)
+      );
+      return;
     }
 
-    $host = isset($this->config['host']) ? $this->config['host'] : '';
-    $cdn = isset($this->config['cdn']) ? $this->config['cdn'] : '';
+    // Load from source.
+    $content = $this->loadTemplate(__FILE__, $this->source);
 
-    // Load from template.
-    $content = $this->loadTemplate(__FILE__, $this->filename);
-
-    // Replace tokens.
+    // Remove <?php.
     $content = str_replace('<?php', '', $content);
-    $content = str_replace('${cdn}', $cdn, $content);
-    $content = str_replace('${host}', $host, $content);
 
-    // Prepend example file.
-    $content = $this->fileGetContents($template) . PHP_EOL . $content;
+    // Prepend settings file.
+    $content = $this->fileGetContents($source) . PHP_EOL . $content;
 
     // Write file.
     $this->filePutContents($file, $content);
