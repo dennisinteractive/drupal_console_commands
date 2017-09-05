@@ -174,27 +174,6 @@ class DbImportCommand extends AbstractCommand {
       throw new CommandException($shellProcess->getOutput());
     }
 
-    // Only Drupal8, update UUID from system.site.yml if it exists
-    if ($this->getDrupalVersion() === 8) {
-
-      if ($configCommand = $this->getSetSiteUuidCommands()) {
-        $this->io->commentBlock($configCommand);
-
-        // Run.
-        $shellProcess = $this->getShellProcess();
-
-        if ($shellProcess->exec($configCommand, TRUE)) {
-          $this->io->writeln($shellProcess->getOutput());
-          $this->io->success('UUID updated.');
-        }
-        else {
-          throw new CommandException($shellProcess->getOutput());
-        }
-      }
-      else {
-        $this->io->commentBlock('system.site.yml not found. No UUID update required.');
-      }
-    }
   }
 
   /**
@@ -224,30 +203,13 @@ class DbImportCommand extends AbstractCommand {
     $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
     $commands[] = sprintf('drush sql-create -y');
     $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
-    return $commands;
-  }
-
-  /**
-   * Helper to return command to set the UUID from config.
-   * This checks if system.site.yml file exists before running the command.
-   */
-  protected function getSetSiteUuidCommands() {
     // Drupal 8 only;
-    $this->io->comment('Setting the UUID');
-    $shellProcess = $this->getShellProcess()->printOutput(FALSE);
-    if ($shellProcess->exec('cd /vagrant/repos/d8-site-example/web && drush eval "global \$config_directories; echo json_encode(\$config_directories);"', TRUE)) {
-      if ($conf = json_decode($shellProcess->getOutput())) {
-        if (isset($conf->sync)) {
-          $config = $this->getWebRoot() . $conf->sync . '/system.site.yml';
-          $this->io->comment('Checking for system.site.yml.');
-          if ($this->fileExists($config)) {
-            $this->io->comment('system.site.yml found, updating UUID.');
-            $configCommand = 'cd /vagrant/repos/d8-site-example/web && drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
-            return $configCommand;
-          }
-        }
-      }
+    // Set site UUID from config.
+    if ($this->getDrupalVersion() === 8) {
+      $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
     }
+
+    return $commands;
   }
 
   /**
