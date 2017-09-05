@@ -154,6 +154,7 @@ class DbImportCommand extends AbstractCommand {
     else {
       // If a dump file wasn't found, do a fresh site install
       $commands = $this->getSiteInstallCommands($options);
+      $install = TRUE;
     }
     $command = implode(' && ', $commands);
 
@@ -175,7 +176,7 @@ class DbImportCommand extends AbstractCommand {
     }
 
     // Only Drupal8, update UUID from system.site.yml if it exists
-    if ($this->getDrupalVersion() === 8) {
+    if ($this->getDrupalVersion() === 8 && isset($install)) {
 
       if ($configCommand = $this->getSetSiteUuidCommands()) {
         $this->io->commentBlock($configCommand);
@@ -229,20 +230,30 @@ class DbImportCommand extends AbstractCommand {
 
   /**
    * Helper to return command to set the UUID from config.
+   * Drupal 8 only.
    * This checks if system.site.yml file exists before running the command.
    */
   protected function getSetSiteUuidCommands() {
-    // Drupal 8 only;
     $this->io->comment('Setting the UUID');
     $shellProcess = $this->getShellProcess()->printOutput(FALSE);
-    if ($shellProcess->exec('cd /vagrant/repos/d8-site-example/web && drush eval "global \$config_directories; echo json_encode(\$config_directories);"', TRUE)) {
+
+    // Shell commands
+    $shellCommand[] = sprintf('cd %s', $this->getWebRoot());
+    $shellCommand[] = sprintf('drush eval "global \$config_directories; echo json_encode(\$config_directories);"');
+    $shellCommand = implode(' && ', $shellCommand);
+
+    // Config commands
+    $command[] = sprintf('cd %s', $this->getWebRoot());
+    $command[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
+    $configCommand = implode(' && ', $command);
+
+    if ($shellProcess->exec($shellCommand, TRUE)) {
       if ($conf = json_decode($shellProcess->getOutput())) {
         if (isset($conf->sync)) {
           $config = $this->getWebRoot() . $conf->sync . '/system.site.yml';
           $this->io->comment('Checking for system.site.yml.');
           if ($this->fileExists($config)) {
             $this->io->comment('system.site.yml found, updating UUID.');
-            $configCommand = 'cd /vagrant/repos/d8-site-example/web && drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
             return $configCommand;
           }
         }
