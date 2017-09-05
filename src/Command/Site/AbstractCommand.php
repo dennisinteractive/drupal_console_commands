@@ -121,6 +121,13 @@ abstract class AbstractCommand extends Command {
   protected $env = NULL;
 
   /**
+   * Stores the url to the config files
+   *
+   * @var string
+   */
+  protected $configUrl = NULL;
+
+  /**
    * Constructor.
    */
   public function __construct(
@@ -672,6 +679,28 @@ abstract class AbstractCommand extends Command {
     $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->getDrupalVersion() . '/' . $templateName;
 
     return file_get_contents($template);
+  }
+
+  /**
+   * Helper to check whether config files exist.
+   *
+   * @return string.
+   */
+  protected function getConfigUrl() {
+    $shellProcess = $this->getShellProcess()->printOutput(FALSE);
+
+    // Shell commands
+    $command[] = sprintf('cd %s', $this->getWebRoot());
+    $command[] = sprintf('drush eval "global \$config_directories; echo json_encode(\$config_directories);"');
+    $command = implode(' && ', $command);
+
+    if ($shellProcess->exec($command, TRUE)) {
+      if ($conf = json_decode($shellProcess->getOutput())) {
+        if ($this->configUrl = $conf->sync) {
+          return $this->configUrl;
+        }
+      }
+    }
   }
 
 }

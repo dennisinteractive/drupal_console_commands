@@ -235,28 +235,18 @@ class DbImportCommand extends AbstractCommand {
    */
   protected function getSetSiteUuidCommands() {
     $this->io->comment('Setting the UUID');
-    $shellProcess = $this->getShellProcess()->printOutput(FALSE);
-
-    // Shell commands
-    $shellCommand[] = sprintf('cd %s', $this->getWebRoot());
-    $shellCommand[] = sprintf('drush eval "global \$config_directories; echo json_encode(\$config_directories);"');
-    $shellCommand = implode(' && ', $shellCommand);
 
     // Config commands
     $command[] = sprintf('cd %s', $this->getWebRoot());
     $command[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
     $configCommand = implode(' && ', $command);
 
-    if ($shellProcess->exec($shellCommand, TRUE)) {
-      if ($conf = json_decode($shellProcess->getOutput())) {
-        if (isset($conf->sync)) {
-          $config = $this->getWebRoot() . $conf->sync . '/system.site.yml';
-          $this->io->comment('Checking for system.site.yml.');
-          if ($this->fileExists($config)) {
-            $this->io->comment('system.site.yml found, updating UUID.');
-            return $configCommand;
-          }
-        }
+    if ($this->getConfigUrl() != NULL) {
+      $config = $this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml';
+      $this->io->comment('Checking for system.site.yml.');
+      if ($this->fileExists($config)) {
+        $this->io->comment('system.site.yml found, updating UUID.');
+        return $configCommand;
       }
     }
   }

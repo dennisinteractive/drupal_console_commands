@@ -69,8 +69,10 @@ class UpdateCommand extends AbstractCommand {
       $commands[] = 'drush updb -y';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
-      $commands[] = 'drush cim -y';
-      $commands[] = 'drush cim -y';
+      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
+        $commands[] = 'drush cim -y';
+        $commands[] = 'drush cim -y';
+      }
       $commands[] = 'drush sset system.maintenance_mode 0';
       $commands[] = 'drush cr';
     }
