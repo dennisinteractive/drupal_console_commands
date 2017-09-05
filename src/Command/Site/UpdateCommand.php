@@ -69,8 +69,10 @@ class UpdateCommand extends AbstractCommand {
       $commands[] = 'drush updb -y';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
-      $commands[] = 'drush cim -y';
-      $commands[] = 'drush cim -y';
+      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
+        $commands[] = 'drush cim -y';
+        $commands[] = 'drush cim -y';
+      }
       $commands[] = 'drush sset system.maintenance_mode 0';
       $commands[] = 'drush cr';
     }
@@ -104,7 +106,10 @@ class UpdateCommand extends AbstractCommand {
    */
   private function addModuleDisableCommands(&$commands) {
     if (!empty($this->config['modules']['disable'])) {
-      $commands[] = sprintf('drush dis -y %s', implode(', ', $this->config['modules']['disable']));
+      if ($this->getDrupalVersion() === 7) {
+        $commands[] = sprintf('drush pm-disable -y %s', implode(', ', $this->config['modules']['disable']));
+      }
+      $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
     }
   }
 
