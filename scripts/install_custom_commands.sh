@@ -5,7 +5,7 @@ set -x
 
 DIRECTORY=~/.console/extend
 PACKAGE=dennisdigital/drupal_console_commands
-BRANCH=site_build_command
+BRANCH=site_example
 
 # Build package
 cd ${DIRECTORY}
