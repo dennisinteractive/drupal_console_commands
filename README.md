@@ -8,9 +8,9 @@ Provides custom Drupal console commands and chains.
 
 ## Installation
 
-curl -L https://goo.gl/JHDmy9 | sh
+curl -L https://goo.gl/DcpKPN | sh
 
-or install it manually
+or install it manually:
 
 ### Requirements:
  - Composer: https://getcomposer.org/download/
