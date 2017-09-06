@@ -15,6 +15,6 @@ PATH="${PHP_FOLDER}/:$PATH" composer require ${PACKAGE}:${BRANCH}-dev
 cp vendor/${PACKAGE}/chain/*.yml ../chain
 
 # Copy example sites
-cp sites/*.yml ../sites
+cp vendor/${PACKAGE}/sites/*.yml ../sites
 
 drupal debug:site
