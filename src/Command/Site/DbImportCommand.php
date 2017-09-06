@@ -241,7 +241,7 @@ class DbImportCommand extends AbstractCommand {
     $command[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
     $configCommand = implode(' && ', $command);
 
-    if ($this->getConfigUrl() != NULL) {
+    if (!is_null($this->getConfigUrl())) {
       $config = $this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml';
       $this->io->comment('Checking for system.site.yml.');
       if ($this->fileExists($config)) {
