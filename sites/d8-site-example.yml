@@ -2,7 +2,7 @@ dev:
   name: d8-site-example
   profile: standard
   root: /var/www/drupal8_core_dir/sites/example
-  web_directory: /web/core
+  web_directory: /web
   host: http://d8-example.local
   cdn: http://d8-example.com
   account-name: admin
