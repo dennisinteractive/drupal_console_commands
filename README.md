@@ -8,7 +8,7 @@ Provides custom Drupal console commands and chains.
 
 ## Installation
 
-curl -L https://goo.gl/UnjUuW | sh
+curl -L https://goo.gl/JHDmy9 | sh
 
 or install it manually
 
@@ -99,11 +99,14 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:settings** *site-name*
     - Runs `site:settings:db`
     - Runs `site:settings:memcache`
-	- Creates *settings.local.php* in the *web/sites/[site name]* directory. This file is auto-generated and should not be committed.
-	If you have a file named `web/sites/example.settings.local.php` on the site's folder, it will be used as a template for settings.local.php.
-	- Creates *web/sites/[site name]/settings.[env].php*. These files are auto-generated and should not be committed.
-	Depending on your environment (--env option), it will copy the respective file into *web/sites/[site name]*. i.e. default.settings.dev.php -> settings.dev.php
-	It is recommended to add settings.*.php to .gitignore.
+    - Creates *settings.php* using *default.settings.php* provided by Drupal core, then appends includes for the settings below:
+      - *settings.db.php* Database credentials.
+      - *settings.memcache.php* Memcache configuration.
+	  - *settings.local.php* in the *web/sites/[site name]* directory. This file is auto-generated and should not be committed. If you have a file named `web/sites/example.settings.local.php` on the site's folder, it will be used as a template for settings.local.php.
+	  - *settings.[env].php* These files are auto-generated and should not be committed. Depending on your environment (--env option), it will copy the respective file into *web/sites/[site name]*. i.e. default.settings.dev.php -> settings.dev.php
+	  - *settings.mine.php* Use this file to add your personal customisations to override all of the above.
+
+  **It is recommended to add settings.*.php to .gitignore.**
 
 - drupal **site:settings:db** *site-name*
 	Creates *settings.db.php* in the *web/sites/default* folder. This file contains DB credentials and should not be committed.
