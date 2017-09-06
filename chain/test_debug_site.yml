@@ -1,7 +1,0 @@
-command:
-  name: test:debug_site
-  description: 'Testing chains'
-commands:
-  - command: site:make
-    arguments:
-      name: %{{sitename}}

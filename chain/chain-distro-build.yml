@@ -1,0 +1,31 @@
+# Usage: drupal distro:build --branch="7.x"
+command:
+  name: distro:build
+  description: 'Builds distro.'
+vars:
+  repository: ssh://didev@didev.kilnhg.com/Drupal-Install-Profiles/dennis_distro/1-0
+  destination: /vagrant/repos
+vars:
+  branch:
+    - 7.x
+    - 7.x-1.37.x
+    - 7.x-1.36.x
+    - 7.x-1.35.x
+    - 7.x-1.34.x
+    - 7.x-1.33.x
+commands:
+# Checkout
+  - command: exec
+    arguments:
+      bin: rm -rf /tmp/dennis_distro; git clone --branch %{{branch}} %{{repository}} /tmp/dennis_distro
+# Build
+  - command: exec
+    arguments:
+      bin: echo "projects[dennis_distro][download][revision] = %{{branch}}" >> /tmp/dennis_distro/build-dennis_distro.make
+  - command: exec
+    arguments:
+      bin: rm -rf /tmp/dennis_distro_build; drush -v make --prepare-install --no-gitinfofile --working-copy /tmp/dennis_distro/build-dennis_distro.make /tmp/dennis_distro_build
+# Move to folder
+  - command: exec
+    arguments:
+      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_build %{{destination}}/docroot_%{{name}}

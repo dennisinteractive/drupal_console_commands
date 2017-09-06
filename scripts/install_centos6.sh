@@ -4,7 +4,7 @@ set +x
 
 # Checkout scripts
 REPO="https://github.com/dennisinteractive/drupal_console_commands.git"
-BRANCH="extend_properly"
+BRANCH="site_example"
 sudo rm -rf /tmp/drupal_console_commands
 git clone --branch ${BRANCH} ${REPO} /tmp/drupal_console_commands
 cd /tmp/drupal_console_commands/scripts

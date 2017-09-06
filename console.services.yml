@@ -1,4 +1,9 @@
 services:
+  console.site_build:
+    class: \DennisDigital\Drupal\Console\Command\Site\BuildCommand
+    arguments: [ '@console.configuration_manager', '@app.root']
+    tags:
+      - { name: drupal.command, bootstrap: uninstall }
   console.site_checkout:
     class: \DennisDigital\Drupal\Console\Command\Site\Checkout\CheckoutCommand
     arguments: [ '@console.configuration_manager', '@app.root']
@@ -26,6 +31,11 @@ services:
       - { name: drupal.command, bootstrap: uninstall }
   console.site_settings:
     class: \DennisDigital\Drupal\Console\Command\Site\Settings\Command
+    arguments: [ '@console.configuration_manager', '@app.root']
+    tags:
+      - { name: drupal.command, bootstrap: uninstall }
+  console.site_settings_local:
+    class: \DennisDigital\Drupal\Console\Command\Site\Settings\LocalCommand
     arguments: [ '@console.configuration_manager', '@app.root']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
