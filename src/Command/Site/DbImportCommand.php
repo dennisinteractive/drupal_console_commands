@@ -154,6 +154,7 @@ class DbImportCommand extends AbstractCommand {
     else {
       // If a dump file wasn't found, do a fresh site install
       $commands = $this->getSiteInstallCommands($options);
+      $install = TRUE;
     }
     $command = implode(' && ', $commands);
 
@@ -174,6 +175,27 @@ class DbImportCommand extends AbstractCommand {
       throw new CommandException($shellProcess->getOutput());
     }
 
+    // Only Drupal8, update UUID from system.site.yml if it exists
+    if ($this->getDrupalVersion() === 8 && isset($install)) {
+
+      if ($configCommand = $this->getSetSiteUuidCommands()) {
+        $this->io->commentBlock($configCommand);
+
+        // Run.
+        $shellProcess = $this->getShellProcess();
+
+        if ($shellProcess->exec($configCommand, TRUE)) {
+          $this->io->writeln($shellProcess->getOutput());
+          $this->io->success('UUID updated.');
+        }
+        else {
+          throw new CommandException($shellProcess->getOutput());
+        }
+      }
+      else {
+        $this->io->commentBlock('system.site.yml not found. No UUID update required.');
+      }
+    }
   }
 
   /**
@@ -203,13 +225,30 @@ class DbImportCommand extends AbstractCommand {
     $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
     $commands[] = sprintf('drush sql-create -y');
     $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
-    // Drupal 8 only;
-    // Set site UUID from config.
-    if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y';
-    }
-
     return $commands;
+  }
+
+  /**
+   * Helper to return command to set the UUID from config.
+   * Drupal 8 only.
+   * This checks if system.site.yml file exists before running the command.
+   */
+  protected function getSetSiteUuidCommands() {
+    $this->io->comment('Setting the UUID');
+
+    // Config commands
+    $command[] = sprintf('cd %s', $this->getWebRoot());
+    $command[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
+    $configCommand = implode(' && ', $command);
+
+    if (!is_null($this->getConfigUrl())) {
+      $config = $this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml';
+      $this->io->comment('Checking for system.site.yml.');
+      if ($this->fileExists($config)) {
+        $this->io->comment('system.site.yml found, updating UUID.');
+        return $configCommand;
+      }
+    }
   }
 
   /**

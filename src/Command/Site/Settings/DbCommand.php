@@ -70,7 +70,7 @@ class DbCommand extends AbstractCommand {
     $override = array(
       'db-name' => $this->config['db']['name'],
       'db-user' => $this->config['db']['user'],
-      'db-pass' => $this->config['db']['pass'],
+      'db-pass' => isset($this->config['db']['pass']) ? $this->config['db']['pass'] : '',
       'db-host' => $this->config['db']['host'],
       'db-port' => $this->config['db']['port'],
       'db-type' => $this->config['db']['type'],

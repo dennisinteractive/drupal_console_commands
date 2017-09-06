@@ -9,14 +9,14 @@
 
 namespace DennisDigital\Drupal\Console\Command\Site;
 
+
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Finder\Finder;
 use Drupal\Console\Core\Style\DrupalStyle;
-use Drupal\Console\Core\Command\Shared\CommandTrait;
+use Drupal\Console\Core\Utils\ConfigurationManager;
+use Drupal\Console\Core\Command\Command;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Utils\ShellProcess;
 use DennisDigital\Drupal\Console\Command\Drupal\Detector;
@@ -28,10 +28,8 @@ use DennisDigital\Drupal\Console\Command\Drupal\Detector;
  */
 abstract class AbstractCommand extends Command {
 
-  use CommandTrait;
-
   /**
-   * @var ConfigurationManager
+   * @var configurationManager
    */
   protected $configurationManager;
 
@@ -108,9 +106,9 @@ abstract class AbstractCommand extends Command {
   protected $url = NULL;
 
   /**
-   * Stores the container.
+   * Stores the app root.
    */
-  protected $container;
+  protected $appRoot;
 
   /**
    * Stores the drupal core version.
@@ -123,21 +121,22 @@ abstract class AbstractCommand extends Command {
   protected $env = NULL;
 
   /**
-   * Constructor.
+   * Stores the url to the config files
+   *
+   * @var string
    */
-  public function __construct()
-  {
-    parent::__construct();
-  }
+  protected $configUrl = NULL;
 
   /**
-   * @param mixed $container
+   * Constructor.
    */
-  public function setContainer($container)
-  {
-    $this->container = $container;
-    $this->configurationManager = $this->container
-      ->get('console.configuration_manager');
+  public function __construct(
+    ConfigurationManager $configurationManager,
+    $appRoot
+  ) {
+    $this->configurationManager = $configurationManager;
+    $this->appRoot = $appRoot;
+    parent::__construct();
   }
 
   /**
@@ -243,10 +242,8 @@ abstract class AbstractCommand extends Command {
       $this->options['env'] = $input->getOption('env');
     }
 
-    // Sites list.
-    $sitesDirectory = $this->configurationManager->getSitesDirectory();
-
-    $options = $this->siteList($sitesDirectory);
+    // Sites list filtered by environment.
+    $options = $this->siteList();
     if (empty($options)) {
       throw new CommandException(sprintf('No sites available for %s environment.', $this->getEnv()));
     }
@@ -330,7 +327,7 @@ abstract class AbstractCommand extends Command {
    */
   protected function getSiteRoot() {
     if (is_null($this->siteRoot)) {
-      throw new CommandException('Site root directory is not available.');
+      throw new CommandException(sprintf('Site root directory is not available in %s', $this->siteName));
     }
     return $this->siteRoot;
   }
@@ -356,13 +353,18 @@ abstract class AbstractCommand extends Command {
   protected function siteConfig(InputInterface $input) {
     $siteName = $input->getArgument('name');
 
-    $config = $this->configurationManager->readTarget($siteName . '.' . $this->getEnv());
-
+    // Support for site name without env or with env.
+    $config = $this->configurationManager->readTarget($siteName);
+    if (empty($config))
+    {
+      $config = $this->configurationManager->readTarget($siteName . '.' . $this->getEnv());
+    }
     if (empty($config))
     {
       $message = sprintf(
-        'Site not found on %s env. To see a list of available sites, run drupal site:debug',
-         $this->getEnv()
+        'Site %s not found on %s env. To see a list of available sites, run drupal debug:site',
+        $siteName,
+        $this->getEnv()
       );
       throw new CommandException($message);
     }
@@ -548,9 +550,10 @@ abstract class AbstractCommand extends Command {
 
       foreach ($items as $key => $item) {
         // Only change permissions if needed.
-        $filePerms = substr(sprintf('%o', fileperms($item)), -4);
-        if (file_exists($item) && $filePerms != '0777') {
-          $commands[] = sprintf('chmod 0777 %s', $item);
+        if (file_exists($item)) {
+          if (substr(sprintf('%o', fileperms($item)), -4) != '0777') {
+            $commands[] = sprintf('chmod 0777 %s', $item);
+          }
         }
       }
 
@@ -575,8 +578,7 @@ abstract class AbstractCommand extends Command {
    * @return ShellProcess
    */
   protected function getShellProcess() {
-    $app_root = $this->container->get('app.root');
-    return new ShellProcess($app_root);
+    return new ShellProcess($this->appRoot);
   }
 
   /**
@@ -647,44 +649,25 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Extracted from DebugCommand.
-   * This function lists all sites found in ~/.console/sites folder
-   * It will only return sites that have 'repo' configured
+   * This function lists all sites, filtering by the environment (-e)
    *
-   * @param string $sitesDirectory
-   *
-   * @return array
+   * @return array List
    */
-  private function siteList($sitesDirectory) {
-    $finder = new Finder();
-    $finder->in($sitesDirectory);
-    $finder->name("*.yml");
+  private function siteList() {
+    $sites = array_keys($this->configurationManager->getSites());
+    $siteList = array();
 
-    $tableRows = [];
-    foreach ($finder as $site) {
-      $siteName = $site->getBasename('.yml');
-      $environments = $this
-        ->configurationManager
-        ->readSite($site->getRealPath());
+    foreach ($sites as $site) {
+      $parts = explode('.', $site);
+      $environment = array_pop($parts);
 
-      if (!$environments || !is_array($environments)) {
-        continue;
-      }
-
-      foreach ($environments as $environment => $config) {
-        // Filter by option --env.
-        if ($this->getEnv() && $environment != $this->getEnv()) {
-          continue;
-        }
-
-        // Ignore site configs that don't have the repo configuration.
-        if (isset($config['repo'])) {
-          $tableRows[] = $siteName;
-        }
+      // Filter by option --env.
+      if ($this->getEnv() && $environment === $this->getEnv()) {
+        $siteList[] = str_replace('.' . $environment, '', $site);
       }
     }
 
-    return array_unique($tableRows);
+    return array_unique($siteList);
   }
 
   /**
@@ -696,6 +679,28 @@ abstract class AbstractCommand extends Command {
     $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->getDrupalVersion() . '/' . $templateName;
 
     return file_get_contents($template);
+  }
+
+  /**
+   * Helper to check whether config files exist.
+   *
+   * @return string.
+   */
+  protected function getConfigUrl() {
+    $shellProcess = $this->getShellProcess()->printOutput(FALSE);
+
+    // Shell commands
+    $command[] = sprintf('cd %s', $this->getWebRoot());
+    $command[] = sprintf('drush eval "global \$config_directories; echo json_encode(\$config_directories);"');
+    $command = implode(' && ', $command);
+
+    if ($shellProcess->exec($command, TRUE)) {
+      if ($conf = json_decode($shellProcess->getOutput())) {
+        if ($this->configUrl = $conf->sync) {
+          return $this->configUrl;
+        }
+      }
+    }
   }
 
 }

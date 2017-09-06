@@ -10,9 +10,67 @@ Provides custom Drupal console commands and chains.
 
 curl -L https://goo.gl/UnjUuW | sh
 
+or install it manually
+
+### Requirements:
+ - Composer: https://getcomposer.org/download/
+ - Launcher: https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html
+
+### Run the following:
+- Init Drupal
+```
+drupal -n --override init
+```
+
+- Set the environment i.e.
+```
+drupal settings:set environment dev
+```
+
+- Install the Drupal Extend plugin (https://github.com/hechoendrupal/drupal-console-extend)
+```cd ~/.console/
+composer create-project \
+drupal/console-extend ~/.console/extend \
+--no-interaction
+```
+
+- Remove example (optional)
+```
+cd ~/.console/extend;
+composer remove drupal/console-extend-example
+```
+
+- Install Dennis Digital Commands
+```
+cd ~/.console/extend;
+composer require dennisdigital/drupal_console_commands:extend_properly-dev
+```
+
+- Copy chain commands
+```
+cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
+```
+
+- Copy the *sites.yml* into *~/.console/sites*
+
+You can copy the site-example.yml found in the sites folder.
+
 ## Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
 e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/example/site-example.yml
+
+- drupal **site:build** Runs the following commands to build a site:
+    - site:checkout
+    - site:compose|make
+    - site:npm
+    - site:grunt
+    - site:settings
+    - site:phpunit:setup
+    - site:behat:setup
+    - site:db:import
+    - site:update
+    options:
+    - skip: Used to skip one or more commands. i.e. --skip="checkout, phpunit:setup"'
 
 - drupal **site:new**
 	Builds a new site using Drupal project as template https://github.com/dennisinteractive/drupal-project
@@ -26,16 +84,16 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
 - drupal **site:checkout:branch** *site-name* --branch
 	Performs a git clone and checks out the specified branch
 
-- drupal **site:compose** *site-name*
+- drupal **site:compose** *site-name* Runs composer install
 	Runs *composer*
 
-- drupal **site:make** *site-name*
+- drupal **site:make** *site-name* Runs drush make
 	Runs *drush make*
 
-- drupal **site:npm**
+- drupal **site:npm** Compiles npm packages
   Runs NPM
 
-- drupal **site:grunt**
+- drupal **site:grunt** Compiles grunt packages
   Runs Grunt
 
 - drupal **site:settings** *site-name*
@@ -82,29 +140,8 @@ e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands
       - ./behat %s' (Runs behat tests)
       - ./vendor/bin/phpunit (Runs phpunit tests)
 
-## Chains
-Chains that can be reused on various environments
-
-- drupal **site:test:setup** Sets the test suites
-    - site:phpunit:setup
-    - site:behat:setup
-
 ## Environment specific chains
 Each environment will have its own chain that executes the relevant commands and chains
-
-### Dev
-- drupal **site:build** Builds a site for development
-    - site:checkout
-    - site:rebuild (chain)
-
-- drupal **site:rebuild** Performs necessary steps to rebuild the site from a given source
-    - site:compose
-    - site:npm
-    - site:grunt
-    - site:configure (chain)
-    - site:test:setup (chain)
-    - site:db:import
-    - site:update
 
 ### Artifact
 - drupal **site:build:artifact** Prepare artifacts
@@ -135,8 +172,9 @@ Each environment will have its own chain that executes the relevant commands and
   - site:update
 
 ## Useful arguments and options
-- **-h** Show all the available arguments and options
+- **-h** Show all the available arguments and options.
 - **--no-interaction** Will execute the command without asking any optional argument
+- **--skip** (site:build) Skips the execution of one or more commands.
 
 ## Environment variables
 By default, the commands will use parameters from the site.yml, but it is possible to override them using environment variables.
@@ -145,8 +183,11 @@ For example, to override the root directory you can set the variable before call
 
 `export site_destination_directory="/directory/"`
 
-## Usage example
+## Usage examples
 ```
 drupal site:build
+drupal site:build [site_name]
+drupal site:build [site_name] --branch="master"
+drupal site:build [site_name] --branch="master" --skip="compose, db:import"
 drupal site:db:import [site_name]
 ```

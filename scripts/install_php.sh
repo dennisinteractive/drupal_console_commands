@@ -1,5 +1,6 @@
 #!/bin/sh
 # Installs php 5.6
+set +x
 
 export PHP_FOLDER=/opt/php/bin
 DIRECTORY=/opt/php
