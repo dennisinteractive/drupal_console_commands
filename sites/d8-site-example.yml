@@ -1,0 +1,47 @@
+dev:
+  name: d8-site-example
+  profile: standard
+  root: /var/www/drupal8_core_dir/sites/example
+  web_directory: /web/core
+  host: http://d8-example.local
+  cdn: http://d8-example.com
+  account-name: admin
+  account-pass: demo
+  account-mail: mail@example.local
+  repo:
+    type: git
+    url: https://github.com/dennisinteractive/drupal-example-site.git
+    branch: 8.x
+  db:
+    dump: /directory/site_example.sql.gz
+    host: 127.0.0.1
+    name: d8_site_example
+    user: root
+    port: 3306
+    type: mysql
+  modules:
+    enable:
+      - devel
+    disable:
+      - varnish
+prod:
+  name: d8-site-example
+  profile: standard
+  root: /var/www/drupal8_core_dir/sites/example
+  web_directory: /
+  host: http://d8-example.com
+  cdn: http://d8-example.com
+  account-name: admin
+  account-pass: demo
+  account-mail: mail@example.local
+  repo:
+    type: git
+    url: https://github.com/dennisinteractive/drupal-example-site.git
+    branch: 8.x
+  db:
+    dump: /directory/site_example.sql.gz
+    host: 127.0.0.1
+    name: d8_site_example
+    user: root
+    port: 3306
+    type: mysql
