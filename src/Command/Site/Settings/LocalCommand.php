@@ -9,6 +9,7 @@
 
 namespace DennisDigital\Drupal\Console\Command\Site\Settings;
 
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
@@ -26,6 +27,7 @@ class LocalCommand extends AbstractCommand {
    *
    * @var
    */
+  protected $source = '../example.settings.local.php';
   protected $filename = 'settings.local.php';
 
   /**
@@ -48,62 +50,62 @@ class LocalCommand extends AbstractCommand {
   }
 
   /**
-   * {@inheritdoc}
+   * Generates settings.local.php.
+   *
+   * If the site contains a file on web/sites/example.settings.local.php it will
+   * make a copy to web/sites/site-name/settings.local.php and replace tokens.
+   * For Drupal 7, it will look for a file called default.settings.local.php.
+   * If the template doesn't exist it will create one.
+   *
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
+    if ($this->getDrupalVersion() == '7') {
+      $this->source = 'default.settings.local.php';
+    }
+
     // Validation.
-    if (!$this->fileExists($this->getSiteRoot() . '../example.' . $this->filename)) {
-      $message = sprintf('The file example.settings.local.php is missing.',
-        $this->getSiteRoot()
+    $source = $this->getSiteRoot() . $this->source;
+    $file = $this->getSiteRoot() . $this->filename;
+
+    if (!$this->fileExists($source)) {
+      $this->io->writeln(sprintf(
+          "Cannot find %s.",
+          $source
+        )
       );
-      throw new CommandException($message);
+      // Create one.
+      $source = '/tmp/' . $this->filename;
+      $this->filePutContents($source, "<?php\n/**\n * This file was generated automatically.\n*/");
     }
 
     // Remove existing file.
-    $file = $this->getSiteRoot() . $this->filename;
     if ($this->fileExists($file)) {
       $this->fileUnlink($file);
     }
 
-    // Copy example.
-    $command = sprintf('cd %s && cp -n ../example.%s %s',
-      $this->shellPath($this->getSiteRoot()),
-      $this->filename,
-      $this->filename
-    );
-    $shellProcess = $this->getShellProcess();
-    if (!$shellProcess->exec($command, TRUE)) {
-      throw new CommandException(sprintf('Error generating %s',
-          $this->filename
-        )
-      );
-    }
+    $host = isset($this->config['host']) ? $this->config['host'] : '';
+    $cdn = isset($this->config['cdn']) ? $this->config['cdn'] : '';
 
-    // Load the file.
-    $content = $this->fileGetContents($file);
+    // Load from template.
+    $content = $this->loadTemplate(__FILE__, $this->filename);
 
-    $host= $this->config['host'];
-    $cdn = $this->config['cdn'];
+    // Replace tokens.
+    $content = str_replace('<?php', '', $content);
+    $content = str_replace('${cdn}', $cdn, $content);
+    $content = str_replace('${host}', $host, $content);
 
-    // Append configuration.
-    $content .= <<<EOF
+    // Prepend example file.
+    $content = $this->fileGetContents($source) . PHP_EOL . $content;
 
-// Set Stage file proxy origin.
-\$config['stage_file_proxy.settings']['origin'] = '$cdn';
-
-// Change CDN domain to local.
-\$config['cdn.settings']['mapping']['domain'] = '$host';
-
-EOF;
-
+    // Write file.
     $this->filePutContents($file, $content);
 
     // Check file.
     if ($this->fileExists($file)) {
       $this->io->success(sprintf('Generated %s',
-          $file)
+        $file)
       );
     }
     else {

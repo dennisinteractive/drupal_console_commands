@@ -84,14 +84,13 @@ class MemcacheCommand extends AbstractCommand {
     // Prepare content.
     $memcache_prefix = $input->getOption('memcache-prefix');
 
-    $content = <<<EOF
-<?php
-\$settings['memcache']['servers'] = ['127.0.0.1:11211' => 'default'];
-\$settings['memcache']['bins'] = ['default' => 'default'];
-\$settings['memcache']['key_prefix'] = '$memcache_prefix';
-\$settings['memcache']['stampede_protection'] = TRUE;
-EOF;
+    // Load from template.
+    $content = $this->loadTemplate(__FILE__, $this->filename);
 
+    // Replace tokens.
+    $content = str_replace('${memcache_prefix}', $memcache_prefix, $content);
+
+    // Write file.
     $this->filePutContents($file, $content);
 
     // Check file.

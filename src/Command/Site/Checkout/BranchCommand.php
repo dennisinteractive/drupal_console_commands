@@ -48,12 +48,12 @@ class BranchCommand extends AbstractRefCommand {
     $branch = $input->getOption('branch');
     if (!$branch) {
 
-      $options = array_values(array_unique(array_merge(
+      $options = array_filter(array_values(array_unique(array_merge(
         ['8.x'],
         [$defaultBranch],
         [$this->currentRef],
         $remoteBranches
-      )));
+      ))));
 
       $branch = $this->io->choice(
         $this->trans('Select a branch'),

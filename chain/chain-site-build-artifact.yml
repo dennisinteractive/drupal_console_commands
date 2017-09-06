@@ -1,4 +1,4 @@
-# Usage: drupal site:build:artifact --placeholder="name:subscriptions"
+# Usage: drupal site:build:artifact --name="subscriptions"
 command:
   name: site:build:artifact
   description: 'Prepare artifacts.'

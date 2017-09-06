@@ -1,10 +1,16 @@
+# Usage
+# drupal test:main
+# drupal test:main --project="nano"
 command:
   name: test:main
-  description: 'Example of a chain calling another chain with placeholders'
+  description: 'Example of a chain calling another chain with arguments'
+vars:
+  main-project:
+    - nano
+    - star
 commands:
   # In interactive mode, it will ask you to provide the project, default value is 'main-project'
   - command: test:child
     options:
-      placeholder:
-        - 'project:%{{project|main-project}}'
-        - 'directory:main-dir'
+      project: %{{main-project}}
+      directory: '/tmp2'

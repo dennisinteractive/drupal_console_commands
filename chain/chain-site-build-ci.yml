@@ -1,4 +1,4 @@
-# Usage: drupal site:build:ci --placeholder="name:subscriptions"
+# Usage: drupal site:build:ci --name="subscriptions"
 command:
   name: site:build:ci
   description: 'Builds site for CI.'

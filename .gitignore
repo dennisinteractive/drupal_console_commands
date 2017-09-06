@@ -4,3 +4,7 @@
 
 # Composer
 /vendor
+
+# Project
+extend.console.config.yml
+extend.console.*.yml

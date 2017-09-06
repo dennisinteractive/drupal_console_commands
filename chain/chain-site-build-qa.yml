@@ -1,4 +1,4 @@
-# Usage: drupal site:build:qa --placeholder="name:subscriptions"
+# Usage: drupal site:build:qa --name="subscriptions"
 command:
   name: site:build:qa
   description: 'Builds site for QA.'
