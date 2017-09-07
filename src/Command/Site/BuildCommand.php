@@ -175,14 +175,25 @@ class BuildCommand extends AbstractCommand {
       return;
     }
 
-    $sitesPHP = $this->getSiteRoot() . '../sites.php';
+    // Get site root from config.
+    $siteRoot = realpath($this->config['root']);
+
+    // Get the site dir (last part of the docroot)
+    $siteRootArray = explode('/', $siteRoot);
+    $siteRootArray = array_filter($siteRootArray);
+    $siteDir = array_pop($siteRootArray);
+
+    // Get sites folder (one before the last)
+    $sitesFolder = '/' . implode('/', $siteRootArray) . '/';
+
+    // Path for sites.php/
+    $sitesPHP = $sitesFolder . 'sites.php';
 
     // Check if sites.php exists otherwise try to copy from example.sites.php.
     if (!file_exists($sitesPHP)) {
-
-      $defaultSitesPHP = $this->getSiteRoot() . '../example.sites.php';
+      $defaultSitesPHP = $sitesFolder . 'example.sites.php';
       if (!file_exists($defaultSitesPHP)) {
-        throw new CommandException('Could not find sites.php or example.sites.php on ' . realpath($this->getSiteRoot() . '../'));
+        throw new CommandException("Could not find sites.php or example.sites.php on $sitesFolder");
       }
       // Copy the file.
       copy($defaultSitesPHP, $sitesPHP);
@@ -190,11 +201,6 @@ class BuildCommand extends AbstractCommand {
 
     // Append the host if necessary.
     $contents = file_get_contents($sitesPHP);
-
-    // Get the last part of the docroot.
-    $siteRoot = explode('/', $this->getSiteRoot());
-    $siteRoot = array_filter($siteRoot);
-    $siteDir = end($siteRoot);
 
     // Split site host.
     $parts = parse_url($this->config['host']);

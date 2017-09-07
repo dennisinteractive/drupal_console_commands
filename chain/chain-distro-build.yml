@@ -17,15 +17,15 @@ commands:
 # Checkout
   - command: exec
     arguments:
-      bin: rm -rf /tmp/dennis_distro; git clone --branch %{{branch}} %{{repository}} /tmp/dennis_distro
+      bin: rm -rf /tmp/dennis_distro_%{{name}}; git clone --branch %{{branch}} %{{repository}} /tmp/dennis_distro_%{{name}}
 # Build
   - command: exec
     arguments:
-      bin: echo "projects[dennis_distro][download][revision] = %{{branch}}" >> /tmp/dennis_distro/build-dennis_distro.make
+      bin: echo "projects[dennis_distro][download][revision] = %{{branch}}" >> /tmp/dennis_distro_%{{name}}/build-dennis_distro.make
   - command: exec
     arguments:
-      bin: rm -rf /tmp/dennis_distro_build; drush -v make --prepare-install --no-gitinfofile --working-copy /tmp/dennis_distro/build-dennis_distro.make /tmp/dennis_distro_build
+      bin: rm -rf /tmp/dennis_distro_%{{name}}_build; drush -v make --prepare-install --no-gitinfofile --working-copy /tmp/dennis_distro_%{{name}}/build-dennis_distro.make /tmp/dennis_distro_%{{name}}_build
 # Move to folder
   - command: exec
     arguments:
-      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_build %{{destination}}/docroot_%{{name}}
+      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_%{{name}}_build %{{destination}}/docroot_%{{name}}
