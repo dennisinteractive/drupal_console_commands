@@ -119,6 +119,7 @@ class BuildCommand extends AbstractCommand {
     // Run checkout first because Compose/Make depends on it.
     $this->runList();
 
+    $this->addSitesPhp();
     $this->addComposeMakeCommand();
     $this->addNPMCommand();
     $this->addGruntCommand();
@@ -164,6 +165,52 @@ class BuildCommand extends AbstractCommand {
     }
 
     $this->commands = array();
+  }
+
+  /**
+   * Helper to add the site host to sites.php.
+   */
+  private function addSitesPhp() {
+    if ($this->getDrupalVersion() !== 7) {
+      return;
+    }
+
+    $sitesPHP = $this->getSiteRoot() . '../sites.php';
+
+    // Check if sites.php exists otherwise try to copy from example.sites.php.
+    if (!file_exists($sitesPHP)) {
+
+      $defaultSitesPHP = $this->getSiteRoot() . '../example.sites.php';
+      if (!file_exists($defaultSitesPHP)) {
+        throw new CommandException('Could not find sites.php or example.sites.php on ' . realpath($this->getSiteRoot() . '../'));
+      }
+      // Copy the file.
+      copy($defaultSitesPHP, $sitesPHP);
+    }
+
+    // Append the host if necessary.
+    $contents = file_get_contents($sitesPHP);
+
+    // Get the last part of the docroot.
+    $siteRoot = explode('/', $this->getSiteRoot());
+    $siteRoot = array_filter($siteRoot);
+    $siteDir = end($siteRoot);
+
+    // Split site host.
+    $parts = parse_url($this->config['host']);
+
+    // Generate site config entry.
+    $config = sprintf(PHP_EOL . '$sites[\'%s%s\'] = \'%s\';' . PHP_EOL,
+      isset($parts['port']) ? $parts['port'] . '.' : '',
+      $parts['host'],
+      $siteDir
+    );
+
+    // Check if config needs to be appended.
+    if (strpos($contents, $config) === FALSE) {
+      file_put_contents($sitesPHP, $contents . $config);
+      $this->io->comment('Added ' . $this->config['host'] . ' to sites.php');
+    }
   }
 
   /**
