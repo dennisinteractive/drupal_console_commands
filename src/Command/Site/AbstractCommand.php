@@ -186,11 +186,13 @@ abstract class AbstractCommand extends Command {
   public function getDrupalVersion() {
     if (!is_numeric($this->drupalVersion)) {
       $detector = new Detector();
-      $version = $detector->getDrupalVersion($this->getWebRoot());
+
+      $webRoot = $this->getWebRoot();
+      $version = $detector->getDrupalVersion($webRoot);
       if (is_numeric($version)) {
         $this->io->comment(sprintf('Drupal %s detected.', $version));
+        $this->setDrupalVersion($version);
       }
-      $this->setDrupalVersion($version);
     }
 
     return $this->drupalVersion;

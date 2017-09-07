@@ -118,7 +118,6 @@ class BuildCommand extends AbstractCommand {
     $this->addCheckoutCommand();
     // Run checkout first because Compose/Make depends on it.
     $this->runList();
-
     $this->addSitesPhp();
     $this->addComposeMakeCommand();
     $this->addNPMCommand();

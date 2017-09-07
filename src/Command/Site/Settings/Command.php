@@ -151,7 +151,7 @@ class Command extends AbstractCommand {
     $source = $this->getSiteRoot() . $this->source;
     $file = $this->getSiteRoot() . $this->filename;
 
-    if ($this->getDrupalVersion() == '7') {
+    if ($this->getDrupalVersion() === 7) {
       $source = $this->getSiteRoot() . '../default/' . $this->source;
     }
 

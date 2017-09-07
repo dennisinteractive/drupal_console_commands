@@ -37,6 +37,7 @@ class Detector {
     if (!file_exists($drupalRoot)) {
       return;
     }
+
     $version = '';
     $this->drupalRoot = $drupalRoot;
 
@@ -44,15 +45,16 @@ class Detector {
       // Support 6, 7 and 8.
       $version_constant_paths = array(
         // Drupal 7.
-        '/includes/bootstrap.inc',
+        $this->drupalRoot . 'includes/bootstrap.inc',
+        explode('sites', $drupalRoot)[0] . 'includes/bootstrap.inc',
         // Drupal 8.
-        '/autoload.php',
-        '/core/includes/bootstrap.inc',
+        $this->drupalRoot . 'autoload.php',
+        $this->drupalRoot . 'core/includes/bootstrap.inc',
       );
 
-      foreach ($version_constant_paths as $path) {
-        if (file_exists($this->drupalRoot . $path)) {
-          require_once $this->drupalRoot . $path;
+      foreach ($version_constant_paths as $file) {
+        if (file_exists($file)) {
+          require_once $file;
         }
       }
 
@@ -62,25 +64,13 @@ class Detector {
       elseif (defined('\Drupal::VERSION')) {
         $version = \Drupal::VERSION;
       }
-      else {
-        // Could not find core. One last try.
-        // A bit magic but that is it for now.
-        $result = explode('/sites/', $drupalRoot);
-        if (is_array($result)) {
-          $version = $this->getDrupalVersion($result[0]);
-        }
-      }
 
       // Extract the major version from VERSION.
       $version_parts = explode('.', $version);
       if (is_numeric($version_parts[0])) {
-        $this->version = (integer) $version_parts[0];
-      }
-      else {
-        throw new \Exception(sprintf('Unable to extract major Drupal core version from version string %s.', $version));
+        $this->version = (int) $version_parts[0];
+        return $this->version;
       }
     }
-
-    return (int) $this->version;
   }
 }

@@ -61,7 +61,7 @@ class LocalCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    if ($this->getDrupalVersion() == '7') {
+    if ($this->getDrupalVersion() === 7) {
       $this->source = 'default.settings.local.php';
     }
 
