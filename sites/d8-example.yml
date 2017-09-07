@@ -1,7 +1,7 @@
 dev:
   name: d8-example
   profile: standard
-  root: /var/www/sites/drupal8_core_dir/sites/example
+  root: /var/www/sites/d8-example
   web_directory: /web
   host: http://d8-example.local
   cdn: http://d8-example.com
@@ -27,7 +27,7 @@ dev:
 prod:
   name: d8-example
   profile: standard
-  root: /var/www/sites/drupal8_core_dir/sites/example
+  root: /var/www/sites/d8-example
   web_directory: /
   host: http://d8-example.com
   cdn: http://d8-example.com

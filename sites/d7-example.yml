@@ -2,7 +2,7 @@ dev:
   name: d7-example
   profile: standard
   # This is the path for the site. Requires drupal installed at drupal7_core_dir
-  root: /var/www/sites/drupal7_core_dir/sites/example
+  root: /var/www/sites/docroot_d7-example/sites/example
   # For Drupal 7 sites the web_directory should be /
   web_directory: /
   host: http://d7-example.local
@@ -29,7 +29,7 @@ dev:
 prod:
   name: d7-example
   profile: standard
-  root: /var/www/sites/drupal7_core_dir/sites/example
+  root: /var/www/sites/docroot_d7-example/sites/example
   web_directory: /
   host: http://d7-example.com
   cdn: http://d7-example.com
