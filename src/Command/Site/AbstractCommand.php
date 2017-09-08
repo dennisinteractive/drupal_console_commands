@@ -244,6 +244,10 @@ abstract class AbstractCommand extends Command {
       $this->options['env'] = $input->getOption('env');
     }
 
+    if ($output->isVerbose()) {
+      $this->options['verbose'] = TRUE;
+    }
+
     // Sites list filtered by environment.
     $options = $this->siteList();
     if (empty($options)) {
@@ -289,28 +293,33 @@ abstract class AbstractCommand extends Command {
     $this->siteConfig($input);
 
     // Validate profile.
-    $this->validateProfile($input);
+    $this->setProfile($input);
 
-    // Validate root.
-    $this->validateRoot($input);
+    // Set installation directory.
+    $this->setInstallDir($input);
 
-    // Validate web root.
-    $this->validateWebRoot();
+    // Set web root.
+    $this->setWebRoot();
 
-    // Validate settings.php directory.
-    $this->validateSiteRoot();
+    // Set site root.
+    $this->setSiteRoot();
 
     // Validate url.
-    $this->validateUrl($input);
+    $this->setUrl($input);
   }
 
   /**
    * Getter for the root directory property.
    */
-  protected function getRoot() {
+  protected function getInstallDir() {
     if (is_null($this->root)) {
-      throw new CommandException('Root directory is not available.');
+      throw new CommandException('Installation directory is not available.');
     }
+
+    if (isset($this->options['verbose'])) {
+      $this->io->writeLn('Install dir: ' . $this->root);
+    }
+
     return $this->root;
   }
 
@@ -321,6 +330,11 @@ abstract class AbstractCommand extends Command {
     if (is_null($this->webRoot)) {
       throw new CommandException('Web root directory is not available.');
     }
+
+    if (isset($this->options['verbose'])) {
+      $this->io->writeLn('Web root: ' . $this->webRoot);
+    }
+
     return $this->webRoot;
   }
 
@@ -331,6 +345,11 @@ abstract class AbstractCommand extends Command {
     if (is_null($this->siteRoot)) {
       throw new CommandException(sprintf('Site root directory is not available in %s', $this->siteName));
     }
+
+    if (isset($this->options['verbose'])) {
+      $this->io->writeLn('Site root: ' . $this->siteRoot);
+    }
+
     return $this->siteRoot;
   }
 
@@ -386,7 +405,7 @@ abstract class AbstractCommand extends Command {
    *
    * @return string Profile
    */
-  protected function validateProfile(InputInterface $input) {
+  protected function setProfile(InputInterface $input) {
     if ($input->hasArgument('profile') &&
       !is_null($input->getArgument('profile'))
     ) {
@@ -411,20 +430,21 @@ abstract class AbstractCommand extends Command {
 
   /**
    * Validate and set the web root directory.
+   * This is the place were we run drush commands from.
    */
-  protected function validateWebRoot() {
+  protected function setWebRoot() {
     $web_directory = empty($this->config['web_directory']) ? 'web' : $this->config['web_directory'];
-    $this->webRoot = $this->getRoot() . trim($web_directory, '/') . '/';
+    $this->webRoot = $this->getInstallDir() . trim($web_directory, '/') . '/';
     $this->webRoot = str_replace('//', '/', $this->webRoot);
   }
 
   /**
-   * Validate and set the root directory.
+   * Validate and set the installation directory, where the website was checked out.
    *
    * @param InputInterface $input
    * @return string
    */
-  protected function validateRoot(InputInterface $input) {
+  protected function setInstallDir(InputInterface $input) {
     if ($input->hasOption('destination-directory') &&
       !is_null($input->getOption('destination-directory'))
     ) {
@@ -457,7 +477,7 @@ abstract class AbstractCommand extends Command {
    * @param InputInterface $input
    * @return string
    */
-  protected function validateUrl(InputInterface $input) {
+  protected function setUrl(InputInterface $input) {
     $scheme = isset($this->config['scheme']) && !empty($this->config['scheme']) ? $this->config['scheme'] : 'http';
 
     if (isset($this->config['host']) && !empty($this->config['host'])) {
@@ -482,7 +502,11 @@ abstract class AbstractCommand extends Command {
    *
    * @return string Path
    */
-  public function validateSiteRoot() {
+  public function setSiteRoot() {
+    if (!is_null($this->siteRoot)) {
+      return $this->siteRoot;
+    }
+
     // Support for sites that live in docroot/sites/sitename.
     if (isset($this->config['web_directory']) && $this->config['web_directory'] == '/') {
       $webSitesPath = $this->getWebRoot();
@@ -534,7 +558,6 @@ abstract class AbstractCommand extends Command {
 
     // Fix folder permissions.
     $this->fixSiteFolderPermissions();
-
     $this->siteRoot = $settingsPath;
   }
 
@@ -567,7 +590,7 @@ abstract class AbstractCommand extends Command {
 
       $this->io->commentBlock($command);
 
-      $shellProcess = $this->getShellProcess();
+      $shellProcess = $this->getShellProcess()->printOutput(FALSE);
       if (!$shellProcess->exec($command, TRUE)) {
         throw new CommandException($shellProcess->getOutput());
       }
@@ -678,6 +701,10 @@ abstract class AbstractCommand extends Command {
    * @return String The contents of the template.
    */
   function loadTemplate($file, $templateName) {
+    if (!is_numeric($this->getDrupalVersion())) {
+      throw new CommandException(sprintf('Unable to detect Drupal core version'));
+    }
+
     $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->getDrupalVersion() . '/' . $templateName;
 
     return file_get_contents($template);
