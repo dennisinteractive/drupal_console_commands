@@ -54,7 +54,7 @@ class Detector {
       $version_constant_paths = array();
       $version_constant_paths['d7_makefile'] = $drupalRoot . 'includes/bootstrap.inc';
       $version_constant_paths['d7_composer'] = realpath($drupalRoot . '../../') . '/includes/bootstrap.inc';
-      //$version_constant_paths['d8_composer'] = $drupalRoot . 'autoload.php';
+      $version_constant_paths['d8_composer_autoload'] = $drupalRoot . 'autoload.php';
       $version_constant_paths['d8_composer'] = $drupalRoot . 'core/includes/bootstrap.inc';
 
       foreach ($version_constant_paths as $file) {
