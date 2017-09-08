@@ -178,10 +178,6 @@ class BuildCommand extends AbstractCommand {
    * Helper to add the site host to sites.php.
    */
   private function addSitesPhp() {
-    if ($this->getDrupalVersion() !== 7) {
-      return;
-    }
-
     // Get site root from config.
     $siteRoot = $this->getSiteRoot();
 

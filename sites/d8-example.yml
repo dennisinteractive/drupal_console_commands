@@ -4,7 +4,7 @@
 dev:
   name: d8-example
   profile: standard
-  root: /var/www/sites/drupal/d8-example
+  root: /var/www/sites/drupal/docroot_d8-example
   web_directory: /web
   host: http://d8-example.local
   cdn: http://d8-example.com
