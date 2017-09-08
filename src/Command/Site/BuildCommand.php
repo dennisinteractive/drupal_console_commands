@@ -115,11 +115,19 @@ class BuildCommand extends AbstractCommand {
 
     $this->commands = array();
 
-    $this->addCheckoutCommand();
     // Run checkout first because Compose/Make depends on it.
+    $this->addCheckoutCommand();
     $this->runList();
-    $this->addSitesPhp();
+
+    // Run compose now because we need to have core to set the site root.
     $this->addComposeMakeCommand();
+    $this->runList();
+
+    // Add entry on sites.php.
+    $this->setSiteRoot();
+    $this->addSitesPhp();
+
+    // Queue other commands.
     $this->addNPMCommand();
     $this->addGruntCommand();
     $this->addSettingsCommand();
@@ -175,7 +183,7 @@ class BuildCommand extends AbstractCommand {
     }
 
     // Get site root from config.
-    $siteRoot = realpath($this->config['root']);
+    $siteRoot = $this->getSiteRoot();
 
     // Get the site dir (last part of the docroot)
     $siteRootArray = explode('/', $siteRoot);
@@ -192,7 +200,8 @@ class BuildCommand extends AbstractCommand {
     if (!file_exists($sitesPHP)) {
       $defaultSitesPHP = $sitesFolder . 'example.sites.php';
       if (!file_exists($defaultSitesPHP)) {
-        throw new CommandException("Could not find sites.php or example.sites.php on $sitesFolder");
+        $this->io->error("Could not find sites.php or example.sites.php on $sitesFolder");
+        return;
       }
       // Copy the file.
       copy($defaultSitesPHP, $sitesPHP);
@@ -241,20 +250,20 @@ class BuildCommand extends AbstractCommand {
    * Composer or make command.
    */
   private function addComposeMakeCommand() {
-    if (file_exists($this->getRoot() . '/composer.json')) {
+    if (file_exists($this->getInstallDir() . '/composer.json')) {
       if (in_array('compose', $this->skip)) {
         return;
       }
       $command = 'site:compose';
     }
-    elseif (file_exists($this->getRoot() . '/site.make')) {
+    elseif (file_exists($this->getInstallDir() . '/site.make')) {
       if (in_array('make', $this->skip)) {
         return;
       }
       $command = 'site:make';
     }
     else {
-      throw new CommandException(sprintf('Could not find composer.json or site.make in %s', $this->getRoot()));
+      throw new CommandException(sprintf('Could not find composer.json or site.make in %s', $this->getInstallDir()));
     }
 
     $this->commands[] = array(

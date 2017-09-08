@@ -28,4 +28,8 @@ commands:
 # Move to folder
   - command: exec
     arguments:
-      bin: rm -rf %{{destination}}/%{{branch}}; mv /tmp/dennis_distro_%{{name}}_build %{{destination}}/docroot_%{{name}}
+      bin: rm -rf %{{destination}}/docroot_%{{name}}; mv /tmp/dennis_distro_%{{name}}_build %{{destination}}/docroot_%{{name}}
+# Display message
+  - command: exec
+    arguments:
+      bin: echo Distro built on  %{{destination}}/docroot_%{{name}}

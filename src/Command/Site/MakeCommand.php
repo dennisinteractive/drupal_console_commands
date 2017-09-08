@@ -43,9 +43,9 @@ class MakeCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    if (!$this->fileExists($this->getRoot() . 'site.make')) {
+    if (!$this->fileExists($this->getInstallDir() . 'site.make')) {
       $message = sprintf('The file site.make is missing on %s',
-        $this->getRoot()
+        $this->getInstallDir()
       );
       throw new CommandException($message);
     }
@@ -66,7 +66,7 @@ class MakeCommand extends AbstractCommand {
   protected function runCommand($command) {
     $command = sprintf(
       'cd %s && drush %s',
-      $this->shellPath($this->getRoot()),
+      $this->shellPath($this->getInstallDir()),
       $command
     );
     $this->io->commentBlock($command);
@@ -75,7 +75,7 @@ class MakeCommand extends AbstractCommand {
 
     //@todo Show a progress bar.
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success(sprintf('Site built on %s', $this->getRoot()));
+      $this->io->success(sprintf('Site built on %s', $this->getInstallDir()));
     }
     else {
       throw new CommandException($shellProcess->getOutput());

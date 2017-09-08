@@ -15,7 +15,7 @@ class Detector {
   /**
    * Stores the drupal root.
    */
-  protected $drupalRoot;
+  //protected $drupalRoot;
 
   /**
    * Constructor.
@@ -39,22 +39,29 @@ class Detector {
     }
 
     $version = '';
-    $this->drupalRoot = $drupalRoot;
 
     if (!isset($this->version)) {
-      // Support 6, 7 and 8.
-      $version_constant_paths = array(
-        // Drupal 7.
-        $this->drupalRoot . 'includes/bootstrap.inc',
-        explode('sites', $drupalRoot)[0] . 'includes/bootstrap.inc',
-        // Drupal 8.
-        $this->drupalRoot . 'autoload.php',
-        $this->drupalRoot . 'core/includes/bootstrap.inc',
-      );
+      /**
+       * Test possible Drupal core directories.
+       * Examples:
+       *   Drupal 7 using make files
+       *     root: /var/www/sites/drupal/docroot_d7-example/sites/example
+       *   Drupal 7 using composer
+       *     root: /var/www/sites/drupal/docroot_d7-example
+       *   Drupal 8
+       *     root: /var/www/sites/drupal/docroot_d8-example
+       */
+      $version_constant_paths = array();
+      $version_constant_paths['d7_makefile'] = $drupalRoot . 'includes/bootstrap.inc';
+      $version_constant_paths['d7_composer'] = realpath($drupalRoot . '../../') . '/includes/bootstrap.inc';
+      //$version_constant_paths['d8_composer'] = $drupalRoot . 'autoload.php';
+      $version_constant_paths['d8_composer'] = $drupalRoot . 'core/includes/bootstrap.inc';
 
       foreach ($version_constant_paths as $file) {
         if (file_exists($file)) {
           require_once $file;
+
+          continue;
         }
       }
 
@@ -69,6 +76,7 @@ class Detector {
       $version_parts = explode('.', $version);
       if (is_numeric($version_parts[0])) {
         $this->version = (int) $version_parts[0];
+
         return $this->version;
       }
     }

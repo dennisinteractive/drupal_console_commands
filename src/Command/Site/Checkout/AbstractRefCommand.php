@@ -73,15 +73,13 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
     $this->io->comment(sprintf('Checking out %s (%s) on %s',
       $this->siteName,
       $this->ref,
-      $this->getRoot()
+      $this->getInstallDir()
     ));
 
     switch ($this->repo['type']) {
       case 'git':
         // Check if repo exists and has any changes.
-        if ($this->fileExists($this->getRoot()) &&
-          $this->fileExists($this->getRoot() . '.' . $this->repo['type'])
-        ) {
+        if ($this->hasRepo()) {
           if ($input->hasOption('force') &&
             !$input->getOption('force')
           ) {
@@ -133,7 +131,7 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
   protected function gitDiff() {
     $command = sprintf(
       'cd %s && git diff-files --name-status -r --ignore-submodules',
-      $this->shellPath($this->getRoot())
+      $this->shellPath($this->getInstallDir())
     );
 
     $shellProcess = $this->getShellProcess();
@@ -143,7 +141,7 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
         $message = sprintf('You have uncommitted changes on %s' . PHP_EOL .
           'Please commit or revert your changes before checking out the site.' . PHP_EOL .
           'If you want to wipe your local changes use --force.',
-          $this->getRoot()
+          $this->getInstallDir()
         );
         throw new CommandException($message);
       }
@@ -165,14 +163,14 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
   protected function gitClone() {
     $command = sprintf('git clone %s %s',
       $this->repo['url'],
-      $this->shellPath($this->getRoot())
+      $this->shellPath($this->getInstallDir())
     );
     $this->io->commentBlock($command);
 
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->success(sprintf('Repo cloned on %s', $this->getRoot()));
+      $this->io->success(sprintf('Repo cloned on %s', $this->getInstallDir()));
     }
     else {
       throw new CommandException($shellProcess->getOutput());
@@ -196,7 +194,7 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
     $commands = [];
 
     // Checkout commands.
-    $commands[] = sprintf('cd %s', $this->shellPath($this->getRoot()));
+    $commands[] = sprintf('cd %s', $this->shellPath($this->getInstallDir()));
     $commands[] = 'git fetch --all';
     $commands[] = sprintf('git checkout %s --force', $this->ref);
 
@@ -221,10 +219,10 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
    * @return mixed
    */
   protected function getCurrentRef() {
-    if ($this->fileExists($this->getRoot())) {
+    if ($this->hasRepo()) {
       // Get branch from site directory.
       $command = sprintf('cd %s && git branch',
-        $this->shellPath($this->getRoot())
+        $this->shellPath($this->getInstallDir())
       );
 
       $shellProcess = $this->getShellProcess()->printOutput(FALSE);
@@ -246,4 +244,13 @@ abstract class AbstractRefCommand extends AbstractCheckoutCommand {
    * @return string
    */
   abstract protected function getRef(InputInterface $input);
+
+  /**
+   * Helper to detect if there is a repo on the path.
+   *
+   * @param $path
+   */
+  protected function hasRepo() {
+    return $this->fileExists($this->getInstallDir() . '.' . $this->repo['type']);
+  }
 }

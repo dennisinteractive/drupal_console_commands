@@ -83,7 +83,7 @@ class TestCommand extends AbstractCommand {
     ));
 
     $commands = [];
-    $commands[] = sprintf('cd %s; ./vendor/bin/phpunit', $this->shellPath($this->getRoot()));
+    $commands[] = sprintf('cd %s; ./vendor/bin/phpunit', $this->shellPath($this->getInstallDir()));
     $commands[] = sprintf('cd tests; ./behat %s', $this->behatTags);
     $command = implode(' ; ', $commands);
 
