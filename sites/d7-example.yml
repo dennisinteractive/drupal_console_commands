@@ -1,5 +1,4 @@
 # Config for Drupal 7 sites with make files
-# Examples:
 # drupal distro:build -e dev --branch=7.x --name=d7-example --destination=/var/www/sites/drupal
 # drupal site:build d7-example -e dev --branch=7.x
 dev:
@@ -7,11 +6,11 @@ dev:
   profile: standard
   root: /var/www/sites/drupal/docroot_d7-example/sites/example
   web_directory: /
-  host: http://d7-example.local
+  host: http://d7-example.dev
   cdn: http://d7-example.com
   account-name: admin
   account-pass: demo
-  account-mail: mail@example.local
+  account-mail: mail@example.dev
   repo:
     type: git
     url: https://github.com/dennisinteractive/drupal-example-site.git
@@ -30,9 +29,8 @@ dev:
       - varnish
 
 # Config for Drupal 7 sites with make files
-# Examples:
 # drupal distro:build -e local --branch=7.x --name=d7-example --destination=/Users/Shared/sites
-# drupal site:build d7-example-devdesktop -e local --branch=7.x
+# drupal site:build d7-example -e local --branch=7.x
 local:
   name: d7-example
   profile: standard
