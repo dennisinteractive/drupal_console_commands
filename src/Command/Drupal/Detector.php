@@ -13,11 +13,6 @@ class Detector {
   protected $version;
 
   /**
-   * Stores the drupal root.
-   */
-  //protected $drupalRoot;
-
-  /**
    * Constructor.
    */
   public function __construct()
