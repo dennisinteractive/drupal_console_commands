@@ -51,13 +51,9 @@ composer require dennisdigital/drupal_console_commands:extend_properly-dev
 cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
 ```
 
-- Copy the *sites.yml* into *~/.console/sites*
-
-You can copy the site-example.yml found in the sites folder.
-
 ## Commands
 These are custom commands used to build a site. The information about the site comes from ~/.console/sites/site-name.yml.
-e.g. https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/example/site-example.yml
+See some example site yml on https://github.com/dennisinteractive/drupal_console_commands/tree/master/sites
 
 - drupal **site:build** Runs the following commands to build a site:
     - site:checkout
@@ -189,8 +185,8 @@ For example, to override the root directory you can set the variable before call
 ## Usage examples
 ```
 drupal site:build
-drupal site:build [site_name]
-drupal site:build [site_name] --branch="master"
-drupal site:build [site_name] --branch="master" --skip="compose, db:import"
-drupal site:db:import [site_name]
+drupal site:build d7-example
+drupal site:build d7-example -e dev --branch="master"
+drupal site:build d7-example -e dev --branch="master" --skip="checkout, compose"
+drupal site:db:import d7-example
 ```
