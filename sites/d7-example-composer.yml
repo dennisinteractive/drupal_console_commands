@@ -27,3 +27,33 @@ dev:
       - devel
     disable:
       - varnish
+
+# Config for Drupal 7 site with composer
+#
+# drupal site:build d7-example-composer-devdesktop -e local --branch=7.x-composer
+local:
+  name: d7-example-composer
+  profile: standard
+  root: /Users/Shared/sites/docroot_d7-example
+  web_directory: /web/core
+  host: http://d7-example.dd:8083
+  cdn: http://d7-example.com
+  account-name: admin
+  account-pass: demo
+  account-mail: mail@example.local
+  repo:
+    type: git
+    url: https://github.com/dennisinteractive/drupal-example-site.git
+    branch: 7.x-composer
+  db:
+    dump: /tmp/d7-example.sql.gz
+    host: 127.0.0.1
+    name: d7_example
+    user: root
+    port: 33067
+    type: mysql
+  modules:
+    enable:
+      - devel
+    disable:
+      - varnish

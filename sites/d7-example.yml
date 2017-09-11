@@ -28,12 +28,17 @@ dev:
       - devel
     disable:
       - varnish
-prod:
+
+# Config for Drupal 7 sites with make files
+# Examples:
+# drupal distro:build -e local --branch=7.x --name=d7-example --destination=/Users/Shared/sites
+# drupal site:build d7-example-devdesktop -e local --branch=7.x
+local:
   name: d7-example
   profile: standard
-  root: /var/www/sites/drupal/docroot_d7-example/sites/example
+  root: /Users/Shared/sites/docroot_d7-example/sites/example
   web_directory: /
-  host: http://d7-example.local
+  host: http://d7-example.dd:8083
   cdn: http://d7-example.com
   account-name: admin
   account-pass: demo
@@ -43,8 +48,14 @@ prod:
     url: https://github.com/dennisinteractive/drupal-example-site.git
     branch: 7.x
   db:
+    dump: /tmp/d7-example.sql.gz
     host: 127.0.0.1
     name: d7_example
     user: root
-    port: 3306
+    port: 33067
     type: mysql
+  modules:
+    enable:
+      - devel
+    disable:
+      - varnish
