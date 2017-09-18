@@ -156,7 +156,7 @@ class DbImportCommand extends AbstractCommand {
       $commands = $this->getSiteInstallCommands($options);
       $install = TRUE;
     }
-    $command = implode(' && ', $commands);
+    $command = implode(' ; ', $commands);
 
     $this->io->commentBlock($command);
 
@@ -208,7 +208,8 @@ class DbImportCommand extends AbstractCommand {
     $commands[] = sprintf('drush sql-create -y');
     $commands[] = sprintf('drush sql-cli < %s', $this->filename);
     if ($this->getDrupalVersion() === 7) {
-      $commands[] = 'drush -q rr';
+      $commands[] = 'drush rr --no-cache-clear';
+      $commands[] = 'drush rr --fire-bazooka';
     }
     $commands[] = sprintf('drush user-password %s --password="%s"',
       $this->config['account-name'],
