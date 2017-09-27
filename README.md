@@ -33,7 +33,7 @@ curl -L https://goo.gl/DcpKPN | sh
 	drupal settings:set environment dev
 	```
 
-1. Install the Drupal Extend plugin (https://github.com/hechoendrupal/drupal-console-extend)
+1. Install the [Drupal Extend plugin](https://github.com/hechoendrupal/drupal-console-extend)
 
 	```cd ~/.console/
 	composer create-project \
@@ -54,7 +54,7 @@ curl -L https://goo.gl/DcpKPN | sh
 	cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
 	```
 
-1. Remove example (optional)
+1. Remove example (_optional_)
 
 	```
 	composer remove drupal/console-extend-example
