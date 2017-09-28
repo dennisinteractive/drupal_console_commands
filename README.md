@@ -43,7 +43,7 @@ composer remove drupal/console-extend-example
 - Install Dennis Digital Commands
 ```
 cd ~/.console/extend;
-composer require dennisdigital/drupal_console_commands:extend_properly-dev
+composer require dennisdigital/drupal_console_commands:master-dev
 ```
 
 - Copy chain commands
