@@ -5,7 +5,6 @@ command:
 vars:
   repository: ssh://didev@didev.kilnhg.com/Drupal-Install-Profiles/dennis_distro/1-0
   destination: /vagrant/repos
-vars:
   branch:
     - 7.x
     - 7.x-1.37.x
