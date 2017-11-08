@@ -45,7 +45,7 @@ curl -L https://goo.gl/DcpKPN | sh
 
 	```
 	cd ~/.console/extend;
-	composer require dennisdigital/drupal_console_commands:extend_properly-dev
+  composer require dennisdigital/drupal_console_commands:master-dev
 	```
 
 1. Copy chain commands
