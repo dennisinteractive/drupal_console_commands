@@ -5,7 +5,14 @@ Provides custom Drupal console commands and chains.
 ## Requirements
 
 - [Composer](https://getcomposer.org/download/)
-- [Drupal Console Launcher](https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html)
+- [Drupal Console Launcher](https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html). Alternatively you can pick a specific tag i.e. https://github.com/hechoendrupal/drupal-console-launcher/releases/tag/1.0.2 and run the following commands:
+```
+mv ~/.console/sites /tmp/sites
+rm -fr ~/.console
+curl -L https://goo.gl/DcpKPN | sh
+mv /tmp/sites/* ~/.console/sites/
+rm -fr /tmp/sites
+```
 
 ## Installation
 
