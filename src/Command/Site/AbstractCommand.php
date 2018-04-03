@@ -430,7 +430,7 @@ abstract class AbstractCommand extends Command {
 
   /**
    * Validate and set the web root directory.
-   * This is the place were we run drush commands from.
+   * This is the place were we run commands from.
    */
   protected function setWebRoot() {
     $web_directory = empty($this->config['web_directory']) ? 'web' : $this->config['web_directory'];
@@ -720,6 +720,7 @@ abstract class AbstractCommand extends Command {
 
     // Shell commands
     $command[] = sprintf('cd %s', $this->getWebRoot());
+    //@todo
     $command[] = sprintf('drush eval "global \$config_directories; echo json_encode(\$config_directories);"');
     $command = implode(' && ', $command);
 

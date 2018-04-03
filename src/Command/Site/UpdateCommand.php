@@ -64,17 +64,17 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drush sset system.maintenance_mode 1';
-      $commands[] = 'drush cr';
-      $commands[] = 'drush updb -y';
+      $commands[] = 'drupal site:maintenance  on';
+      $commands[] = 'drupal cr all';
+      $commands[] = 'drupal module:update';
+      $commands[] = 'drupal theme:update';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
       if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
-        $commands[] = 'drush cim -y';
-        $commands[] = 'drush cim -y';
+        $commands[] = 'drupal ci';
       }
-      $commands[] = 'drush sset system.maintenance_mode 0';
-      $commands[] = 'drush cr';
+      $commands[] = 'drupal site:maintenance  off';
+      $commands[] = 'drupal cr all';
     }
 
     $command = implode(' ; ', $commands);
@@ -97,7 +97,16 @@ class UpdateCommand extends AbstractCommand {
    */
   private function addModuleEnableCommands(&$commands) {
     if (!empty($this->config['modules']['enable'])) {
-      $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
+
+      // Drupal 7 only;
+      if ($this->getDrupalVersion() === 7) {
+        $commands[] = sprintf('drupal module:install %s', implode(', ', $this->config['modules']['enable']));
+      }
+
+      // Drupal 8 only;
+      if ($this->getDrupalVersion() === 8) {
+        $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
+      }
     }
   }
 
@@ -106,10 +115,17 @@ class UpdateCommand extends AbstractCommand {
    */
   private function addModuleDisableCommands(&$commands) {
     if (!empty($this->config['modules']['disable'])) {
+
+      // Drupal 7 only;
       if ($this->getDrupalVersion() === 7) {
         $commands[] = sprintf('drush pm-disable -y %s', implode(', ', $this->config['modules']['disable']));
+        $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
       }
-      $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
+
+      // Drupal 8 only;
+      if ($this->getDrupalVersion() === 8) {
+        $commands[] = sprintf('drupal module:uninstall %s', implode(', ', $this->config['modules']['disable']));
+      }
     }
   }
 

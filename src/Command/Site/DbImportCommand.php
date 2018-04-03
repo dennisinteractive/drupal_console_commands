@@ -126,7 +126,7 @@ class DbImportCommand extends AbstractCommand {
     foreach ($this->getDefinition()->getOptions() as $option) {
       $name = $option->getName();
 
-      // Ignore Drupal console variables for drush command.
+      // Ignore Drupal console variables.
       if ($name == 'env') {
         continue;
       }
@@ -201,20 +201,31 @@ class DbImportCommand extends AbstractCommand {
   /**
    * Helper to return list of commands to import sql dump.
    */
-  protected function getSqlImportCommands(){
+  protected function getSqlImportCommands() {
     $this->io->comment('Importing dump');
 
-    $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-    $commands[] = sprintf('drush sql-create -y');
-    $commands[] = sprintf('drush sql-cli < %s', $this->filename);
+    // Drupal 7 only;
     if ($this->getDrupalVersion() === 7) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $commands[] = sprintf('drush sql-create -y');
+      $commands[] = sprintf('drush sql-cli < %s', $this->filename);
       $commands[] = 'drush rr --no-cache-clear';
       $commands[] = 'drush rr --fire-bazooka';
+      $commands[] = sprintf('drush user-password %s --password="%s"',
+        $this->config['account-name'],
+        $this->config['account-pass']
+      );
     }
-    $commands[] = sprintf('drush user-password %s --password="%s"',
-      $this->config['account-name'],
-      $this->config['account-pass']
-    );
+
+    // Drupal 8 only;
+    if ($this->getDrupalVersion() === 8) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $commands[] = sprintf('drupal database:restore --file=%s');
+      $commands[] = 'drupal cr all';
+      $commands[] = sprintf('drupal user:password:reset 1 %s',
+        $this->config['account-pass']
+      );
+    }
 
     return $commands;
   }
@@ -223,12 +234,21 @@ class DbImportCommand extends AbstractCommand {
    * Helper to return list of commands to install a site.
    */
   protected function getSiteInstallCommands($options) {
-    //@todo Use drupal site:install instead of Drush.
     $this->io->comment('Installing site');
 
-    $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-    $commands[] = sprintf('drush sql-create -y');
-    $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
+    // Drupal 7 only;
+    if ($this->getDrupalVersion() === 7) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $commands[] = sprintf('drush sql-create -y');
+      $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
+    }
+
+    // Drupal 8 only;
+    if ($this->getDrupalVersion() === 8) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $commands[] = sprintf('drupal site:install %s %s', $this->profile, $options);
+    }
+
     return $commands;
   }
 
@@ -242,6 +262,7 @@ class DbImportCommand extends AbstractCommand {
 
     // Config commands
     $command[] = sprintf('cd %s', $this->getWebRoot());
+    // @todo
     $command[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
     $configCommand = implode(' && ', $command);
 
