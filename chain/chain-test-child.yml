@@ -13,4 +13,4 @@ commands:
   # This chain shows the variables passed either via placeholders or interactive mode
   - command: exec
     arguments:
-      bin: 'echo "This is a test: Project:%{{project}} Directory:%{{directory}}"'
+      bin: 'echo "This is a test: Project:{{project}} Directory:{{directory}}"'

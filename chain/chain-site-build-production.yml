@@ -6,4 +6,4 @@ commands:
 # Run updates.
    - command: site:update
      arguments:
-       name: '%{{name}}'
+       name: '{{name}}'
