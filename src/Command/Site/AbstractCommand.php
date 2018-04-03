@@ -683,12 +683,11 @@ abstract class AbstractCommand extends Command {
     $siteList = array();
 
     foreach ($sites as $site) {
-      $parts = explode('.', $site);
-      $environment = array_pop($parts);
+      $config = $this->configurationManager->readTarget($site);
 
       // Filter by option --env.
-      if ($this->getEnv() && $environment === $this->getEnv()) {
-        $siteList[] = str_replace('.' . $environment, '', $site);
+      if (isset($config[$this->getEnv()])) {
+        $siteList[] = $config[$this->getEnv()]['name'];
       }
     }
 
