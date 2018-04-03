@@ -393,7 +393,7 @@ abstract class AbstractCommand extends Command {
     // Update input.
     $input->setArgument('name', $siteName);
     $this->siteName = $siteName;
-    $this->config = $config;
+    $this->config = $config[$this->getEnv()];
 
     return $this;
   }
