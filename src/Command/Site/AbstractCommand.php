@@ -190,8 +190,10 @@ abstract class AbstractCommand extends Command {
       $webRoot = $this->getWebRoot();
       $version = $detector->getDrupalVersion($webRoot);
       if (is_numeric($version)) {
-        $this->io->comment(sprintf('Drupal %s detected.', $version));
         $this->setDrupalVersion($version);
+        if (isset($this->options['verbose'])) {
+          $this->io->writeln(sprintf('Drupal %s detected.', $version));
+        }
       }
     }
 

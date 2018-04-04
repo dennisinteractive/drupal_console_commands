@@ -414,7 +414,7 @@ class DbImportCommand extends AbstractCommand {
     );
 
     // Run unzip command.
-    $this->io->write(sprintf('Unzipping dump'));
+    $this->io->comment(sprintf('Unzipping dump'));
 
     $shellProcess = $this->getShellProcess();
     if ($shellProcess->exec($command, TRUE)) {
