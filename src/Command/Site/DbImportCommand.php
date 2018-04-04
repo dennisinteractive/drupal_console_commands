@@ -95,7 +95,7 @@ class DbImportCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $learning = $input->getOption('learning');
+    $learning = $input->hasOption('learning');
 
     // Check if a dump file has been specified.
     if ($input->hasOption('file') && !is_null($input->getOption('file'))) {
@@ -156,7 +156,6 @@ class DbImportCommand extends AbstractCommand {
     else {
       // If a dump file wasn't found, do a fresh site install
       $commands = $this->getSiteInstallCommands($options);
-      $install = TRUE;
     }
     $command = implode(' ; ', $commands);
 
@@ -168,7 +167,7 @@ class DbImportCommand extends AbstractCommand {
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->writeln($shellProcess->getOutput());
+      //$this->io->writeln($shellProcess->getOutput());
       $this->io->success(sprintf(
         "Site url %s\nURL %s",
         $this->getSiteRoot(),
@@ -178,6 +177,7 @@ class DbImportCommand extends AbstractCommand {
     else {
       throw new CommandException($shellProcess->getOutput());
     }
+
   }
 
   /**

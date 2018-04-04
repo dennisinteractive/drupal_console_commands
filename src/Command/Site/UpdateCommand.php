@@ -43,7 +43,7 @@ class UpdateCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $learning = $input->getOption('learning');
+    $learning = $input->hasOption('learning');
 
     $this->io->comment(sprintf('Running Updates on %s',
       $this->getWebRoot()
@@ -67,7 +67,6 @@ class UpdateCommand extends AbstractCommand {
     if ($this->getDrupalVersion() === 8) {
       $commands[] = 'drupal site:maintenance on';
       $commands[] = 'drupal module:update';
-      $commands[] = 'drupal theme:update';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
       if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
@@ -87,7 +86,7 @@ class UpdateCommand extends AbstractCommand {
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->writeln($shellProcess->getOutput());
+      //$this->io->writeln($shellProcess->getOutput());
       $this->io->success('Update Complete');
     }
     else {

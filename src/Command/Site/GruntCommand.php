@@ -44,7 +44,7 @@ class GruntCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $learning = $input->getOption('learning');
+    $learning = $input->hasOption('learning');
 
     $this->io->comment(sprintf('Running Grunt on %s',
       $this->getWebRoot()
