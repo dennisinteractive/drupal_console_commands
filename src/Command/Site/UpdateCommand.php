@@ -43,8 +43,6 @@ class UpdateCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $learning = $input->hasOption('learning');
-
     $this->io->comment(sprintf('Running Updates on %s',
       $this->getWebRoot()
     ));
@@ -65,29 +63,24 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drupal site:maintenance on';
       $commands[] = 'drupal update:execute';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
       if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
         $commands[] = 'drupal config:import';
       }
-      $commands[] = 'drupal site:maintenance  off';
-      $commands[] = 'drupal cache:rebuild all';
+      //$commands[] = 'drupal cache:rebuild all';
     }
 
     $command = implode(' ; ', $commands);
 
-    if ($learning) {
-      $this->io->commentBlock($command);
-    }
+    $this->io->commentBlock($command);
 
     // Run.
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
       //$this->io->writeln($shellProcess->getOutput());
-      $this->io->success('Update Complete');
     }
     else {
       throw new CommandException($shellProcess->getOutput());

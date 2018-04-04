@@ -135,6 +135,12 @@ class BuildCommand extends AbstractCommand {
     $this->addDbImportCommand();
     $this->addUpdateCommand();
     $this->runList();
+
+    $this->io->success(sprintf(
+      "Site url %s\nURL %s",
+      $this->getSiteRoot(),
+      $this->config['host']
+    ));
   }
 
   /**

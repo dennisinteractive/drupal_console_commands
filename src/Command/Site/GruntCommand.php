@@ -44,8 +44,6 @@ class GruntCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-    $learning = $input->hasOption('learning');
-
     $this->io->comment(sprintf('Running Grunt on %s',
       $this->getWebRoot()
     ));
@@ -60,9 +58,7 @@ class GruntCommand extends AbstractCommand {
     // Run.
     $shellProcess = $this->getShellProcess();
 
-    if ($learning) {
-      $this->io->commentBlock($command);
-    }
+    $this->io->commentBlock($command);
 
     if ($shellProcess->exec($command, TRUE)) {
       $this->io->writeln($shellProcess->getOutput());
