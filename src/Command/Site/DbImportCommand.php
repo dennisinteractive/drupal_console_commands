@@ -155,7 +155,7 @@ class DbImportCommand extends AbstractCommand {
       // If a dump file wasn't found, do a fresh site install
       $commands = $this->getSiteInstallCommands($options);
     }
-    $command = implode(' ; ', $commands);
+    $command = implode(' && ', $commands);
 
     $this->io->commentBlock($command);
 
@@ -219,7 +219,9 @@ class DbImportCommand extends AbstractCommand {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       // Install drupal from existing configuration, see https://weknowinc.com/blog/how-install-drupal-8-existing-configuration
       $commands[] = sprintf('drupal site:install %s %s --force', $this->profile, $options);
-      $commands[] = sprintf('drupal config:import');
+      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
+        $commands[] = 'drupal config:import';
+      }
     }
 
     return $commands;
