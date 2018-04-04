@@ -199,7 +199,7 @@ class DbImportCommand extends AbstractCommand {
     if ($this->getDrupalVersion() === 8) {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       $commands[] = sprintf('drupal database:restore --file=%s', $this->filename);
-      $commands[] = 'drupal cr all';
+      $commands[] = 'drupal cache:rebuild all';
       $commands[] = sprintf('drupal user:password:reset 1 %s', $this->config['account-pass']);
     }
 

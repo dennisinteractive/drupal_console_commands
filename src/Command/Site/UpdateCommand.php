@@ -44,7 +44,7 @@ class UpdateCommand extends AbstractCommand {
     parent::execute($input, $output);
 
 
-    $this->io->comment(sprintf('Running Update on %s',
+    $this->io->comment(sprintf('Running Updates on %s',
       $this->getWebRoot()
     ));
 
@@ -64,17 +64,16 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drupal site:maintenance  on';
-      $commands[] = 'drupal cr all';
+      $commands[] = 'drupal site:maintenance on';
       $commands[] = 'drupal module:update';
       $commands[] = 'drupal theme:update';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
       if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
-        $commands[] = 'drupal ci';
+        $commands[] = 'drupal config:import';
       }
       $commands[] = 'drupal site:maintenance  off';
-      $commands[] = 'drupal cr all';
+      $commands[] = 'drupal cache:rebuild all';
     }
 
     $command = implode(' ; ', $commands);
