@@ -588,7 +588,9 @@ abstract class AbstractCommand extends Command {
 
       $command = implode(' && ', $commands);
 
-      $this->io->commentBlock($command);
+      if (isset($this->options['verbose'])) {
+        $this->io->commentBlock($command);
+      }
 
       $shellProcess = $this->getShellProcess()->printOutput(FALSE);
       if (!$shellProcess->exec($command, TRUE)) {

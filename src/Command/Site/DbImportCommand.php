@@ -95,6 +95,8 @@ class DbImportCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
+    $learning = $input->getOption('learning');
+
     // Check if a dump file has been specified.
     if ($input->hasOption('file') && !is_null($input->getOption('file'))) {
       $this->filename = $input->getOption('file');
@@ -158,7 +160,9 @@ class DbImportCommand extends AbstractCommand {
     }
     $command = implode(' ; ', $commands);
 
-    $this->io->commentBlock($command);
+    if ($learning) {
+      $this->io->commentBlock($command);
+    }
 
     // Run.
     $shellProcess = $this->getShellProcess();

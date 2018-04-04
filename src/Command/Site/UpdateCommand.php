@@ -43,6 +43,7 @@ class UpdateCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
+    $learning = $input->getOption('learning');
 
     $this->io->comment(sprintf('Running Updates on %s',
       $this->getWebRoot()
@@ -77,7 +78,10 @@ class UpdateCommand extends AbstractCommand {
     }
 
     $command = implode(' ; ', $commands);
-    $this->io->commentBlock($command);
+
+    if ($learning) {
+      $this->io->commentBlock($command);
+    }
 
     // Run.
     $shellProcess = $this->getShellProcess();
