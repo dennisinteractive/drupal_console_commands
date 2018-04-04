@@ -66,7 +66,7 @@ class UpdateCommand extends AbstractCommand {
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
       $commands[] = 'drupal site:maintenance on';
-      $commands[] = 'drupal module:update';
+      $commands[] = 'drupal update:execute';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
       if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
