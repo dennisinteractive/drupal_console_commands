@@ -174,28 +174,6 @@ class DbImportCommand extends AbstractCommand {
     else {
       throw new CommandException($shellProcess->getOutput());
     }
-
-    // Only Drupal8, update UUID from system.site.yml if it exists
-    if ($this->getDrupalVersion() === 8 && isset($install)) {
-
-      if ($configCommand = $this->getSetSiteUuidCommands()) {
-        $this->io->commentBlock($configCommand);
-
-        // Run.
-        $shellProcess = $this->getShellProcess();
-
-        if ($shellProcess->exec($configCommand, TRUE)) {
-          $this->io->writeln($shellProcess->getOutput());
-          $this->io->success('UUID updated.');
-        }
-        else {
-          throw new CommandException($shellProcess->getOutput());
-        }
-      }
-      else {
-        $this->io->commentBlock('system.site.yml not found. No UUID update required.');
-      }
-    }
   }
 
   /**
@@ -220,11 +198,9 @@ class DbImportCommand extends AbstractCommand {
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-      $commands[] = sprintf('drupal database:restore --file=%s');
+      $commands[] = sprintf('drupal database:restore --file=%s', $this->filename);
       $commands[] = 'drupal cr all';
-      $commands[] = sprintf('drupal user:password:reset 1 %s',
-        $this->config['account-pass']
-      );
+      $commands[] = sprintf('drupal user:password:reset 1 %s', $this->config['account-pass']);
     }
 
     return $commands;
@@ -246,34 +222,12 @@ class DbImportCommand extends AbstractCommand {
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-      $commands[] = sprintf('drupal site:install %s %s', $this->profile, $options);
+      // Install drupal from existing configuration, see https://weknowinc.com/blog/how-install-drupal-8-existing-configuration
+      $commands[] = sprintf('drupal site:install %s %s --force', $this->profile, $options);
+      $commands[] = sprintf('drupal config:import');
     }
 
     return $commands;
-  }
-
-  /**
-   * Helper to return command to set the UUID from config.
-   * Drupal 8 only.
-   * This checks if system.site.yml file exists before running the command.
-   */
-  protected function getSetSiteUuidCommands() {
-    $this->io->comment('Setting the UUID');
-
-    // Config commands
-    $command[] = sprintf('cd %s', $this->getWebRoot());
-    // @todo
-    $command[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
-    $configCommand = implode(' && ', $command);
-
-    if (!is_null($this->getConfigUrl())) {
-      $config = $this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml';
-      $this->io->comment('Checking for system.site.yml.');
-      if ($this->fileExists($config)) {
-        $this->io->comment('system.site.yml found, updating UUID.');
-        return $configCommand;
-      }
-    }
   }
 
   /**
