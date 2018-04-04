@@ -84,3 +84,9 @@ services:
     arguments: [ '@console.configuration_manager', '@app.root']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
+  # This is a temporary registry until this PR is available https://github.com/hechoendrupal/drupal-console/pull/3856
+  console.database_restore:
+    class: \Drupal\Console\Command\Database\RestoreCommand
+    arguments: ['@app.root']
+    tags:
+      - { name: drupal.command, bootstrap: uninstall }
