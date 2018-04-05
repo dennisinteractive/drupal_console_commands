@@ -95,12 +95,12 @@ class UpdateCommand extends AbstractCommand {
 
       // Drupal 7 only;
       if ($this->getDrupalVersion() === 7) {
-        $commands[] = sprintf('drupal module:install %s', implode(', ', $this->config['modules']['enable']));
+        $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
       }
 
       // Drupal 8 only;
       if ($this->getDrupalVersion() === 8) {
-        $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
+        $commands[] = sprintf('drupal module:install %s', implode(', ', $this->config['modules']['enable']));
       }
     }
   }
