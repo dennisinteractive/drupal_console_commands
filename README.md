@@ -248,7 +248,8 @@ Each environment will have its own chain that executes the relevant commands and
 
 - **-h** - Shows all the available arguments and options.
 - **--no-interaction** - Executes the command without asking any optional argument
-- **--skip** - Skips the execution of one or more commands (only `site:build`).
+- **--learning**, **-vvv** - Verbose messages
+- **--skip** - Skips the execution of one or more commands (only `site:build`, `site:update`).
 
 ## Environment variables
 
@@ -264,6 +265,6 @@ For example, to override the root directory you can set the variable before call
 drupal site:build
 drupal site:build d7-example
 drupal site:build d7-example -e dev --branch="master"
-drupal site:build d7-example -e dev --branch="master" --skip="checkout, compose"
+drupal site:build d7-example -e dev --branch="master" --skip="checkout, compose, config:import"
 drupal site:db:import d7-example
 ```
