@@ -374,7 +374,10 @@ class BuildCommand extends AbstractCommand {
       'command' => 'site:update',
       'arguments' => array(
         'name' => $this->siteName,
-      )
+      ),
+      'options' => array(
+        'skip' => implode(',', $this->skip),
+      ),
     );
   }
 
