@@ -2,6 +2,7 @@
 #
 # drupal site:build d8-example -e dev --branch=8.x
 dev:
+  type: local
   name: d8-example
   profile: standard
   root: /var/www/sites/drupal/docroot_d8-example
@@ -32,6 +33,7 @@ dev:
 #
 # drupal site:build d8-example -e local --branch=8.x
 local:
+  type: local
   name: d8-example
   profile: standard
   root: /Users/Shared/sites/docroot_d8-example
