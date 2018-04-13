@@ -2,6 +2,7 @@
 # drupal distro:build -e dev --branch=7.x --name=d7-example --destination=/var/www/sites/drupal
 # drupal site:build d7-example -e dev --branch=7.x
 dev:
+  type: local
   name: d7-example
   profile: standard
   root: /var/www/sites/drupal/docroot_d7-example/sites/example
@@ -32,6 +33,7 @@ dev:
 # drupal distro:build -e local --branch=7.x --name=d7-example --destination=/Users/Shared/sites
 # drupal site:build d7-example -e local --branch=7.x
 local:
+  type: local
   name: d7-example
   profile: standard
   root: /Users/Shared/sites/docroot_d7-example/sites/example
