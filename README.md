@@ -37,6 +37,7 @@ curl -L https://goo.gl/DcpKPN | sh
 
 	```
 	drupal settings:set environment dev
+	drupal settings:set overrides.config.skip-validate-site-uuid true
 	```
 
 1. Install the [Drupal Extend plugin](https://github.com/hechoendrupal/drupal-console-extend)
