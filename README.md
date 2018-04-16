@@ -5,7 +5,7 @@ Provides custom Drupal console commands and chains.
 ## Requirements
 
 - [Composer](https://getcomposer.org/download/)
-- [Drupal Console Launcher](https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html). Alternatively you can pick a specific tag i.e. https://github.com/hechoendrupal/drupal-console-launcher/releases/tag/1.0.2 and run the following commands:
+- [Drupal Console Launcher](https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html). Alternatively you can pick a specific tag i.e. https://github.com/hechoendrupal/drupal-console-launcher/releases/tag/1.8.0 and run the following commands:
 ```
 sudo rm /usr/local/bin/drupal
 curl -L https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.0.2/drupal.phar > drupal
