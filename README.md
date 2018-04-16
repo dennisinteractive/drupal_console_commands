@@ -62,6 +62,12 @@ curl -L https://goo.gl/DcpKPN | sh
 	cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
 	```
 
+1. Run update
+
+	```
+	composer update
+	```
+
 1. Remove example (_optional_)
 
 	```
