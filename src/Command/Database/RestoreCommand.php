@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Console\Command\Database\RestoreCommand.
+ * Contains \DennisDigital\Drupal\Console\Command\Database\RestoreCommand.
  * This is a temporary file until this PR is available https://github.com/hechoendrupal/drupal-console/pull/3856
  */
 
