@@ -72,7 +72,7 @@ class UpdateCommand extends AbstractCommand {
       //$commands[] = 'drupal cache:rebuild all';
     }
 
-    $command = implode(' ; ', $commands);
+    $command = implode(' && ', $commands);
 
     $this->io->commentBlock($command);
 
