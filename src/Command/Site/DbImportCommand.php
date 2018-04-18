@@ -17,6 +17,7 @@ use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Command\Site\Shared\InstallArgumentsTrait;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 /**
  * Class DbImportCommand
  *
@@ -147,27 +148,62 @@ class DbImportCommand extends AbstractCommand {
       $this->filename = $this->getDump($this->filename);
     }
 
+    // This code is repetitive so we can run config:import separately if we're
+    // doing a fresh site install.
     if ($this->fileExists($this->filename)) {
       // Import dump.
       $commands = $this->getSqlImportCommands($options);
+
+      $command = implode(' && ', $commands);
+
+      $this->io->commentBlock($command);
+
+      // Run.
+      $shellProcess = $this->getShellProcess();
+
+      if ($shellProcess->exec($command, TRUE)) {
+        //$this->io->writeln($shellProcess->getOutput());
+      }
+      else {
+        throw new CommandException($shellProcess->getOutput());
+      }
     }
     else {
       // If a dump file wasn't found, do a fresh site install
       $commands = $this->getSiteInstallCommands($options);
-    }
-    $command = implode(' && ', $commands);
 
-    $this->io->commentBlock($command);
+      $command = implode(' && ', $commands);
 
-    // Run.
-    $shellProcess = $this->getShellProcess();
+      $this->io->commentBlock($command);
 
-    if ($shellProcess->exec($command, TRUE)) {
-      //$this->io->writeln($shellProcess->getOutput());
+      // Run.
+      $shellProcess = $this->getShellProcess();
+
+      if ($shellProcess->exec($command, TRUE)) {
+        //$this->io->writeln($shellProcess->getOutput());
+      }
+      else {
+        throw new CommandException($shellProcess->getOutput());
+      }
+
+      // We run config:import separately so that if there's no config and it
+      // fails we can continue. Previously, we checked the config folder, but
+      // this was a quick fix.
+      if ($this->getDrupalVersion() === 8) {
+        $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+        $config_commands[] = 'drupal config:import';
+        $config_command = implode(' && ', $config_commands);
+
+        $this->io->commentBlock($config_command);
+
+        try {
+          $shellProcess->exec($config_command, TRUE);
+        }
+        catch (ProcessFailedException $e) {
+        }
+      }
     }
-    else {
-      throw new CommandException($shellProcess->getOutput());
-    }
+
 
   }
 
@@ -219,9 +255,9 @@ class DbImportCommand extends AbstractCommand {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       // Install drupal from existing configuration, see https://weknowinc.com/blog/how-install-drupal-8-existing-configuration
       $commands[] = sprintf('drupal site:install %s %s --force', $this->profile, $options);
-      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
-        $commands[] = 'drupal config:import';
-      }
+//      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
+//        $commands[] = 'drupal config:import';
+//      }
     }
 
     return $commands;

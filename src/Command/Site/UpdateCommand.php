@@ -12,6 +12,7 @@ namespace DennisDigital\Drupal\Console\Command\Site;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * Class TestCommand
@@ -66,9 +67,7 @@ class UpdateCommand extends AbstractCommand {
       $commands[] = 'drupal update:execute';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
-      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
-        $commands[] = 'drupal config:import';
-      }
+
       //$commands[] = 'drupal cache:rebuild all';
     }
 
@@ -85,6 +84,24 @@ class UpdateCommand extends AbstractCommand {
     else {
       throw new CommandException($shellProcess->getOutput());
     }
+
+    // We run config:import separately so that if there's no config and it
+    // fails we can continue. Previously, we checked the config folder, but this
+    // was a quick fix.
+    if ($this->getDrupalVersion() === 8) {
+      $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $config_commands[] = 'drupal config:import';
+      $config_command = implode(' && ', $config_commands);
+
+      $this->io->commentBlock($config_command);
+
+      try {
+        $shellProcess->exec($config_command, TRUE);
+      }
+      catch (ProcessFailedException $e) {
+      }
+    }
+
   }
 
   /**
