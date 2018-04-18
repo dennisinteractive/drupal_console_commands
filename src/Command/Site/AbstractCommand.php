@@ -190,8 +190,10 @@ abstract class AbstractCommand extends Command {
       $webRoot = $this->getWebRoot();
       $version = $detector->getDrupalVersion($webRoot);
       if (is_numeric($version)) {
-        $this->io->comment(sprintf('Drupal %s detected.', $version));
         $this->setDrupalVersion($version);
+        if (isset($this->options['verbose'])) {
+          $this->io->writeln(sprintf('Drupal %s detected.', $version));
+        }
       }
     }
 
@@ -393,7 +395,7 @@ abstract class AbstractCommand extends Command {
     // Update input.
     $input->setArgument('name', $siteName);
     $this->siteName = $siteName;
-    $this->config = $config;
+    $this->config = $config[$this->getEnv()];
 
     return $this;
   }
@@ -430,7 +432,7 @@ abstract class AbstractCommand extends Command {
 
   /**
    * Validate and set the web root directory.
-   * This is the place were we run drush commands from.
+   * This is the place were we run commands from.
    */
   protected function setWebRoot() {
     $web_directory = empty($this->config['web_directory']) ? 'web' : $this->config['web_directory'];
@@ -472,7 +474,7 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Helper to validate URL.
+   * Validate URL.
    *
    * @param InputInterface $input
    * @return string
@@ -493,7 +495,7 @@ abstract class AbstractCommand extends Command {
   }
 
   /**
-   * Helper to set the site root.
+   * Set the site root.
    *
    * This is where we place settings.php
    *
@@ -588,7 +590,9 @@ abstract class AbstractCommand extends Command {
 
       $command = implode(' && ', $commands);
 
-      $this->io->commentBlock($command);
+      if (isset($this->options['verbose'])) {
+        $this->io->commentBlock($command);
+      }
 
       $shellProcess = $this->getShellProcess()->printOutput(FALSE);
       if (!$shellProcess->exec($command, TRUE)) {
@@ -683,12 +687,11 @@ abstract class AbstractCommand extends Command {
     $siteList = array();
 
     foreach ($sites as $site) {
-      $parts = explode('.', $site);
-      $environment = array_pop($parts);
+      $config = $this->configurationManager->readTarget($site);
 
       // Filter by option --env.
-      if ($this->getEnv() && $environment === $this->getEnv()) {
-        $siteList[] = str_replace('.' . $environment, '', $site);
+      if (isset($config[$this->getEnv()])) {
+        $siteList[] = $config[$this->getEnv()]['name'];
       }
     }
 
@@ -708,28 +711,6 @@ abstract class AbstractCommand extends Command {
     $template =  realpath(dirname($file)) . '/Includes/Drupal' . $this->getDrupalVersion() . '/' . $templateName;
 
     return file_get_contents($template);
-  }
-
-  /**
-   * Helper to check whether config files exist.
-   *
-   * @return string.
-   */
-  protected function getConfigUrl() {
-    $shellProcess = $this->getShellProcess()->printOutput(FALSE);
-
-    // Shell commands
-    $command[] = sprintf('cd %s', $this->getWebRoot());
-    $command[] = sprintf('drush eval "global \$config_directories; echo json_encode(\$config_directories);"');
-    $command = implode(' && ', $command);
-
-    if ($shellProcess->exec($command, TRUE)) {
-      if ($conf = json_decode($shellProcess->getOutput())) {
-        if ($this->configUrl = $conf->sync) {
-          return $this->configUrl;
-        }
-      }
-    }
   }
 
 }

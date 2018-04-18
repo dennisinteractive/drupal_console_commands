@@ -6,8 +6,8 @@ commands:
 # Imports db or installs a site
   - command: site:db:import
     arguments:
-      name: '%{{name}}'
+      name: '{{name}}'
 # Run updates.
   - command: site:update
     arguments:
-       name: '%{{name}}'
+       name: '{{name}}'

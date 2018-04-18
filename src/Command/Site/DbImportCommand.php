@@ -17,6 +17,7 @@ use DennisDigital\Drupal\Console\Command\Exception\CommandException;
 use DennisDigital\Drupal\Console\Command\Site\Shared\InstallArgumentsTrait;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 /**
  * Class DbImportCommand
  *
@@ -126,7 +127,7 @@ class DbImportCommand extends AbstractCommand {
     foreach ($this->getDefinition()->getOptions() as $option) {
       $name = $option->getName();
 
-      // Ignore Drupal console variables for drush command.
+      // Ignore Drupal console variables.
       if ($name == 'env') {
         continue;
       }
@@ -147,74 +148,91 @@ class DbImportCommand extends AbstractCommand {
       $this->filename = $this->getDump($this->filename);
     }
 
+    // This code is repetitive so we can run config:import separately if we're
+    // doing a fresh site install.
     if ($this->fileExists($this->filename)) {
       // Import dump.
       $commands = $this->getSqlImportCommands($options);
+
+      $command = implode(' && ', $commands);
+
+      $this->io->commentBlock($command);
+
+      // Run.
+      $shellProcess = $this->getShellProcess();
+
+      if ($shellProcess->exec($command, TRUE)) {
+        //$this->io->writeln($shellProcess->getOutput());
+      }
+      else {
+        throw new CommandException($shellProcess->getOutput());
+      }
     }
     else {
       // If a dump file wasn't found, do a fresh site install
       $commands = $this->getSiteInstallCommands($options);
-      $install = TRUE;
-    }
-    $command = implode(' ; ', $commands);
 
-    $this->io->commentBlock($command);
+      $command = implode(' && ', $commands);
 
-    // Run.
-    $shellProcess = $this->getShellProcess();
+      $this->io->commentBlock($command);
 
-    if ($shellProcess->exec($command, TRUE)) {
-      $this->io->writeln($shellProcess->getOutput());
-      $this->io->success(sprintf(
-        "Site url %s\nURL %s",
-        $this->getSiteRoot(),
-        $this->config['host']
-      ));
-    }
-    else {
-      throw new CommandException($shellProcess->getOutput());
-    }
+      // Run.
+      $shellProcess = $this->getShellProcess();
 
-    // Only Drupal8, update UUID from system.site.yml if it exists
-    if ($this->getDrupalVersion() === 8 && isset($install)) {
-
-      if ($configCommand = $this->getSetSiteUuidCommands()) {
-        $this->io->commentBlock($configCommand);
-
-        // Run.
-        $shellProcess = $this->getShellProcess();
-
-        if ($shellProcess->exec($configCommand, TRUE)) {
-          $this->io->writeln($shellProcess->getOutput());
-          $this->io->success('UUID updated.');
-        }
-        else {
-          throw new CommandException($shellProcess->getOutput());
-        }
+      if ($shellProcess->exec($command, TRUE)) {
+        //$this->io->writeln($shellProcess->getOutput());
       }
       else {
-        $this->io->commentBlock('system.site.yml not found. No UUID update required.');
+        throw new CommandException($shellProcess->getOutput());
+      }
+
+      // We run config:import separately so that if there's no config and it
+      // fails we can continue. Previously, we checked the config folder, but
+      // this was a quick fix.
+      if ($this->getDrupalVersion() === 8) {
+        $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+        $config_commands[] = 'drupal config:import';
+        $config_command = implode(' && ', $config_commands);
+
+        $this->io->commentBlock($config_command);
+
+        try {
+          $shellProcess->exec($config_command, TRUE);
+        }
+        catch (ProcessFailedException $e) {
+        }
       }
     }
+
+
   }
 
   /**
    * Helper to return list of commands to import sql dump.
    */
-  protected function getSqlImportCommands(){
+  protected function getSqlImportCommands() {
     $this->io->comment('Importing dump');
 
-    $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-    $commands[] = sprintf('drush sql-create -y');
-    $commands[] = sprintf('drush sql-cli < %s', $this->filename);
+    // Drupal 7 only;
     if ($this->getDrupalVersion() === 7) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $commands[] = sprintf('drush sql-create -y');
+      $commands[] = sprintf('drush sql-cli < %s', $this->filename);
       $commands[] = 'drush rr --no-cache-clear';
       $commands[] = 'drush rr --fire-bazooka';
+      $commands[] = sprintf('drush user-password %s --password="%s"',
+        $this->config['account-name'],
+        $this->config['account-pass']
+      );
     }
-    $commands[] = sprintf('drush user-password %s --password="%s"',
-      $this->config['account-name'],
-      $this->config['account-pass']
-    );
+
+    // Drupal 8 only;
+    if ($this->getDrupalVersion() === 8) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $commands[] = sprintf('drupal database:restore --file=%s', $this->filename);
+      $commands[] = 'drupal cache:rebuild all';
+      $commands[] = sprintf('drupal user:password:reset 1 %s', $this->config['account-pass']);
+    }
 
     return $commands;
   }
@@ -223,36 +241,26 @@ class DbImportCommand extends AbstractCommand {
    * Helper to return list of commands to install a site.
    */
   protected function getSiteInstallCommands($options) {
-    //@todo Use drupal site:install instead of Drush.
     $this->io->comment('Installing site');
 
-    $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-    $commands[] = sprintf('drush sql-create -y');
-    $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
-    return $commands;
-  }
-
-  /**
-   * Helper to return command to set the UUID from config.
-   * Drupal 8 only.
-   * This checks if system.site.yml file exists before running the command.
-   */
-  protected function getSetSiteUuidCommands() {
-    $this->io->comment('Setting the UUID');
-
-    // Config commands
-    $command[] = sprintf('cd %s', $this->getWebRoot());
-    $command[] = sprintf('drush cset "system.site" uuid "$(drush cget system.site uuid --source=sync --format=list)" -y');
-    $configCommand = implode(' && ', $command);
-
-    if (!is_null($this->getConfigUrl())) {
-      $config = $this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml';
-      $this->io->comment('Checking for system.site.yml.');
-      if ($this->fileExists($config)) {
-        $this->io->comment('system.site.yml found, updating UUID.');
-        return $configCommand;
-      }
+    // Drupal 7 only;
+    if ($this->getDrupalVersion() === 7) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $commands[] = sprintf('drush sql-create -y');
+      $commands[] = sprintf('drush si -y %s %s', $this->profile, $options);
     }
+
+    // Drupal 8 only;
+    if ($this->getDrupalVersion() === 8) {
+      $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      // Install drupal from existing configuration, see https://weknowinc.com/blog/how-install-drupal-8-existing-configuration
+      $commands[] = sprintf('drupal site:install %s %s --force', $this->profile, $options);
+//      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
+//        $commands[] = 'drupal config:import';
+//      }
+    }
+
+    return $commands;
   }
 
   /**
@@ -435,7 +443,7 @@ class DbImportCommand extends AbstractCommand {
     );
 
     // Run unzip command.
-    $this->io->write(sprintf('Unzipping dump'));
+    $this->io->comment(sprintf('Unzipping dump'));
 
     $shellProcess = $this->getShellProcess();
     if ($shellProcess->exec($command, TRUE)) {

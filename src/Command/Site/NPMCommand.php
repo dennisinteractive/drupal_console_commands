@@ -57,6 +57,7 @@ class NPMCommand extends AbstractCommand {
 
     // Run.
     $shellProcess = $this->getShellProcess();
+
     $this->io->commentBlock($command);
 
     if ($shellProcess->exec($command, TRUE)) {

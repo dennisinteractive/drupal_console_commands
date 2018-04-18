@@ -20,6 +20,7 @@ sh install_launcher.sh
 # Setup Drupal console
 drupal -n --override init
 drupal settings:set environment dev
+drupal settings:set overrides.config.skip-validate-site-uuid true
 
 # Install console extend plugin
 sh install_extend.sh
