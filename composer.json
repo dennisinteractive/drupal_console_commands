@@ -24,11 +24,5 @@
   },
   "require-dev": {
       "drupal/console-core": "~1.0"
-  },
-  "repositories": {
-      "extend-plugin": {
-          "type": "vcs",
-          "url": "https://github.com/dennisinteractive/drupal-console-extend-plugin.git"
-      }
   }
 }
