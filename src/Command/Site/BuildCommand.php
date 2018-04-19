@@ -135,6 +135,12 @@ class BuildCommand extends AbstractCommand {
     $this->addDbImportCommand();
     $this->addUpdateCommand();
     $this->runList();
+
+    $this->io->success(sprintf(
+      "Site url %s\nURL %s",
+      $this->getSiteRoot(),
+      $this->config['host']
+    ));
   }
 
   /**
@@ -175,7 +181,7 @@ class BuildCommand extends AbstractCommand {
   }
 
   /**
-   * Helper to add the site host to sites.php.
+   * Add the site host to sites.php.
    */
   private function addSitesPhp() {
     // Get site root from config.
@@ -206,13 +212,9 @@ class BuildCommand extends AbstractCommand {
     // Append the host if necessary.
     $contents = file_get_contents($sitesPHP);
 
-    // Split site host.
-    $parts = parse_url($this->config['host']);
-
     // Generate site config entry.
-    $config = sprintf(PHP_EOL . '$sites[\'%s%s\'] = \'%s\';' . PHP_EOL,
-      isset($parts['port']) ? $parts['port'] . '.' : '',
-      $parts['host'],
+    $config = sprintf(PHP_EOL . '$sites[\'%s\'] = \'%s\';' . PHP_EOL,
+      $this->config['host'],
       $siteDir
     );
 

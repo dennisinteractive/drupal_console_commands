@@ -101,6 +101,8 @@ class BranchCommand extends AbstractRefCommand {
    * @throws CommandException
    */
   protected function getRemoteBranches() {
+    $this->io->comment(sprintf('Fetching remote branches'));
+
     $command = sprintf('git ls-remote --heads %s',
       $this->repo['url']
     );

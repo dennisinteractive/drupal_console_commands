@@ -6,19 +6,19 @@ commands:
 # Checkout site
   - command: site:checkout
     arguments:
-      name: '%{{name}}'
+      name: '{{name}}'
     options:
-      tag: '%{{tag}}'
-      destination-directory: '%{{root}}'
+      tag: '{{tag}}'
+      destination-directory: '{{root}}'
 # Run composer.
   - command: site:compose
     arguments:
-      name: '%{{name}}'
+      name: '{{name}}'
 # Run NPM.
   - command: site:npm
     arguments:
-      name: '%{{name}}'
+      name: '{{name}}'
 # Run Grunt.
   - command: site:grunt
     arguments:
-      name: '%{{name}}'
+      name: '{{name}}'
