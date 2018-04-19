@@ -9,7 +9,7 @@ Provides custom Drupal console commands and chains.
 ## Installation
 
 ```
-curl -L https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/29770_dc_upgrade/Makefile | make install
+curl -L https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/Makefile | make install
 ```
 	
 ## Commands
