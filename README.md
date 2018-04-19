@@ -1,4 +1,4 @@
-# Drupal console commands
+# Dennis Console
 
 Provides custom Drupal console commands and chains.
 
