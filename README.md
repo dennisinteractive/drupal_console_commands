@@ -5,74 +5,12 @@ Provides custom Drupal console commands and chains.
 ## Requirements
 
 - [Composer](https://getcomposer.org/download/)
-- [Drupal Console Launcher](https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html). Alternatively you can pick a specific tag i.e. https://github.com/hechoendrupal/drupal-console-launcher/releases/tag/1.8.0 and run the following commands:
-```
-sudo rm /usr/local/bin/drupal
-curl -L https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.8.0/drupal.phar > drupal
-chmod +x drupal
-mv drupal /usr/local/bin/
-```
 
 ## Installation
 
-You may follow either the scripted or manual steps below:
-
-### Scripted:
-
-1. Get and run our installation script with a single command:
-
 ```
-curl -L https://github.com/dennisinteractive/drupal_console_commands/blob/29770_dc_upgrade/Makefile | make install
+curl -L https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/29770_dc_upgrade/Makefile | make install
 ```
-
-### Manual:
-
-1. Init Drupal console
-
-	```
-	drupal -n --override init
-	```
-
-1.  Set the environment
-
-	```
-	drupal settings:set environment dev
-	drupal settings:set overrides.config.skip-validate-site-uuid true
-	```
-
-1. Install the [Drupal Extend plugin](https://github.com/hechoendrupal/drupal-console-extend)
-
-	```cd ~/.console/
-	composer create-project \
-	drupal/console-extend ~/.console/extend \
-	--no-interaction
-	```
-
-1. Install Dennis Digital Commands
-
-	```
-	cd ~/.console/extend;
-        
-	composer require dennisdigital/drupal_console_commands:master-dev
-	```
-
-1. Copy chain commands
-
-	```
-	cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
-	```
-
-1. Run update
-
-	```
-	composer update
-	```
-
-1. Remove example (_optional_)
-
-	```
-	composer remove drupal/console-extend-example
-	```
 	
 ## Commands
 
