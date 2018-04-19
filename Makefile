@@ -32,4 +32,3 @@ install :
 
 		drupal debug:site
 		drupal list site
-		echo Drupal Console installed succesfully

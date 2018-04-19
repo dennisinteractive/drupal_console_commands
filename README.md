@@ -22,7 +22,7 @@ You may follow either the scripted or manual steps below:
 1. Get and run our installation script with a single command:
 
 ```
-curl -L https://goo.gl/DcpKPN | sh
+curl -L https://github.com/dennisinteractive/drupal_console_commands/blob/29770_dc_upgrade/Makefile | make install
 ```
 
 ### Manual:
