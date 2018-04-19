@@ -5,10 +5,10 @@ Provides custom Drupal console commands and chains.
 ## Requirements
 
 - [Composer](https://getcomposer.org/download/)
-- [Drupal Console Launcher](https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html). Alternatively you can pick a specific tag i.e. https://github.com/hechoendrupal/drupal-console-launcher/releases/tag/1.0.2 and run the following commands:
+- [Drupal Console Launcher](https://hechoendrupal.gitbooks.io/drupal-console/content/en/getting/launcher.html). Alternatively you can pick a specific tag i.e. https://github.com/hechoendrupal/drupal-console-launcher/releases/tag/1.8.0 and run the following commands:
 ```
 sudo rm /usr/local/bin/drupal
-curl -L https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.0.2/drupal.phar > drupal
+curl -L https://github.com/hechoendrupal/drupal-console-launcher/releases/download/1.8.0/drupal.phar > drupal
 chmod +x drupal
 mv drupal /usr/local/bin/
 ```
@@ -37,6 +37,7 @@ curl -L https://goo.gl/DcpKPN | sh
 
 	```
 	drupal settings:set environment dev
+	drupal settings:set overrides.config.skip-validate-site-uuid true
 	```
 
 1. Install the [Drupal Extend plugin](https://github.com/hechoendrupal/drupal-console-extend)
@@ -59,6 +60,12 @@ curl -L https://goo.gl/DcpKPN | sh
 
 	```
 	cp vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
+	```
+
+1. Run update
+
+	```
+	composer update
 	```
 
 1. Remove example (_optional_)

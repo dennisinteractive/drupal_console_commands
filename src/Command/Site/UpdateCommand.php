@@ -12,6 +12,7 @@ namespace DennisDigital\Drupal\Console\Command\Site;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use DennisDigital\Drupal\Console\Command\Exception\CommandException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * Class TestCommand
@@ -43,8 +44,7 @@ class UpdateCommand extends AbstractCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     parent::execute($input, $output);
 
-
-    $this->io->comment(sprintf('Running Update on %s',
+    $this->io->comment(sprintf('Running Updates on %s',
       $this->getWebRoot()
     ));
 
@@ -64,32 +64,44 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drush sset system.maintenance_mode 1';
-      $commands[] = 'drush cr';
-      $commands[] = 'drush updb -y';
+      $commands[] = 'drupal update:execute';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
-      if ($this->fileExists($this->getWebRoot() . $this->getConfigUrl() . '/system.site.yml')) {
-        $commands[] = 'drush cim -y';
-        $commands[] = 'drush cim -y';
-      }
-      $commands[] = 'drush sset system.maintenance_mode 0';
-      $commands[] = 'drush cr';
+
+      //$commands[] = 'drupal cache:rebuild all';
     }
 
-    $command = implode(' ; ', $commands);
+    $command = implode(' && ', $commands);
+
     $this->io->commentBlock($command);
 
     // Run.
     $shellProcess = $this->getShellProcess();
 
     if ($shellProcess->exec($command, TRUE)) {
-      $this->io->writeln($shellProcess->getOutput());
-      $this->io->success('Update Complete');
+      //$this->io->writeln($shellProcess->getOutput());
     }
     else {
       throw new CommandException($shellProcess->getOutput());
     }
+
+    // We run config:import separately so that if there's no config and it
+    // fails we can continue. Previously, we checked the config folder, but this
+    // was a quick fix.
+    if ($this->getDrupalVersion() === 8) {
+      $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
+      $config_commands[] = 'drupal config:import';
+      $config_command = implode(' && ', $config_commands);
+
+      $this->io->commentBlock($config_command);
+
+      try {
+        $shellProcess->exec($config_command, TRUE);
+      }
+      catch (ProcessFailedException $e) {
+      }
+    }
+
   }
 
   /**
@@ -97,7 +109,16 @@ class UpdateCommand extends AbstractCommand {
    */
   private function addModuleEnableCommands(&$commands) {
     if (!empty($this->config['modules']['enable'])) {
-      $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
+
+      // Drupal 7 only;
+      if ($this->getDrupalVersion() === 7) {
+        $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
+      }
+
+      // Drupal 8 only;
+      if ($this->getDrupalVersion() === 8) {
+        $commands[] = sprintf('drupal module:install %s', implode(', ', $this->config['modules']['enable']));
+      }
     }
   }
 
@@ -106,10 +127,17 @@ class UpdateCommand extends AbstractCommand {
    */
   private function addModuleDisableCommands(&$commands) {
     if (!empty($this->config['modules']['disable'])) {
+
+      // Drupal 7 only;
       if ($this->getDrupalVersion() === 7) {
         $commands[] = sprintf('drush pm-disable -y %s', implode(', ', $this->config['modules']['disable']));
+        $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
       }
-      $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
+
+      // Drupal 8 only;
+      if ($this->getDrupalVersion() === 8) {
+        $commands[] = sprintf('drupal module:uninstall %s', implode(', ', $this->config['modules']['disable']));
+      }
     }
   }
 

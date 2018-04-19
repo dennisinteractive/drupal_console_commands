@@ -2,6 +2,7 @@
 #
 # drupal site:build d7-example-composer -e dev --branch=7.x-composer
 dev:
+  type: local
   name: d7-example-composer
   profile: standard
   root: /var/www/sites/drupal/docroot_d7-example
@@ -32,6 +33,7 @@ dev:
 #
 # drupal site:build d7-example-composer -e local --branch=7.x-composer
 local:
+  type: local
   name: d7-example-composer
   profile: standard
   root: /Users/Shared/sites/docroot_d7-example
