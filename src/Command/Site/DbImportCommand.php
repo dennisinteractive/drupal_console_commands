@@ -114,6 +114,11 @@ class DbImportCommand extends AbstractCommand {
       'account-name' => $this->config['account-name'],
       'account-pass' => $this->config['account-pass'],
       'account-mail' => $this->config['account-mail'],
+      'db-type' => $this->config['db']['type'],
+      'db-host' => $this->config['db']['host'],
+      'db-name' => $this->config['db']['name'],
+      'db-user' => $this->config['db']['user'],
+      'db-pass' => isset($this->config['db']['pass']) ? $this->config['db']['pass'] : '',
     );
     foreach ($this->getDefinition()->getOptions() as $option) {
       $name = $option->getName();
