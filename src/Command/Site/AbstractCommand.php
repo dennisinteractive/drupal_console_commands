@@ -414,18 +414,6 @@ abstract class AbstractCommand extends Command {
       // Use config from parameter.
       $this->profile = $input->getArgument('profile');
     }
-    elseif (isset($this->config['profile'])) {
-      // Use config from ~/.console/sites/{site}.yml.
-      $this->profile = $this->config['profile'];
-    }
-    else {
-      $this->profile = 'config_installer';
-    }
-
-    // Update input.
-    if ($input->hasArgument('profile')) {
-      $input->setArgument('profile', $this->profile);
-    }
 
     return $this->profile;
   }

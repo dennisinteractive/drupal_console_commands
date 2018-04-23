@@ -82,6 +82,12 @@ class BuildCommand extends AbstractCommand {
       'Specify which branch to build if different than the global branch found in sites.yml'
     );
     $this->addOption(
+      'profile',
+      '',
+      InputOption::VALUE_NONE,
+      'Which profile to use. i.e. standard'
+    );
+    $this->addOption(
       'skip',
       '',
       InputOption::VALUE_OPTIONAL,
@@ -105,6 +111,7 @@ class BuildCommand extends AbstractCommand {
     }
     // Trim input.
     $this->skip = array_map('trim', $this->skip);
+
   }
 
   /**
@@ -119,12 +126,36 @@ class BuildCommand extends AbstractCommand {
     $this->addCheckoutCommand();
     $this->runList();
 
+    $this->setSiteRoot();
+
+    $profile = $input->getOption('profile');
+    // Try to get the profile from settings.php.
+    if (!$profile) {
+      $settingsPhp = $this->getSiteRoot() . 'settings.php';
+      if (file_exists($settingsPhp)) {
+        $regex = '|\$settings\[\'install_profile\'\] = \'(\w+)\'|';
+        $contents = file_get_contents($settingsPhp);
+        preg_match($regex, $contents, $matches);
+        if (!empty($matches)) {
+          $profile = $matches[1];
+        }
+      }
+    }
+    // Ask for user input.
+    if (!$profile) {
+      $profile = $this->getIo()->ask(
+        $this->trans('Which profile would you like to install?'),
+        'standard'
+      );
+    }
+    $this->profile = $profile;
+    $input->setOption('profile', $profile);
+
     // Run compose now because we need to have core to set the site root.
     $this->addComposeMakeCommand();
     $this->runList();
 
     // Add entry on sites.php.
-    $this->setSiteRoot();
     $this->addSitesPhp();
 
     // Queue other commands.
@@ -354,6 +385,7 @@ class BuildCommand extends AbstractCommand {
       'command' => 'site:db:import',
       'arguments' => array(
         'name' => $this->siteName,
+        'profile' => $this->profile,
       )
     );
   }
