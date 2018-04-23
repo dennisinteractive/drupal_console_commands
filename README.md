@@ -44,6 +44,7 @@ See some examples of site YAML files at [https://github.com/dennisinteractive/dr
 	- drupal-composer/drupal-project:8.x-dev
 	- acquia/lightning-project
 	- acquia/reservoir-project
+	- burdamagazinorg/thunder-project
 
 - drupal **site:checkout** *site-name* [--branch|--tag]
 	
