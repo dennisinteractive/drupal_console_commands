@@ -18,10 +18,9 @@ install :
 		drupal settings:set overrides.config.skip-validate-site-uuid true
 
 		# Install Console Extend Plugin
+   	        rm -rf ~/.console/extend
 		composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-extend.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-extend:dev-master#041bb9cf9831d ~/.console/extend --no-dev --no-interaction
 
-		# Install Console Extend Plugin
-		composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-extend.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-extend:dev-master#041bb9cf9831d ~/.console/extend --no-dev --no-interaction
 		# Install Dennis console
 		# cd ~/.console/extend && composer require drupal/console:dev-master#368bbfa44dc6
 		git clone git@github.com:dennisinteractive/drupal_console_sites.git ~/.console/sites/
