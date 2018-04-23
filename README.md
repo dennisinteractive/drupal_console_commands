@@ -10,6 +10,7 @@ Provides custom Drupal console commands and chains.
 
 ```
 curl -L https://raw.githubusercontent.com/dennisinteractive/drupal_console_commands/master/Makefile > Makefile
+
 make install
 ```
 	
