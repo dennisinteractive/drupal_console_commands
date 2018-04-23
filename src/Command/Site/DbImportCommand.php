@@ -118,6 +118,7 @@ class DbImportCommand extends AbstractCommand {
       'db-host' => $this->config['db']['host'],
       'db-name' => $this->config['db']['name'],
       'db-user' => $this->config['db']['user'],
+      'db-port' => $this->config['db']['port'],
       'db-pass' => isset($this->config['db']['pass']) ? $this->config['db']['pass'] : '',
     );
     foreach ($this->getDefinition()->getOptions() as $option) {
@@ -145,6 +146,18 @@ class DbImportCommand extends AbstractCommand {
         );
       }
     }
+
+    // Temporary solution to recreate databases until Drupal console provides commands for this.
+    $db = array(
+      'name' => $override['db-name'],
+      'type' => $override['db-type'],
+      'host' => $override['db-host'],
+      'user' => $override['db-user'],
+      'pass' => $override['db-pass'],
+      'port' => $override['db-port'],
+    );
+    $this->sqlDrop($db);
+    $this->sqlCreate($db);
 
     // If we're installing from a dump that's not already in
     // our local destination, copy it to our local destination.
@@ -209,7 +222,56 @@ class DbImportCommand extends AbstractCommand {
       }
     }
 
+  }
 
+  /**
+   * Temporary function to drop databases.
+   */
+  protected function sqlDrop($db) {
+    $command = sprintf('mysql --user=%s --password=%s --host=%s --port=%s -e"DROP DATABASE IF EXISTS %s"',
+        $db['user'],
+        $db['pass'],
+        $db['host'],
+        $db['port'],
+        $db['name']
+    );
+
+    $this->io->commentBlock($command);
+
+    // Run.
+    $shellProcess = $this->getShellProcess();
+
+    if ($shellProcess->exec($command, TRUE)) {
+      //$this->io->writeln($shellProcess->getOutput());
+    }
+    else {
+      throw new CommandException($shellProcess->getOutput());
+    }
+  }
+
+  /**
+   * Temporary function to create databases.
+   */
+  protected function sqlCreate($db) {
+    $command = sprintf('mysql --user=%s --password=%s --host=%s --port=%s -e"CREATE DATABASE IF NOT EXISTS %s"',
+        $db['user'],
+        $db['pass'],
+        $db['host'],
+        $db['port'],
+        $db['name']
+    );
+
+    $this->io->commentBlock($command);
+
+    // Run.
+    $shellProcess = $this->getShellProcess();
+
+    if ($shellProcess->exec($command, TRUE)) {
+      //$this->io->writeln($shellProcess->getOutput());
+    }
+    else {
+      throw new CommandException($shellProcess->getOutput());
+    }
   }
 
   /**
