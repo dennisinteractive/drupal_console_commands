@@ -210,6 +210,7 @@ class DbImportCommand extends AbstractCommand {
       if ($this->getDrupalVersion() === 8) {
         $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
         $config_commands[] = 'drupal config:import';
+        $config_commands[] = 'drupal cache:rebuild';
         $config_command = implode(' && ', $config_commands);
 
         $this->io->commentBlock($config_command);
