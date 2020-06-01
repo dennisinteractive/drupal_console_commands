@@ -64,7 +64,7 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drupal update:execute';
+      $commands[] = 'drush updb -y';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
 
@@ -90,8 +90,8 @@ class UpdateCommand extends AbstractCommand {
     // was a quick fix.
     if ($this->getDrupalVersion() === 8) {
       $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-      $config_commands[] = 'drupal config:import';
-      $config_commands[] = 'drupal cache:rebuild';
+      $config_commands[] = 'drush cim -y';
+      $config_commands[] = 'drush cr';
       $config_command = implode(' && ', $config_commands);
 
       $this->io->commentBlock($config_command);
@@ -118,7 +118,7 @@ class UpdateCommand extends AbstractCommand {
 
       // Drupal 8 only;
       if ($this->getDrupalVersion() === 8) {
-        $commands[] = sprintf('drupal module:install %s', implode(', ', $this->config['modules']['enable']));
+        $commands[] = sprintf('drupal en -y %s', implode(', ', $this->config['modules']['enable']));
       }
     }
   }
@@ -137,7 +137,7 @@ class UpdateCommand extends AbstractCommand {
 
       // Drupal 8 only;
       if ($this->getDrupalVersion() === 8) {
-        $commands[] = sprintf('drupal module:uninstall %s', implode(', ', $this->config['modules']['disable']));
+        $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
       }
     }
   }

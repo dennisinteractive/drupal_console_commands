@@ -209,8 +209,8 @@ class DbImportCommand extends AbstractCommand {
       // this was a quick fix.
       if ($this->getDrupalVersion() === 8) {
         $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-        $config_commands[] = 'drupal config:import';
-        $config_commands[] = 'drupal cache:rebuild';
+        $config_commands[] = 'drush cim -y';
+        $config_commands[] = 'drush cr';
         $config_command = implode(' && ', $config_commands);
 
         $this->io->commentBlock($config_command);
@@ -297,9 +297,13 @@ class DbImportCommand extends AbstractCommand {
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-      $commands[] = sprintf('drupal database:restore --file=%s', $this->filename);
-      $commands[] = 'drupal cache:rebuild all';
-      $commands[] = sprintf('drupal user:password:reset 1 %s', $this->config['account-pass']);
+      $commands[] = sprintf('drush sql-create -y');
+      $commands[] = sprintf('drush sql-cli < %s', $this->filename);
+      $commands[] = 'drush cr';
+      $commands[] = sprintf('drush user-password %s "%s"',
+        $this->config['account-name'],
+        $this->config['account-pass']
+      );
     }
 
     return $commands;
