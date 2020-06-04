@@ -64,7 +64,10 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
+      $commands[] = 'drush cim -y';
+      $commands[] = 'drush cr';
       $commands[] = 'drush updb -y';
+      $commands[] = 'drush cr';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
 
@@ -83,24 +86,6 @@ class UpdateCommand extends AbstractCommand {
     }
     else {
       throw new CommandException($shellProcess->getOutput());
-    }
-
-    // We run config:import separately so that if there's no config and it
-    // fails we can continue. Previously, we checked the config folder, but this
-    // was a quick fix.
-    if ($this->getDrupalVersion() === 8) {
-      $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-      $config_commands[] = 'drush cim -y';
-      $config_commands[] = 'drush cr';
-      $config_command = implode(' && ', $config_commands);
-
-      $this->io->commentBlock($config_command);
-
-      try {
-        $shellProcess->exec($config_command, TRUE);
-      }
-      catch (ProcessFailedException $e) {
-      }
     }
 
   }
