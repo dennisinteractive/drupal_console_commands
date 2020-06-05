@@ -103,7 +103,7 @@ class UpdateCommand extends AbstractCommand {
 
       // Drupal 8 only;
       if ($this->getDrupalVersion() === 8) {
-        $commands[] = sprintf('drupal en -y %s', implode(', ', $this->config['modules']['enable']));
+        $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
       }
     }
   }
