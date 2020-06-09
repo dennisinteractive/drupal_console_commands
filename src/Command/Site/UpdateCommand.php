@@ -64,7 +64,10 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drupal update:execute';
+      $commands[] = 'drush cim -y';
+      $commands[] = 'drush cr';
+      $commands[] = 'drush updb -y';
+      $commands[] = 'drush cr';
       $this->addModuleEnableCommands($commands);
       $this->addModuleDisableCommands($commands);
 
@@ -85,24 +88,6 @@ class UpdateCommand extends AbstractCommand {
       throw new CommandException($shellProcess->getOutput());
     }
 
-    // We run config:import separately so that if there's no config and it
-    // fails we can continue. Previously, we checked the config folder, but this
-    // was a quick fix.
-    if ($this->getDrupalVersion() === 8) {
-      $config_commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
-      $config_commands[] = 'drupal config:import';
-      $config_commands[] = 'drupal cache:rebuild';
-      $config_command = implode(' && ', $config_commands);
-
-      $this->io->commentBlock($config_command);
-
-      try {
-        $shellProcess->exec($config_command, TRUE);
-      }
-      catch (ProcessFailedException $e) {
-      }
-    }
-
   }
 
   /**
@@ -118,7 +103,7 @@ class UpdateCommand extends AbstractCommand {
 
       // Drupal 8 only;
       if ($this->getDrupalVersion() === 8) {
-        $commands[] = sprintf('drupal module:install %s', implode(', ', $this->config['modules']['enable']));
+        $commands[] = sprintf('drush en -y %s', implode(', ', $this->config['modules']['enable']));
       }
     }
   }
@@ -137,7 +122,7 @@ class UpdateCommand extends AbstractCommand {
 
       // Drupal 8 only;
       if ($this->getDrupalVersion() === 8) {
-        $commands[] = sprintf('drupal module:uninstall %s', implode(', ', $this->config['modules']['disable']));
+        $commands[] = sprintf('drush pm-uninstall -y %s', implode(', ', $this->config['modules']['disable']));
       }
     }
   }
