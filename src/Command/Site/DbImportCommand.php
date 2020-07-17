@@ -299,11 +299,11 @@ class DbImportCommand extends AbstractCommand {
       $commands[] = sprintf('cd %s', $this->shellPath($this->getWebRoot()));
       $commands[] = sprintf('drush sql-create -y');
       $commands[] = sprintf('drush sql-cli < %s', $this->filename);
-      $commands[] = 'drush cr';
-      $commands[] = sprintf('drush user-password %s "%s"',
-        $this->config['account-name'],
-        $this->config['account-pass']
-      );
+     // $commands[] = 'drush cr';
+   //   $commands[] = sprintf('drush user-password %s "%s"',
+   //     $this->config['account-name'],
+   //     $this->config['account-pass']
+   //   );
     }
 
     return $commands;

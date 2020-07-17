@@ -64,8 +64,8 @@ class UpdateCommand extends AbstractCommand {
 
     // Drupal 8 only;
     if ($this->getDrupalVersion() === 8) {
-      $commands[] = 'drush cim -y';
-      $commands[] = 'drush cr';
+    //  $commands[] = 'drush cim -y';
+     // $commands[] = 'drush cr';
       $commands[] = 'drush updb -y';
       $commands[] = 'drush cr';
       $this->addModuleEnableCommands($commands);
