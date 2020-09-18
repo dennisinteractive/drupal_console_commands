@@ -23,7 +23,7 @@ install :
 		# Install Dennis console
 		# cd ~/.console/extend && composer require drupal/console:dev-master#368bbfa44dc6
 		git clone git@github.com:dennisinteractive/drupal_console_sites.git ~/.console/sites/
-		cd ~/.console/extend && composer require dennisdigital/drupal_console_commands:dev-master#ef3105222
+		cd ~/.console/extend && composer require dennisdigital/drupal_console_commands:dev-master#36f2ec62e1af38ef31ac10cabd9a83f26175f18e
 		cd ~/.console/extend && composer update
 		cp ~/.console/extend/vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
 		cp ~/.console/extend/vendor/drupal/console/extend.console.services.yml ~/.console/extend
