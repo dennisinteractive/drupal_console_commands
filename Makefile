@@ -9,7 +9,7 @@ install :
 		sudo rm -rf  /usr/local/bin/drupal
 
 		# Install launcher
-		composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-launcher.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-launcher:dev-master#9c7390353c1e839 ~/.console/launcher --no-dev --no-interaction
+		composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-launcher.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-launcher:dev-master#9c7390353c1e8396ff8a6f3caebbcd1679e7c7f2 ~/.console/launcher --no-dev --no-interaction
 		sudo ln -s ~/.console/launcher/bin/drupal /usr/local/bin/drupal
 
 		# Configure Drupal Console
@@ -18,12 +18,12 @@ install :
 		drupal settings:set overrides.config.skip-validate-site-uuid true
 
 		# Install Console Extend Plugin
-		composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-extend.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-extend:dev-master#041bb9cf9831d ~/.console/extend --no-dev --no-interaction
+		composer create-project --repository='{"type": "vcs", "url": "git@github.com:dennisinteractive/drupal-console-extend.git", "vendor-alias": "drupal", "no-api": true}' drupal/console-extend:dev-master#b8d67b5e8dfe6a52fb57bacdfe0bd5c76ef1fa9e ~/.console/extend --no-dev --no-interaction
 
 		# Install Dennis console
 		# cd ~/.console/extend && composer require drupal/console:dev-master#368bbfa44dc6
 		git clone git@github.com:dennisinteractive/drupal_console_sites.git ~/.console/sites/
-		cd ~/.console/extend && composer require dennisdigital/drupal_console_commands:dev-master#ef3105222
+		cd ~/.console/extend && composer require dennisdigital/drupal_console_commands:dev-master#36f2ec62e1af38ef31ac10cabd9a83f26175f18e
 		cd ~/.console/extend && composer update
 		cp ~/.console/extend/vendor/dennisdigital/drupal_console_commands/chain/*.yml ~/.console/chain
 		cp ~/.console/extend/vendor/drupal/console/extend.console.services.yml ~/.console/extend
