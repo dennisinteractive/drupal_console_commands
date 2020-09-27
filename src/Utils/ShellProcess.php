@@ -65,7 +65,9 @@ class ShellProcess {
    * @return Process
    */
   public function exec($command, $workingDirectory=null) {
-    if (!$workingDirectory || $workingDirectory==='') {
+    if ($workingDirectory === TRUE) {
+      $workingDirectory = getcwd();
+    } else if (!$workingDirectory || $workingDirectory==='') {
       $workingDirectory = $this->appRoot;
     }
     $this->process = new Process($command);
